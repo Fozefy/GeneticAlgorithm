@@ -45,6 +45,11 @@ setMethod("initialize",
           						decode.fn = identity,
           						 ...) {
 		genes.env <- new.env()
+    if (is.null(rdist))
+    {
+      rdist = function(n) sample(c(0,1), n, replace=TRUE)
+    }
+		chr.length
 		genes.env$genes <- rdist(chr.length)
 		.Object@chr.genes <- genes.env
 		
@@ -57,7 +62,7 @@ setMethod("initialize",
 )
 
 new.chromosome <- function(GA.env){
-	new("chromosome", GA.env$chr.length, rdist = GA.env$new.genes.fn)
+	new("chromosome", encoding.env(GA.env)$chr.length, rdist = encoding.env(GA.env)$new.genes.fn)
 }
 						  
 chromosome <- function(object){object@chr.genes[["genes"]]}
@@ -1087,7 +1092,7 @@ finite.min.fn <- function(genes, gene.max){
 #   |-- Fitness Environment: fitness.fn, decode.fn, goal.fn, epsilon
 
 new.GA.env <- function(GA.base.args = NULL, encoding.args = new.encoding.args(),
-								 prob.mutation = 2, mutation.type = "binary", mutation.args = NULL,
+								 mutation.args = new.mutation.args(),
 								 xover.prob = 0.8, xover.type = "uniform", xover.args = c(xover.alpha = 0.3),
 								 selection.type = "simple.tournament", 
 								 selection.args = c(tourn.size = 2, prob.select.worse = 0, decreasing = TRUE, `%>%` = `>`),
@@ -1095,41 +1100,38 @@ new.GA.env <- function(GA.base.args = NULL, encoding.args = new.encoding.args(),
 	GA.env <- new.env()
   setup.GA.envTree(GA.env)
 	setup.GA.base.env(GA.env, GA.base.args)
-	setup.encoding.env(encoding.env(GA.env), encoding.args)
+	setup.encoding.env(GA.env, encoding.args)
 	add.to.env(GA.env, mutation.args)
 	add.to.env(GA.env, xover.args)
 	add.to.env(GA.env, selection.args)
 # #	setup.elitism(GA.env)
-# #	setup.chromosome.encoding(GA.env, chr.encode.type)
- 	new.chromosome <- function(chr.length){new("chromosome", chr.length, new.genes.fn)}
 # 	mutation.controller <- create.mutation.controller(GA.env, mutation.type)
-	setup.reproduction.env(repoduction.env(GA.env))
+	setup.reproduction.env(GA.env, mutation.args)
 # #	selection.controller <- create.selection.controller(GA.env, selection.type)
  	GA.env
 }
 
 
 control.env <- function(GA){GA$control.env}
-`control.env<-` <- function(GA, value){GA$control.env <- value}
+# `control.env<-` <- function(GA, value){GA$control.env <- value}
 encoding.env <- function(GA){GA$encoding.env}
-`encoding.env<-` <- function(GA, value){GA$encoding.env <- value}
+# `encoding.env<-` <- function(GA, value){GA$encoding.env <- value}
 fitness.env <- function(GA){GA$fitness.env}
-`fitness.env<-` <- function(GA, value){GA$fitness.env <- value}
+# `fitness.env<-` <- function(GA, value){GA$fitness.env <- value}
 selection.env <- function(GA){GA$selection.env}
-`selection.env<-` <- function(GA, value){GA$selection.env <- value}
+# `selection.env<-` <- function(GA, value){GA$selection.env <- value}
 reproduction.env <- function(GA){GA$reproduction.env}
-`reproduction.env<-` <- function(GA, value){GA$reproduction.env <- value}
+# `reproduction.env<-` <- function(GA, value){GA$reproduction.env <- value}
 
 add.population <- function(env, popn){
 	env$pop <- popn
 }
 
-setup.GA.envTree <- function(GA.env, encoding.env = new.env(), fitness.env = new.env(),
-   							   selection.env = new.env(), reproduction.env = new.env()) {
-   parent.env(encoding.env) <- GA.env
-	parent.env(fitness.env) <- encoding.env
-	parent.env(selection.env) <- encoding.env
-	parent.env(reproduction.env) <- selection.env
+setup.GA.envTree <- function(GA.env) {
+  GA.env$encoding.env <- new.env(parent = GA.env)
+  GA.env$fitness.env <- new.env(parent = GA.env)
+  GA.env$selection.env <- new.env(parent = GA.env)
+  GA.env$reproduction.env <- new.env(parent = GA.env)
 }
 
 new.GA.base.args <- function(max.gen = 100){
@@ -1148,10 +1150,9 @@ new.encoding.args <- function(pop.size = 100, chr.length = 30, chr.encode.type =
 	as.list(environment())
 }
 
-setup.encoding.env <- function(encoding.env, encoding.args = list()){
-  encoding.env <- new.env()
-  add.to.env(encoding.env, encoding.args)
-	with(encoding.env, {
+setup.encoding.env <- function(GA.env, encoding.args = new.encoding.args()){
+  add.to.env(encoding.env(GA.env), encoding.args)
+	with(encoding.env(GA.env), {
 		if(encoding.args$chr.encode.type == "seq" || encoding.args$chr.encode.type == "integer"){
 			gene.values <- do.call(seq, seq.args)
 			gene.max <- max(gene.values)
@@ -1169,7 +1170,7 @@ setup.encoding.env <- function(encoding.env, encoding.args = list()){
 				... 		= simpleError(paste("chr.encode.type must be one of 'binary', 'spin' ", 
 											         "'symbolic', 'seq', 'integer', 'dist' or 'real'.",
 											         "Instead it is '", chr.encode.type, "'", sep = "")))
-											         
+
 		new.chromosome <- function(chr.length){
 			new("chromosome", chr.length, new.genes.fn)
 		}
@@ -1189,28 +1190,27 @@ setup.fitness.env <- function(fitness.env, fitness.args){
 	add.to.env(fitness.env(GA), fitness.args)
 }
 
-setup.reproduction.env <- function(reproduction.env, mutation.args = new.mutation.args(),
+setup.reproduction.env <- function(GA.env, mutation.args = new.mutation.args(),
 												 xover.prob = 0.8, xover.type = "uniform", xover.args = c(xover.alpha = 0.3)){
-  reproduction.env <- new.env()
-	add.to.env(reproduction.env, environment())
-	add.to.env(reproduction.env, mutation.args)
-	setup.mutation(reproduction.env)
+	add.to.env(reproduction.env(GA.env), mutation.args)
+	setup.mutation(reproduction.env(GA.env))
 
-	add.to.env(reproduction.env, xover.args)
-	setup.xover(reproduction.env)
+	add.to.env(reproduction.env(GA.env), xover.args)
+	setup.xover(reproduction.env(GA.env))
 }
 
 new.mutation.args <- function(gene.delta = NULL, gene.sd = NULL, prob.mutation = 2, mutation.type = "binary"){
 	gene.delta; gene.sd
 	as.list(environment())
+  
 }
 
 setup.mutation <- function(reproduction.env){
 	with(reproduction.env, {
-		if(is.integer(mutation.args$prob.mutation)) 
+		if(is.integer(prob.mutation)) 
 			prob.mutation <- prob.mutation / chr.length
 
-		alleles.fn <- switch(mutation.args$mutation.type, 
+		alleles.fn <- switch(mutation.type, 
 			binary 		= alleles.binary,
 			boolean 		= alleles.boolean,
 			complement 	= alleles.fgen(alleles.complement, gene.alphabet),
