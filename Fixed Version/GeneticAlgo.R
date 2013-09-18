@@ -231,6 +231,11 @@ setMethod("duplicate",
           }
 )
 
+#Reporting
+report <-function(gen, pop, repr.stats, goal.reached){
+  
+}
+
 #Pretty printing
 get.open.delimiter <- function(gene.brackets){
   if(is.null(gene.brackets))
@@ -800,19 +805,16 @@ setMethod("evaluate",
           signature = c("population", "function"),
           definition = function(obj, fitness.fn, decode.fn = identity, ...) {
             fit.vector <- evaluate(chromosomes(obj), fitness.fn, decode.fn, ...)
-            fitness.cache(obj) <- fit.vector
+            fitness.fn$fitness.cache(obj) <- fit.vector
           }
 )
 
 setMethod("evaluate", 
           signature = c("population", "environment"),
           definition = function(obj, fitness.fn, ...) {
-            fitness.env <- fitness.fn
-            add.population(fitness.env, obj)
-            with(fitness.env, {
-              fit.vector <- evaluate(chromosomes(pop), fitness.fn, decode.fn, ...)
-              fitness.cache(obj) <- fit.vector
-            })
+            add.population(fitness.fn, obj)
+            fit.vector <- evaluate(chromosomes(fitness.fn$pop), fitness.fn, fitness.fn$decode.fn)
+            fitness.fn$fitness.cache<- fit.vector
           }
 )
 
@@ -987,13 +989,14 @@ truncation.selection <- elite.selection
 
 generational.ga <- function(GA.env){
   with(GA.env, {
-    pop <- new.population(encoding.env)
+    pop <- new.population(GA.env)
     repr.results <- NULL
     for(gen in 0:max.gen){
-      goal.reached <- evalutate(pop, fitness.env)
+      goal.reached <- evaluate(pop, fitness.env)
       report(gen, pop, repr.stats(repr.results), goal.reached)
-      if (goal.reached)
-        break
+      #Check if goal has been reached
+      #if (goal.reached)
+       # break
       repr.results <- next.generation(pop, reproduction.env)
       pop <- population(repr.results)
     }
@@ -1015,6 +1018,7 @@ next.generation <- function(popn, repr.env){
   add.population(repr.env, popn)
   with(repr.env, {
     P <- size(pop)
+    #Need to rework selection and elitism
     if(is.null(select.elite))
       elite.loc = NULL
     else
@@ -1092,8 +1096,9 @@ finite.min.fn <- function(genes, gene.max){
 #   |-- Fitness Environment: fitness.fn, decode.fn, goal.fn, epsilon
 
 new.GA.env <- function(pop.size = 100,
-                       GA.base.args = NULL, encoding.args = new.encoding.args(),
+                       GA.base.args = new.GA.base.args(), encoding.args = new.encoding.args(),
                        mutation.args = new.mutation.args(),
+                       fitness.args = new.fitness.args(),
                        xover.prob = 0.8, xover.type = "uniform", xover.args = c(xover.alpha = 0.3),
                        selection.type = "simple.tournament", 
                        selection.args = c(tourn.size = 2, prob.select.worse = 0, decreasing = TRUE, `%>%` = `>`),
@@ -1102,15 +1107,16 @@ new.GA.env <- function(pop.size = 100,
   setup.GA.envTree(GA.env)
   setup.GA.base.env(GA.env, GA.base.args)
   setup.encoding.env(GA.env, encoding.args)
+  setup.fitness.env(GA.env, fitness.args)
+  add.to.env(GA.env, GA.base.args)
   add.to.env(GA.env, mutation.args)
   add.to.env(GA.env, xover.args)
   add.to.env(GA.env, selection.args)
   add.to.env(GA.env, pop.size)
   GA.env$pop.size <- pop.size
-  # #	setup.elitism(GA.env)
-  # 	mutation.controller <- create.mutation.controller(GA.env, mutation.type)
+  setup.elitism(GA.env)
   setup.reproduction.env(GA.env, mutation.args)
-  # #	selection.controller <- create.selection.controller(GA.env, selection.type)
+  # selection.controller <- create.selection.controller(GA.env, selection.type)
   GA.env
 }
 
@@ -1183,14 +1189,14 @@ setup.encoding.env <- function(GA.env, encoding.args = new.encoding.args()){
 
 new.fitness.args <- function(fitness.fn = one.max.fn, fitnessFn.args = NULL,
                              decode.fn = identity, decodeFn.args = NULL,
-                             goal.fn = reached.maximum, goalFn.args = NULL,
+                             goal.fn = NULL, goalFn.args = NULL,
                              epsilon = 0){
   fitness.fn; fitnessFn.args; decode.fn; decodeFn.args; goal.fn; goalFn.args; epsilon
   as.list(environment())
 }
 
-setup.fitness.env <- function(fitness.env, fitness.args){
-  add.to.env(fitness.env(GA), fitness.args)
+setup.fitness.env <- function(GA.env, fitness.args){
+  add.to.env(fitness.env(GA.env), fitness.args)
 }
 
 setup.reproduction.env <- function(GA.env, mutation.args = new.mutation.args(),

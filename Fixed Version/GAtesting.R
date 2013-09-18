@@ -71,31 +71,31 @@ size(pop3)
 # The mutation controller was removed, if we want to continue to have test cases which don't have to create the full GA we'll need to create test functions
 # mcontroller1 <- new("mutation.controller", 0.2, alleles.binary)
 # mcontroller2 <- new("mutation.controller", 1.0, alleles.binary)
-# 
-# pop1a <- duplicate(pop1)
-# mresults1 <- mutate(pop1a[1:10], mcontroller1)
-# mresults2 <- mutate(pop1a[11:20], mcontroller2)
-# evaluate(pop1a, one.max.fn, one.max.decode)
-# ga.print(pop1[1:10], gene.sep = "")
-# ga.print(pop1a[1:10], gene.sep = "")
-# ga.print(mresults1)
-# ga.print(pop1[11:20], gene.sep = "")
-# ga.print(pop1a[11:20], gene.sep = "")
-# ga.print(mresults2)
 
-#ga.print(mresults1[[1]])
+mutationEnv1<- new.GA.env(pop.size = 10, 
+                   encoding.args = new.encoding.args(chr.length = 8,chr.encode.type = "binary"),
+                   mutation.args = new.mutation.args(mutation.type = "binary", prob.mutation = 0.2))
+mutationEnv2 <- new.GA.env(pop.size = 10, 
+                   encoding.args = new.encoding.args(chr.length = 8,chr.encode.type = "binary"),
+                   mutation.args = new.mutation.args(mutation.type = "binary", prob.mutation = 1))
+mutPop1 <- new("population", mutationEnv1)
+mutPop2 <- new("population", mutationEnv2)
+basePop1 <- duplicate(mutPop1)
+basePop2 <- duplicate(mutPop2)
+mresults1 <- reproduction.env(mutationEnv1)$mutate(mutPop1[1:10])
+mresults2 <- reproduction.env(mutationEnv2)$mutate(mutPop2[1:10])
+evaluate(basePop1, one.max.fn, one.max.decode)
+evaluate(basePop2, one.max.fn, one.max.decode)
+evaluate(mutPop1, one.max.fn, one.max.decode)
+evaluate(mutPop2, one.max.fn, one.max.decode)
+ga.print(basePop1, gene.sep = "")
+ga.print(mutPop1, gene.sep = "")
+ga.print(mresults1)
+ga.print(basePop2, gene.sep = "")
+ga.print(mutPop2, gene.sep = "")
+ga.print(mresults2)
 
-# ga.env4 <- new.GA.env(pop.size = 10,								 
-#                 encoding.args = new.encoding.args(chr.length = 8,chr.encode.type = "symbolic",gene.alphabet = c("a", "b", "c")),
-# 								mutation.args = new.mutation.args(mutation.type = "symbolic", prob.mutation = 0.3)
-# )
-# mc <- mutation.controller(ga.env4)
-# pop4a <- new.population(ga.env4)
-# pop4b <- duplicate(pop4a)
-# mr <- chr.mutate(pop4b[1:5],mc)
-# ga.print(pop4a[1:5])
-# ga.print(pop4b[1:5])
-# ga.print(mr)
+ga.print(mresults1[[1]])
 
 ga.env4 <- new.GA.env(pop.size = 10, 
                       encoding.args = new.encoding.args(chr.length = 8,chr.encode.type = "symbolic",gene.alphabet = c("a", "b", "c")),
@@ -110,7 +110,7 @@ ga.print(mr)
 
 ga.env4 <- new.GA.env(pop.size = 10, 
                       encoding.args = new.encoding.args(chr.length = 8,chr.encode.type = "symbolic",gene.alphabet = c("a", "b", "c")),
-                      mutation.args = new.mutation.args(mutation.type = "symbolic", prob.mutation = 0.3))utation = 0.3)
+                      mutation.args = new.mutation.args(mutation.type = "symbolic", prob.mutation = 0.3))
 with(ga.env4, {
 	pop.a <- new.population(GA.env)
 	pop.b <- duplicate(pop.a)
@@ -122,7 +122,7 @@ with(ga.env4, {
 
 ######WORKING UP TO HERE
 
-chr2.vector <- duplicate.chromosomes(pop2)
+chr2.vector <- duplicate(pop2)
 mutate2.fn <- mutation.genes.fgen(mutation.genes.creep, max=10, min=0)
 mutate2 <- mutation.fgen(prob.mutation = 0.2, mutation.genes.fn = mutate2.fn)
 mresults2 <- mutate2(chr2.vector)
