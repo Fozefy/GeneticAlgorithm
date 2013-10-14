@@ -965,19 +965,20 @@ rank.selection <- function(n, pop = NULL, select=NULL){
 #### Elitism
 
 select.elite.population.fgen <- function(elite.fn, ...){
-  function(pop=NULL)
-    elite.fn(pop, ...)
+  function(pop, fitness.fn)
+    elite.fn(pop = pop, fitness.fn = fitness.fn, ...)
 }
 
 #note: elite.selection only works with integer or floating point fitness ordered by <= or >=
 
-elite.selection <- function(pop = NULL, elite.size = 1, decreasing = TRUE, 
+elite.selection <- function(pop, fitness.fn, elite.size = 1, decreasing = TRUE, 
                             pop.fit = NULL, verbose = FALSE){
-  P <- ifelse(is.null(pop.fit), size.population(pop), length(pop.fit))
+  P <- ifelse(is.null(pop.fit), size(pop), length(pop.fit))
   if(is.null(pop.fit))
-    pop.fit <- get.fitness(pop)
+    pop.fit <- fitness.fn(pop)
   pop.loc <- order(pop.fit, decreasing = decreasing)
   if (verbose) print(pop.fit)
+
   pop.loc[1:elite.size]
 }
 
@@ -997,7 +998,7 @@ generational.ga <- function(GA.env){
       #Check if goal has been reached
       #if (goal.reached)
        # break
-      repr.results <- next.generation(pop, reproduction.env)
+      repr.results <- next.generation(pop, GA.env)
       pop <- population(repr.results)
     }
   })
@@ -1014,16 +1015,16 @@ mutate.only.count <- function(P, x, e){
   P - 2 * x - e
 }
 
-next.generation <- function(popn, repr.env){
-  add.population(repr.env, popn)
-  with(repr.env, {
-    P <- size(pop)
+next.generation <- function(popn, ga.env){
+  add.population(reproduction.env(ga.env), popn)
+  
+    P <- size(reproduction.env(ga.env)$pop)
     #Need to rework selection and elitism
-    if(is.null(select.elite))
+    if(is.null(ga.env$select.elite))
       elite.loc = NULL
     else
-      elite.loc <- select.elite(pop)
-    
+      elite.loc <- ga.env$select.elite(reproduction.env(ga.env)$pop, fitness.env(ga.env)$fitness.fn)
+  with(reproduction.env(ga.env), {
     elite.size <- length(elite.loc)
     xover.size <- xover.count(P, elite.count, xover.prob)
     mut.size <- mutate.only.count(P, xover.size, elite.size)
@@ -1338,7 +1339,7 @@ setup.elitism <- function(GA.env){
   with(GA.env, {
     select.fgen <- select.elite.population.fgen
     if(elitism)
-      select.elite <- select.fgen(elite.selection, elite.size, decreasing)
+      select.elite <- select.fgen(elite.fn = elite.selection, elite.size = elite.size, decreasing = decreasing)
     else
       select.elite <- NULL
   })
