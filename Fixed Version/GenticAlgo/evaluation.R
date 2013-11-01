@@ -1,7 +1,7 @@
 ## Evaluation
 
 evaluate <- function(obj, fitness.fn, decode.fn, ...){
-  "generic base function does nothing"
+  print("generic base function does nothing")
 }
 
 setGeneric("evaluate")
@@ -9,7 +9,7 @@ setGeneric("evaluate")
 setMethod("evaluate",
           signature = c("chromosome", "function"),
           definition = function(obj, fitness.fn, decode.fn = identity, ...) {
-            obj@fitness$value <- fitness.fn(decode.fn(obj))
+            obj@fitness$value <- fitness.fn(decode.fn(obj@chr.genes$genes))
             obj@fitness$value
           }
 )
@@ -39,10 +39,13 @@ setMethod("evaluate",
           signature = c("population", "function"),
           definition = function(obj, fitness.fn, decode.fn = identity, ...) {
             fit.vector <- evaluate(chromosomes(obj), fitness.fn, decode.fn, ...)
-            fitness.fn$fitness.cache(obj) <- fit.vector
+            
+            #TODO - Use fitness.cache
+            #fitness.fn$fitness.cache(obj) <- fit.vector
           }
 )
 
+#Doesn't work!!
 setMethod("evaluate", 
           signature = c("population", "environment"),
           definition = function(obj, fitness.fn, ...) {

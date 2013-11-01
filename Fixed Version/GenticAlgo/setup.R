@@ -33,9 +33,7 @@ new.GA.env <- function(pop.size = 100,
                        mutation.args = new.mutation.args(),
                        fitness.args = new.fitness.args(),
                        xover.prob = 0.8, xover.type = "uniform", xover.args = c(xover.alpha = 0.3),
-                       selection.type = "simple.tournament", 
-                       selection.args = c(tourn.size = 2, prob.select.worse = 0, decreasing = TRUE, `%>%` = `>`),
-                       elitism = TRUE, elite.size = 2){
+                       selection.args = new.selection.args()){
   GA.env <- new.env()
   setup.GA.envTree(GA.env)
   setup.GA.base.env(GA.env, GA.base.args)
@@ -49,7 +47,7 @@ new.GA.env <- function(pop.size = 100,
   GA.env$pop.size <- pop.size
   setup.elitism(GA.env)
   setup.reproduction.env(GA.env, mutation.args)
-  # selection.controller <- create.selection.controller(GA.env, selection.type)
+  setup.selection.env(GA.env, selection.args)
   GA.env
 }
 
@@ -201,15 +199,29 @@ setup.xover <- function(reproduction.env){
 xover.fn <- function(GA.env){GA.env$xover}
 
 
-setup.selection.env <- function(selection.type = "simple.tournament", 
-                                selection.args = c(tourn.size = 2, prob.select.worse = 0, decreasing = TRUE, `%>%` = `>`),
-                                elitism = TRUE, elite.size = 2){
-  if(is.integer(prob.mutation)) prob.mutation <- prob.mutation / chr.length
-  selection.env <- environment()
-  add.to.env(selection.env, selection.args)
-  #	setup.elitism(selection.env)
-  #	selection.controller <- create.selection.controller(selection.env, selection.type)
-  selection.env
+setup.selection.env <- function(GA.env, selection.args = new.selection.args()){
+  
+  add.to.env(selection.env(GA.env), selection.args)
+  with(selection.env(GA.env), {
+  
+    if(is.integer(prob.mutation)) prob.mutation <- prob.mutation / chr.length
+    selection.env <- environment()
+    add.to.env(selection.env, selection.args)
+    setup.elitism(selection.env)
+      
+    select.fgen <- select.population.fgen
+    select.chr <- switch(selection.type, 
+                         simple.tournament  = select.fgen(simple.tournament.selection, tourn.size, decreasing, `%>%`),
+                         tournament  			= select.fgen(tournament.selection, tourn.size, prob.select.worse, 
+                                                      decreasing, `%>%`),
+                         fps 						= fitnessProportional.selection,
+                         rank 						= rank.selection,  # not yet implemented ... just a stub
+                         ...						= simple.error(paste("select.chr.type must be one of ", 
+                                                       "'simple.tournament', 'tournament', 'fps' or 'rank'. ", 
+                                                       "Instead it is '", select.chr.type, "'", sep = "")))
+    
+    selection.env
+  })
 }
 
 add.to.env <- function(env, arg.list){
@@ -239,26 +251,9 @@ print.ga.env <- function(env){
 }
 
 
-
-new.selection.args <- function(tourn.size = 2, prob.select.worse = 0, decreasing = TRUE, `%>%` = `>`){
-  tourn.size; prob.select.worse; decreasing; `%>%`
+new.selection.args <- function(selection.type = "simple.tournament", tourn.size = 2, prob.select.worse = 0, decreasing = TRUE, `%>%` = `>`, elitism = TRUE, elite.size = 2){
+  selection.type; tourn.size; prob.select.worse; decreasing; `%>%`; elitism; elite.size
   as.list(environment())
-}
-
-### need reworking 
-setup.selection.controller <- function(GA, selection.type){
-  with(GA.env, {
-    select.fgen <- select.population.fgen
-    select.chr <- switch(selection.type, 
-                         simple.tournament	= select.fgen(simple.tournament.selection, tourn.size, decreasing, `%>%`),
-                         tournament				= select.fgen(tournament.selection, tourn.size, prob.select.worse, 
-                                                     decreasing, `%>%`),
-                         fps 						= fitnessProportional.selection,
-                         rank 						= rank.selection,  # not yet implemented ... just a stub
-                         ...						= simple.error(paste("select.chr.type must be one of ", 
-                                                       "'simple.tournament', 'tournament', 'fps' or 'rank'. ", 
-                                                       "Instead it is '", select.chr.type, "'", sep = "")))
-  })
 }
 
 new.elite.args <- function(elite.size = 2, decreasing = TRUE){

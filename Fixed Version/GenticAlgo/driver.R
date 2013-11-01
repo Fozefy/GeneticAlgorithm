@@ -5,9 +5,9 @@ generational.ga <- function(GA.env){
     pop <- new.population(GA.env)
     repr.results <- NULL
     for(gen in 0:max.gen){
-      goal.reached <- evaluate(pop, fitness.env)
+      goal.reached <- evaluate(pop, fitness.env$fitness.fn, fitness.env$decode.fn)
       report(gen, pop, repr.stats(repr.results), goal.reached)
-      #Check if goal has been reached
+      #TODO Check if goal has been reached
       #if (goal.reached)
       # break
       repr.results <- next.generation(pop, GA.env)
@@ -30,21 +30,32 @@ mutate.only.count <- function(P, x, e){
 next.generation <- function(popn, ga.env){
   add.population(reproduction.env(ga.env), popn)
   
-  P <- size(reproduction.env(ga.env)$pop)
-  #Need to rework selection and elitism
-  if(is.null(ga.env$select.elite))
-    elite.loc = NULL
-  else
-    elite.loc <- ga.env$select.elite(reproduction.env(ga.env)$pop, fitness.env(ga.env)$fitness.fn)
   with(reproduction.env(ga.env), {
-    elite.size <- length(elite.loc)
-    xover.size <- xover.count(P, elite.count, xover.prob)
+
+    P <- size(pop)
+
+    elite.loc = NULL
+    if(!is.null(parent.env(environment())$selection.env$select.elite))
+      elite.loc = NULL  
+    else
+      elite.loc <- parent.env(environment())$select.elite(pop, fitness.env(parent.env(environment()))$fitness.fn)
+    
+    if(is.null(elite.loc))
+    {
+      elite.size <- 0
+    }
+    else
+    {
+      elite.size <- length(elite.loc)
+    }
+    
+    xover.size <- xover.count(P, elite.size, xover.prob)
     mut.size <- mutate.only.count(P, xover.size, elite.size)
-    
-    p1.loc <- select.chr(xover.size, pop)
-    p2.loc <- select.chr(xover.size, pop)
-    rest.loc <- select.chr(mut.size, pop)
-    
+    print(parent.env(environment())$selection.env$select.chr)
+    p1.loc <- parent.env(environment())$selection.env$select.chr(xover.size, pop)
+    p2.loc <- parent.env(environment())$selection.env$select.chr(xover.size, pop)
+    rest.loc <- parent.env(environment())$selection.env$select.chr(mut.size, pop)
+
     elite <- duplicate(pop[elite.loc])
     p1 <- duplicate(pop[p1.loc])
     p2 <- duplicate(pop[p2.loc])
@@ -70,6 +81,7 @@ new.fitness.fn <- function(fitness.fn, ...){
   function(genes) fitness.fn(genes, ...)
 }
 
+#Default fitness function
 one.max.fn <- function(genes){
   sum(genes)	
 }
