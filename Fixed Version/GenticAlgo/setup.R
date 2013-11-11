@@ -211,8 +211,8 @@ setup.selection.env <- function(GA.env, selection.args = new.selection.args()){
       
     select.fgen <- select.population.fgen
     select.chr <- switch(selection.type, 
-                         simple.tournament  = select.fgen(simple.tournament.selection, tourn.size, decreasing, `%>%`),
-                         tournament  			= select.fgen(tournament.selection, tourn.size, prob.select.worse, 
+                         simple.tournament  = select.fgen(simple.tournament.selection, fitness.env(parent.env(environment())), tourn.size, decreasing, `%>%`),
+                         tournament  			= select.fgen(tournament.selection, fitness.env(parent.env(environment())), tourn.size, prob.select.worse, 
                                                       decreasing, `%>%`),
                          fps 						= fitnessProportional.selection,
                          rank 						= rank.selection,  # not yet implemented ... just a stub

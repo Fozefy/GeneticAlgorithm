@@ -8,7 +8,7 @@ setGeneric("evaluate")
 
 setMethod("evaluate",
           signature = c("chromosome", "function"),
-          definition = function(obj, fitness.fn, decode.fn = identity, ...) {
+          definition = function(obj, fitness.fn, decode.fn = identity, ...) {            
             obj@fitness$value <- fitness.fn(decode.fn(obj@chr.genes$genes))
             obj@fitness$value
           }
@@ -37,7 +37,8 @@ setMethod("evaluate",
 
 setMethod("evaluate", 
           signature = c("population", "function"),
-          definition = function(obj, fitness.fn, decode.fn = identity, ...) {
+          definition = function(obj, fitness.fn, decode.fn = identity, ...) { 
+            decode.fn
             fit.vector <- evaluate(chromosomes(obj), fitness.fn, decode.fn, ...)
             
             #TODO - Use fitness.cache
@@ -46,11 +47,11 @@ setMethod("evaluate",
 )
 
 #Doesn't work!!
-setMethod("evaluate", 
-          signature = c("population", "environment"),
-          definition = function(obj, fitness.fn, ...) {
-            add.population(fitness.fn, obj)
-            fit.vector <- evaluate(chromosomes(fitness.fn$pop), fitness.fn, fitness.fn$decode.fn)
-            fitness.fn$fitness.cache<- fit.vector
-          }
-)
+# setMethod("evaluate", 
+#           signature = c("population", "environment"),
+#           definition = function(obj, fitness.fn, ...) {
+#             add.population(fitness.fn, obj)
+#             fit.vector <- evaluate(chromosomes(fitness.fn$pop), fitness.fn, fitness.fn$decode.fn)
+#             fitness.fn$fitness.cache<- fit.vector
+#           }
+# )

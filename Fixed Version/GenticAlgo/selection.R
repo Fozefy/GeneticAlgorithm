@@ -2,7 +2,7 @@
 
 select.population.fgen <- function(selection.fn, ...){
   function(selection.size, pop=NULL)
-    selection.fn(selection.size, pop, ...)
+    selection.fn(selection.size = selection.size, pop = pop, ...)
 }
 
 # tournament selection
@@ -16,7 +16,7 @@ new.tournaments.locations <- function(selection.size, tourn.size, pop.size){
   tourn.loc
 }
 
-new.tournaments.fitness <- function(selection.size, tourn.size, pop = NULL, tourn.loc = NULL, rprob = runif){
+new.tournaments.fitness <- function(fitness.env, selection.size, tourn.size, pop = NULL, tourn.loc = NULL, rprob = runif){
   n <- selection.size
   k <- tourn.size
   tourn.fit <- matrix(nrow = k, ncol = n)
@@ -25,7 +25,7 @@ new.tournaments.fitness <- function(selection.size, tourn.size, pop = NULL, tour
     for(i in 1:k)
       tourn.fit[i,] <- rprob(n)
   } else {
-    pop.fit <- fitness(pop)
+    pop.fit <- evaluate(pop, fitness.env$fitness.fn, fitness.env$decode.fn)
     for(i in 1:k){
       loc <- tourn.loc[i,]
       tourn.fit[i,] <- pop.fit[loc]
@@ -52,7 +52,7 @@ tournament.selection.vprint <- function(tourn.fit, select.worse, tourn.loc, sele
   print(selection.fit)  
 }
 
-tournament.selection <- function(selection.size, pop = NULL, tourn.size = 2, prob.select.worse = 0, 
+tournament.selection <- function(fitness.env, selection.size, pop = NULL, tourn.size = 2, prob.select.worse = 0, 
                                  decreasing = FALSE, `%>%` = NULL,
                                  tourn.fit = NULL, tourn.loc = NULL, 
                                  select.worse = NULL, pop.size = NULL, verbose = FALSE){
@@ -65,7 +65,7 @@ tournament.selection <- function(selection.size, pop = NULL, tourn.size = 2, pro
   if(is.null(tourn.loc))
     tourn.loc <- new.tournaments.locations(n, k, P)
   if(is.null(tourn.fit))
-    tourn.fit <- new.tournaments.fitness(n, k, pop, tourn.loc)
+    tourn.fit <- new.tournaments.fitness(fitness.env, n, k, pop, tourn.loc)
   
   selection.loc <- tourn.loc[1,]
   selection.fit <- tourn.fit[1,]
@@ -81,7 +81,7 @@ tournament.selection <- function(selection.size, pop = NULL, tourn.size = 2, pro
   selection.loc
 }
 
-simple.tournament.selection <- function(selection.size, pop = NULL, tourn.size = 2, 
+simple.tournament.selection <- function(fitness.env, selection.size, pop = NULL, tourn.size = 2, 
                                         decreasing = FALSE, `%>%` = NULL,
                                         tourn.fit = NULL, tourn.loc = NULL, 
                                         pop.size = NULL, verbose = FALSE){
@@ -92,7 +92,7 @@ simple.tournament.selection <- function(selection.size, pop = NULL, tourn.size =
   if(is.null(tourn.loc))
     tourn.loc <- new.tournaments.locations(n, k, P)
   if(is.null(tourn.fit))
-    tourn.fit <- new.tournaments.fitness(n, k, pop, tourn.loc)
+    tourn.fit <- new.tournaments.fitness(fitness.env, n, k, pop, tourn.loc)
   
   selection.loc <- tourn.loc[1,]
   selection.fit <- tourn.fit[1,]

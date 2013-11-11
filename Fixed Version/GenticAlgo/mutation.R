@@ -59,7 +59,7 @@ alleles.gaussian <- function(genes, sd=1){
 
 
 chr.mutate <- function(chr, repr.env, mutation.locations = NULL, mutations = NULL){
-  "generic base function does nothing"
+  print("generic base function does nothing -- chr.mutate")
 }
 
 setGeneric("chr.mutate")

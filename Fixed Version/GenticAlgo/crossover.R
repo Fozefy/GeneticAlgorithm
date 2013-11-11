@@ -1,7 +1,7 @@
 ## crossover
 chr.xover <- function(chr1, chr2, swapMask.fn = xover.mask.2point, swapMask=NULL){
   chr1; chr2; swapMask.fn; swapMask
-  "generic base function does nothing"
+  print("generic base function does nothing - chr.xover")
 }
 
 setGeneric("chr.xover")
@@ -88,7 +88,7 @@ swap.mask <- function(rv.xover){rv.xover@swap.mask}
 
 swap.genes <- function(chr1, chr2, mask){
   chr1; chr2; mask  
-  "generic base function does nothing"
+  print("generic base function does nothing - swap.genes")
 }
 
 setGeneric("swap.genes")
