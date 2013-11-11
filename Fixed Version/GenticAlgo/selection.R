@@ -11,21 +11,27 @@ new.tournaments.locations <- function(selection.size, tourn.size, pop.size){
   n <- selection.size; k <- tourn.size; P <- pop.size 
   tourn.loc <- matrix(nrow = k, ncol = n)
   for(i in 1:k){
-    tourn.loc[i,] <- sample(1:P, n, replace=TRUE)
+    tourn.loc[i,] <- sample(1:P, n, replace=FALSE)
   }
   tourn.loc
 }
 
-new.tournaments.fitness <- function(selection.size, tourn.size, pop = NULL, 
-                                    tourn.loc = NULL, rprob = runif){
-  n <- selection.size; k <- tourn.size 
+new.tournaments.fitness <- function(selection.size, tourn.size, pop = NULL, tourn.loc = NULL, rprob = runif){
+  n <- selection.size
+  k <- tourn.size
   tourn.fit <- matrix(nrow = k, ncol = n)
-  if(is.null(pop))
+  
+  if(is.null(pop)){
     for(i in 1:k)
       tourn.fit[i,] <- rprob(n)
-  else 
-    for(i in 1:k)
-      tourn.fit[i,] <- get.fitness(pop, tourn.loc[i,])
+  } else {
+    pop.fit <- fitness(pop)
+    for(i in 1:k){
+      loc <- tourn.loc[i,]
+      tourn.fit[i,] <- pop.fit[loc]
+    }
+  }
+  
   tourn.fit
 }
 
