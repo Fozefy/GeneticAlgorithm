@@ -179,30 +179,3 @@ new.genes.dist <- function(chr.length = NULL, rdist=rnorm, rdist.args = list()){
 }
 
 new.genes.real <- new.genes.dist
-
-duplicate <- function(obj, ...){
-  obj  
-  "Generic base function; does nothing."
-}
-
-setGeneric("duplicate")
-
-setMethod("duplicate",
-          signature = c("environment"),
-          definition = function(obj, ...){
-            env <- new.env() 
-            for(name in objects(obj)){
-              env[[name]] <- obj[[name]]
-            }
-            env
-          }
-)
-
-setMethod("duplicate",
-          signature = c("chromosome"),
-          definition = function(obj, ...){
-            obj@chr.genes <- duplicate(obj@chr.genes)
-            obj@fitness <- duplicate(obj@fitness)
-            obj
-          }
-)

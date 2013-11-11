@@ -121,26 +121,6 @@ setMethod("size",
           }
 )
 
-setMethod("duplicate",
-          signature = c("list"),
-          definition = function(obj, ...){
-            for(i in 1:length(obj)){
-              obj[[i]] <- duplicate(obj[[i]])
-            }
-            obj
-          }
-)
-
-setMethod("duplicate",
-          signature = c("population"),
-          definition = function(obj, ...){
-            obj@fitness.cache <- duplicate(obj@fitness.cache)
-            obj@chromosomes <- duplicate(obj@chromosomes)
-            obj@chromosomes[["values"]] <- duplicate(obj@chromosomes[["values"]])
-            obj
-          }
-)
-
 setMethod("ga.print",
           signature = c("population"),
           definition = function(obj, ...){
