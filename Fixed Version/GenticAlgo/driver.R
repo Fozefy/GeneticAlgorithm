@@ -11,6 +11,8 @@ generational.ga <- function(GA.env){
       #if (goal.reached)
       # break
       repr.results <- next.generation(pop, GA.env)
+      
+      ####################What is this function supposed to be doing???
       pop <- population(repr.results)
     }
   })
@@ -66,6 +68,8 @@ next.generation <- function(popn, GA.env){
     
     ###PROBLEM HERE --- new.population expects to be sent GA.env, what are we doing with chromosome list?
     new.pop <- new.population(c(elite, p1, p2, rest))
+    
+    #this function doesn't exist, what is it supposed to do?
     create.results(pop = new.pop, mutation = m.results, cross = x.results)
   })
 }
