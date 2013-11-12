@@ -33,7 +33,8 @@ new.GA.env <- function(pop.size = 100,
                        mutation.args = new.mutation.args(),
                        fitness.args = new.fitness.args(),
                        xover.prob = 0.8, xover.type = "uniform", xover.args = c(xover.alpha = 0.3),
-                       selection.args = new.selection.args()){
+                       selection.args = new.selection.args(),
+                       reporting.fn = base.reporting.fn){
   GA.env <- new.env()
   setup.GA.envTree(GA.env)
   setup.GA.base.env(GA.env, GA.base.args)
@@ -48,6 +49,7 @@ new.GA.env <- function(pop.size = 100,
   setup.elitism(GA.env)
   setup.reproduction.env(GA.env, mutation.args)
   setup.selection.env(GA.env, selection.args)
+  setup.reporting(GA.env, reporting.fn)
   GA.env
 }
 
@@ -269,4 +271,8 @@ setup.elitism <- function(GA.env){
     else
       select.elite <- NULL
   })
+}
+
+setup.reporting <- function(GA.env, reporting.fn){
+    GA.env$reporting.fn = reporting.fn
 }
