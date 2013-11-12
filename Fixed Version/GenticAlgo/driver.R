@@ -63,11 +63,10 @@ next.generation <- function(popn, GA.env){
     p2 <- duplicate(pop[p2.loc])
     rest <- duplicate(pop[rest.loc])
     
-    m.results <- c(rest = mutate(rest), p1 = mutate(p1), p2 = mutate(p2))   ### need to create join for m.results
+    m.results <- c(rest = mutate(rest), p1 = mutate(p1), p2 = mutate(p2))
     x.results <- chr.xover(p1, p2)
-    
-    ###PROBLEM HERE --- new.population expects to be sent GA.env, what are we doing with chromosome list?
-    new.pop <- new.population(c(elite, p1, p2, rest))
+
+    new.pop <- new.population(chromosomes = c(elite, p1, p2, rest))
     
     #this function doesn't exist, what is it supposed to do?
     create.results(pop = new.pop, mutation = m.results, cross = x.results)

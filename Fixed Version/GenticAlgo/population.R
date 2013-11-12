@@ -37,8 +37,8 @@ create.random.chromosomes <- function(GA.env){
   chromosomes
 }
 
-new.population <- function(GA.env){
-  new("population", GA.env = GA.env)  
+new.population <- function(GA.env = NULL, chromosomes = NULL){
+  new("population", GA.env = GA.env, chromosomes = chromosomes)  
 }
 
 chromosomes <- function(object){object$values}
