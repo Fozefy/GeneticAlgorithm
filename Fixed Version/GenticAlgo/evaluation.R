@@ -40,18 +40,5 @@ setMethod("evaluate",
           definition = function(obj, fitness.fn, decode.fn = identity, ...) { 
             decode.fn
             fit.vector <- evaluate(chromosomes(obj), fitness.fn, decode.fn, ...)
-            
-            #TODO - Use fitness.cache
-            #fitness.fn$fitness.cache(obj) <- fit.vector
           }
 )
-
-#Doesn't work!!
-# setMethod("evaluate", 
-#           signature = c("population", "environment"),
-#           definition = function(obj, fitness.fn, ...) {
-#             add.population(fitness.fn, obj)
-#             fit.vector <- evaluate(chromosomes(fitness.fn$pop), fitness.fn, fitness.fn$decode.fn)
-#             fitness.fn$fitness.cache<- fit.vector
-#           }
-# )
