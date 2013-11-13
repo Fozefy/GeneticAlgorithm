@@ -18,7 +18,7 @@ generational.ga <- function(GA.env){
         if (fitness.env(GA.env)$goal.fn(goal.reached))
           break
       
-      repr.results <- next.generation(GA.env)
+      repr.results <- c(repr.results, next.generation(GA.env))
     }
   })
 }
@@ -75,7 +75,7 @@ next.generation <- function(GA.env){
   add.population(reproduction.env(GA.env), new.pop)
     
   #Report on the new population
-  GA.env$reporting.fn(pop = new.pop, mutation = m.results, cross = x.results)
+  GA.env$reporting.fn(pop = new.pop, mutation = m.results, cross = x.results, elite = elite)
 }
 
 ### Fitness functions
