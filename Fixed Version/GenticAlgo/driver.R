@@ -31,45 +31,47 @@ mutate.only.count <- function(P, x, e){
 }
 
 next.generation <- function(GA.env){  
-  #TODO - Rewrite this without the 'with' statement
-  with(reproduction.env(GA.env), {
+  P <- size(reproduction.env(GA.env)$pop)
 
-    P <- size(pop)
-
-    #Find elites
-    if(is.null(parent.env(environment())$selection.env$select.elite))
-      elite = NULL
-    else
-      elite <- parent.env(environment())$select.elite(pop, fitness.env(parent.env(environment()))$fitness.fn)
-      
-    #Get number of each repro group
-    elite.size <- if (!is.null(elite)) length(elite) else 0    
-    xover.size <- xover.count(P, elite.size, xover.prob)
-    mut.size <- mutate.only.count(P, xover.size, elite.size)
-
-    #Find the chromosomes to be crossed
-    p1.loc <- parent.env(environment())$selection.env$select.chr(xover.size, pop)
-    p2.loc <- parent.env(environment())$selection.env$select.chr(xover.size, pop)
-    rest.loc <- parent.env(environment())$selection.env$select.chr(mut.size, pop)
-
-    elite <- if (!is.null(elite)) duplicate(elite) else NULL   
-    p1 <- duplicate(pop[p1.loc])
-    p2 <- duplicate(pop[p2.loc])
-    rest <- duplicate(pop[rest.loc])
-
-    #Perform reproduction
-    m.results <- c(rest = mutate(rest), p1 = mutate(p1), p2 = mutate(p2))
-    x.results <- chr.xover(p1, p2, xover.swapMask)
-
-    #Create the next population
-    new.pop <- new.population(chromosomes = c(elite, p1, p2, rest))
+  #Find elites
+  if(is.null(selection.env(GA.env)$select.elite))
+    elite = NULL
+  else
+    elite <- selection.env(GA.env)$select.elite(reproduction.env(GA.env)$pop, fitness.env(GA.env)$fitness.fn)
     
-    #Set the current population to the new population
-    add.population(environment(), new.pop)
+  #Get number of each repro group
+  elite.size <- if (!is.null(elite)) length(elite) else 0
+  xover.size <- xover.count(P, elite.size, reproduction.env(GA.env)$xover.prob)
+  mut.size <- mutate.only.count(P, xover.size, elite.size)
+
+  #Find the chromosomes to be crossed
+  p1.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop)
+  p2.loc <- selection.env(GA.env)$selection.env$select.chr(xover.size, reproduction.env(GA.env)$pop)
+  rest.loc <- selection.env(GA.env)$selection.env$select.chr(mut.size, reproduction.env(GA.env)$pop)
+
+  elite <- if (!is.null(elite)) duplicate(elite) else NULL   
+  p1 <- duplicate(reproduction.env(GA.env)$pop[p1.loc])
+  p2 <- duplicate(reproduction.env(GA.env)$pop[p2.loc])
+  rest <- duplicate(reproduction.env(GA.env)$pop[rest.loc])
+
+  #Perform reproduction
+  #Mutate
+  restResults = reproduction.env(GA.env)$mutate(rest)
+  p1Results = reproduction.env(GA.env)$mutate(p1)
+  p2Results = reproduction.env(GA.env)$mutate(p2)
+  #Store Mutation results
+  m.results <- c(restResults, p1Results, p2Results)
+  #CrossOver
+  x.results <- chr.xover(p1, p2, reproduction.env(GA.env)$xover.swapMask)
+
+  #Create the next population
+  new.pop <- new.population(chromosomes = c(elite, p1, p2, rest))
     
-    #Report on the new population
-    parent.env(environment())$reporting.fn(pop = new.pop, mutation = m.results, cross = x.results)
-  })
+  #Set the current population to the new population
+  add.population(reproduction.env(GA.env), new.pop)
+    
+  #Report on the new population
+  GA.env$reporting.fn(pop = new.pop, mutation = m.results, cross = x.results)
 }
 
 ### Fitness functions
