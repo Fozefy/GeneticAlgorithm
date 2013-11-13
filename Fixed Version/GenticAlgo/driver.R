@@ -10,10 +10,14 @@ generational.ga <- function(GA.env){
     for(gen in 0:max.gen){
       goal.reached <- evaluate(reproduction.env(GA.env)$pop, fitness.env$fitness.fn, fitness.env$decode.fn)
       reported.data <- c(reported.data, report(gen, repr.results, goal.reached))
-
-      #TODO Check if goal has been reached
-      #if (goal.reached)
-      # break
+      
+      if (verbose)
+        print(max(goal.reached))
+      
+      if (!is.null(fitness.env(GA.env)$goal.fn))
+        if (fitness.env(GA.env)$goal.fn(goal.reached))
+          break
+      
       repr.results <- next.generation(GA.env)
     }
   })
@@ -75,22 +79,6 @@ next.generation <- function(GA.env){
 }
 
 ### Fitness functions
-
-straight.decode <- function(chr){
-  genes(chr)  
-}
-
-one.max.decode <- straight.decode
-
 new.fitness.fn <- function(fitness.fn, ...){
   function(genes) fitness.fn(genes, ...)
-}
-
-#Default fitness function
-one.max.fn <- function(genes){
-  sum(genes)	
-}
-
-finite.min.fn <- function(genes, gene.max){
-  length(genes) * gene.max - sum(genes)
 }

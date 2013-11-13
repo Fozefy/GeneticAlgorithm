@@ -28,13 +28,13 @@
 #      |-- Reproduction Environment: mutate, xover, xover.prob
 #   |-- Fitness Environment: fitness.fn, decode.fn, goal.fn, epsilon
 
-new.GA.env <- function(pop.size = 100,
+new.GA.env <- function(pop.size = 100, verbose = TRUE,
                        GA.base.args = new.GA.base.args(), encoding.args = new.encoding.args(), mutation.args = new.mutation.args(),
-                       fitness.args = new.fitness.args(), xover.args = new.xover.args(), selection.args = new.selection.args(),
+                       fitness.args = new.fitness.args(goal = encoding.args$chr.length), xover.args = new.xover.args(), selection.args = new.selection.args(),
                        reporting.fn = base.reporting.fn){
   GA.env <- new.env()
   setup.GA.envTree(GA.env)
-  setup.GA.base.env(GA.env, GA.base.args, pop.size)
+  setup.GA.base.env(GA.env, GA.base.args, pop.size, verbose)
   setup.encoding.env(GA.env, encoding.args)
   setup.fitness.env(GA.env, fitness.args)
   setup.reproduction.env(GA.env, mutation.args, xover.args)
@@ -70,9 +70,10 @@ new.GA.base.args <- function(max.gen = 100){
   as.list(environment())
 }
 
-setup.GA.base.env <- function(GA.env, GA.base.args = list(), pop.size = 100){
+setup.GA.base.env <- function(GA.env, GA.base.args = list(), pop.size = 100, verbose){
   add.to.env(GA.env, GA.base.args)
   GA.env$pop.size = pop.size
+  GA.env$verbose = verbose
 }
 
 new.encoding.args <- function(chr.length = 30, chr.encode.type = "binary", 
@@ -110,11 +111,15 @@ setup.encoding.env <- function(GA.env, encoding.args = new.encoding.args()){
   })	
 }
 
+#TODO - figure out how to make 'perfect goal' work better than having to have chr.length hardcoded
 new.fitness.args <- function(fitness.fn = one.max.fn, fitnessFn.args = NULL,
                              decode.fn = identity, decodeFn.args = NULL,
-                             goal.fn = NULL, goalFn.args = NULL,
-                             epsilon = 0){
-  fitness.fn; fitnessFn.args; decode.fn; decodeFn.args; goal.fn; goalFn.args; epsilon
+                             goal.fn = NULL, goal = 30, epsilon = 0){
+  if (is.null(goal.fn))
+  {
+    goal.fn = simpleGoal(30, epsilon)
+  }
+  fitness.fn; fitnessFn.args; decode.fn; decodeFn.args; goal.fn; epsilon
   as.list(environment())
 }
 
