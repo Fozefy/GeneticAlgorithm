@@ -1,7 +1,7 @@
 ## Evaluation
 
 evaluate <- function(obj, fitness.fn, decode.fn, ...){
-  print("generic base function does nothing")
+  print("generic base function does nothing - evaluate")
 }
 
 setGeneric("evaluate")
