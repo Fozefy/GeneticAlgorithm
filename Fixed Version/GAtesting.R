@@ -226,3 +226,9 @@ print.population(pop3, "")
 elite.selection(pop3, 3)
 top4 <- select.elite.population.fgen(elite.selection, elite.size=4)
 top4(pop4)
+
+#Time the GA
+ptm <- proc.time()
+ga<-new.GA.env()
+generational.ga(ga)
+proc.time() - ptm
