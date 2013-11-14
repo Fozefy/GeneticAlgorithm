@@ -9,9 +9,11 @@ setMethod("initialize",
              .Object@elite <- elite
              .Object
            })
+
+setClass("base.report", representation(gen = "numeric", currentGen.results = "ANY", goal.reached = "logical"))
          
-report <- function(gen, repr.results, goal.reached){
-  c(gen, repr.results, goal.reached)
+report <- function(gen, currentGen.results, goal.reached){
+  new("base.report", gen = gen, currentGen.results = currentGen.results, goal.reached = as.logical(goal.reached))
 }
 
 base.reporting.fn <- function(pop, mutation, cross, elite)
@@ -23,7 +25,7 @@ base.reporting.fn <- function(pop, mutation, cross, elite)
   fitness.stats$maxFit = NULL
     
   mutation.stats <- create.mutation.stats(mutation)
-  crossover.stats <- create.crossover.stats(crossover)
+  crossover.stats <- create.crossover.stats(cross)
   elite.stats <- create.elite.stats(elite)
     
   new("gen.report", maxFit, fitness.stats, mutation.stats, crossover.stats, elite.stats)
@@ -48,8 +50,8 @@ create.fitness.stats <- function(pop)
   fitness.env = new.env()
 
   fitness.env$maxFit = maxFit
-  fitness.env$max = which.max(fitnesses)
-  fitness.env$min = which.min(fitnesses)
+  fitness.env$max = max(fitnesses)
+  fitness.env$min = min(fitnesses)
   fitness.env$SD = sd(fitnesses)
   fitness.env$mean = mean(fitnesses)
   fitness.env$quantile = quantile(fitnesses)
@@ -62,27 +64,37 @@ create.fitness.stats <- function(pop)
 
 create.mutation.stats <- function(mutation)
 {
-  mutation.counts = vector("list", length(mutation))
+  numMutations = 0
+  #Get total mutations
   for (i in 1:length(mutation))
   {
-    mutation.counts[i] = mutation[[i]]@returnList$mutation.count
+    numMutations = numMutations + length(returnList(mutation[[i]]))
   }
 
-  mutation.env = new.env()
-  
-  #TODO problem with mutation.counts, need ot figure out what...
-  if (FALSE)
+  mutation.counts = vector("list", numMutations)
+  mutationIndexCounter = 1
+  for (i in 1:length(mutation))
   {
+    #We are just consider mutation of rest, p1 and p2 as the same, if we want to split them up we'll need to do so here
+    for (j in 1:length(returnList(mutation[[i]])))
+    {
+      mutation.counts[mutationIndexCounter] = mutation[[i]][[j]]@mutation.count
+      
+      mutationIndexCounter = mutationIndexCounter + 1
+    }
+  }
+
+  mutation.counts = as.vector(mutation.counts, mode = "numeric")
   
-  mutation.env$max = which.max(mutation.counts)
-  mutation.env$min = which.min(mutation.counts)
+  mutation.env = new.env()
+  mutation.env$max = max(mutation.counts)
+  mutation.env$min = min(mutation.counts)
   mutation.env$SD = sd(mutation.counts)
   mutation.env$mean = mean(mutation.counts)
   mutation.env$quantile = quantile(mutation.counts)
   mutation.env$median = mutation.env$quantile[3]
   mutation.env$skew = skewness(mutation.counts)
   mutation.env$kurtosis = kurtosis(mutation.counts)
-  }
   
   return(mutation.env)
 }
@@ -108,8 +120,8 @@ create.elite.stats <- function(elite)
   
   elitism.env = new.env()
   elitism.env$maxFit = elite.maxFit
-  elitism.env$max = which.max(elite.fitnesses)
-  elitism.env$min = which.min(elite.fitnesses)
+  elitism.env$max = max(elite.fitnesses)
+  elitism.env$min = min(elite.fitnesses)
   elitism.env$SD = sd(elite.fitnesses)
   elitism.env$mean = mean(elite.fitnesses)
   elitism.env$quantile = quantile(elite.fitnesses)
@@ -120,16 +132,15 @@ create.elite.stats <- function(elite)
   return(elitism.env)
 }
 
-create.crossover.stats <- function(crossover)
+create.crossover.stats <- function(cross)
 {
-  numCrossover = 0
-  #TODO Crossover stats are not being adequately saved, need to save.
-  #for(i in 1:length(crossover))
-  #{
-  #  numCrossover = numCrossover + crossover[[i]]
-  #}
+  #TODO Get crossover points, not currently saved in cross object
   
   crossover.env = new.env()
+  crossover.env$numCrossovers = length(returnList(cross))
+  print(crossover.env$numCrossovers)
+  
+  return(crossover.env)
 }
 
 #REPORT ALL THE THINGS!!!
@@ -145,25 +156,5 @@ reportAll.reporting.fn <- function(GA.env)
          
 print.report <- function(GA.env)
 {
-  print(GA.env$reported.data)
-}
-
-
-#OLD Code for printing GA, will probably be removed
-arg.list.name <- function(obj.name){
-  length(grep("*.args", obj.name)) > 0
-}
-
-controller.name <- function(obj.name){
-  length(grep("*.controller", obj.name)) > 0
-}
-#TODO - Update to make work!
-print.ga.env <- function(env){
-  for(obj.name in objects(env)){
-    if(!arg.list.name(obj.name) && !controller.name(obj.name)){
-      value <- env[[obj.name]]
-      if(!is.function(value) && !is.environment(value))
-        cat(obj.name, "=", value, "\n")
-    }
-  }
+  cat("Generations:",length(GA.env$reported.data), "Goal Reached:", GA.env$reported.data[[length(GA.env$reported.data)]]@goal.reached)
 }
