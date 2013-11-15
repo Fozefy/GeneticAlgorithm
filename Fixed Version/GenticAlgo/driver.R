@@ -40,7 +40,7 @@ next.generation <- function(GA.env){
   if(is.null(selection.env(GA.env)$select.elite))
     elite = NULL
   else
-    elite <- selection.env(GA.env)$select.elite(reproduction.env(GA.env)$pop, fitness.env(GA.env)$fitness.fn)
+    elite <- selection.env(GA.env)$select.elite(reproduction.env(GA.env)$pop)
     
   #Get number of each repro group
   elite.size <- if (!is.null(elite)) length(elite) else 0

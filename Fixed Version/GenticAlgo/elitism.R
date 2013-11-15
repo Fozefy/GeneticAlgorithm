@@ -1,13 +1,13 @@
 #### Elitism
 
 select.elite.population.fgen <- function(elite.fn, ...){
-  function(pop, fitness.fn)
-    elite.fn(pop = pop, fitness.fn = fitness.fn, ...)
+  function(pop)
+    elite.fn(pop = pop, ...)
 }
 
 #note: elite.selection only works with integer or floating point fitness ordered by <= or >=
 
-elite.selection <- function(pop, fitness.fn, elite.size = 1, decreasing = TRUE, pop.fit = NULL, verbose = FALSE){
+elite.selection <- function(pop, elite.size = 1, decreasing = TRUE, pop.fit = NULL, verbose = FALSE){
 
   #TODO: Elitism very inefficient and won't work in all cases, but works in the basic case.....should be fixed
   #ignores decreasing
