@@ -43,21 +43,13 @@ new.GA.env <- function(pop.size = 100, verbose = TRUE,
   GA.env
 }
 
-control.env <- function(GA){GA$control.env}
-# `control.env<-` <- function(GA, value){GA$control.env <- value}
+#Convenience functions for accessing inner environments
 encoding.env <- function(GA){GA$encoding.env}
-# `encoding.env<-` <- function(GA, value){GA$encoding.env <- value}
 fitness.env <- function(GA){GA$fitness.env}
-# `fitness.env<-` <- function(GA, value){GA$fitness.env <- value}
 selection.env <- function(GA){GA$selection.env}
-# `selection.env<-` <- function(GA, value){GA$selection.env <- value}
 reproduction.env <- function(GA){GA$reproduction.env}
-# `reproduction.env<-` <- function(GA, value){GA$reproduction.env <- value}
 
-add.population <- function(env, popn){
-  env$pop <- popn
-}
-
+#Create all of the GA's inner environments
 setup.GA.envTree <- function(GA.env) {
   GA.env$encoding.env <- new.env(parent = GA.env)
   GA.env$fitness.env <- new.env(parent = GA.env)
@@ -65,15 +57,18 @@ setup.GA.envTree <- function(GA.env) {
   GA.env$reproduction.env <- new.env(parent = GA.env)
 }
 
+#Helper function for setting up environments - adds a list of args to env
+add.to.env <- function(env, arg.list){
+  arg.names <- names(arg.list)
+  for(name in arg.names){
+    env[[name]] <- arg.list[[name]]   
+  }
+}
+
+#######################################Create the GA's arguements
 new.GA.base.args <- function(max.gen = 100){
   max.gen
   as.list(environment())
-}
-
-setup.GA.base.env <- function(GA.env, GA.base.args = list(), pop.size = 100, verbose){
-  add.to.env(GA.env, GA.base.args)
-  GA.env$pop.size = pop.size
-  GA.env$verbose = verbose
 }
 
 new.encoding.args <- function(chr.length = 30, chr.encode.type = "binary", 
@@ -81,6 +76,40 @@ new.encoding.args <- function(chr.length = 30, chr.encode.type = "binary",
                               gene.mode = NULL, seq.args = NULL){
   chr.length; chr.encode.type; gene.alphabet; rdist; rdist.args; gene.mode; seq.args
   as.list(environment())
+}
+
+new.fitness.args <- function(fitness.fn = one.max.fn, fitnessFn.args = NULL,
+                             decode.fn = one.max.decode, decodeFn.args = NULL,
+                             goal.fn = NULL, goal = 30, epsilon = 0){
+  if (is.null(goal.fn))
+  {
+    goal.fn = simpleGoal(goal, epsilon)
+  }
+  fitness.fn; fitnessFn.args; decode.fn; decodeFn.args; goal.fn; epsilon
+  as.list(environment())
+}
+
+new.xover.args <- function (xover.prob = 0.8, xover.type = "uniform", xover.alpha = 0.3)
+{
+  xover.prob; xover.type; xover.alpha
+  as.list(environment())
+}
+
+new.mutation.args <- function(gene.delta = NULL, gene.sd = NULL, prob.mutation = 2, mutation.type = "binary", not.equal.op = `!=`){
+  gene.delta; gene.sd
+  as.list(environment())
+}
+
+new.selection.args <- function(selection.type = "simple.tournament", tourn.size = 2, prob.select.worse = 0, decreasing = TRUE, `%>%` = `>`, elitism = TRUE, elite.size = 2, elite.fn = truncation.selection){
+  selection.type; tourn.size; prob.select.worse; decreasing; `%>%`; elitism; elite.size; elite.fn
+  as.list(environment())
+}
+
+##################Setup the GA environments as per the appropriate args
+setup.GA.base.env <- function(GA.env, GA.base.args = list(), pop.size = 100, verbose){
+  add.to.env(GA.env, GA.base.args)
+  GA.env$pop.size = pop.size
+  GA.env$verbose = verbose
 }
 
 setup.encoding.env <- function(GA.env, encoding.args = new.encoding.args()){
@@ -111,18 +140,6 @@ setup.encoding.env <- function(GA.env, encoding.args = new.encoding.args()){
   })	
 }
 
-#TODO - figure out how to make 'perfect goal' work better than having to have chr.length hardcoded
-new.fitness.args <- function(fitness.fn = one.max.fn, fitnessFn.args = NULL,
-                             decode.fn = identity, decodeFn.args = NULL,
-                             goal.fn = NULL, goal = 30, epsilon = 0){
-  if (is.null(goal.fn))
-  {
-    goal.fn = simpleGoal(30, epsilon)
-  }
-  fitness.fn; fitnessFn.args; decode.fn; decodeFn.args; goal.fn; epsilon
-  as.list(environment())
-}
-
 setup.fitness.env <- function(GA.env, fitness.args){
   add.to.env(fitness.env(GA.env), fitness.args)
 }
@@ -133,17 +150,6 @@ setup.reproduction.env <- function(GA.env, mutation.args = new.mutation.args(), 
   
   add.to.env(reproduction.env(GA.env), xover.args)
   setup.xover(reproduction.env(GA.env))
-}
-
-new.xover.args <- function (xover.prob = 0.8, xover.type = "uniform", xover.alpha = 0.3)
-{
-  xover.prob; xover.type; xover.alpha
-  as.list(environment())
-}
-
-new.mutation.args <- function(gene.delta = NULL, gene.sd = NULL, prob.mutation = 2, mutation.type = "binary", not.equal.op = `!=`){
-  gene.delta; gene.sd
-  as.list(environment())
 }
 
 setup.mutation <- function(reproduction.env){
@@ -169,43 +175,35 @@ setup.mutation <- function(reproduction.env){
   })
 }
 
-mutate.fn <- function(reproduction.env){reproduction.env$mutate}
-prob.mutation <- function(rep.env){rep.env$prob.mutation}
-new.alleles <- function(rep.env){rep.env$alleles.fn}
-
-choose.xover.swapMask <- function(reproduction.env){
+setup.xover <- function(reproduction.env){
   with(reproduction.env, {
     xsm.fgen <- xover.swapMask.fgen
-    switch(xover.type, 
-           one.pt	= xover.mask.1point,
+    xover.swapMask <- switch(xover.type, 
+           one.pt  = xover.mask.1point,
            two.pt	= xsm.fgen(xover.mask.kpoint, 2),
            k.pt 		= xsm.fgen(xover.mask.kpoint, xover.k),
            uniform 	= xsm.fgen(xover.mask.uniform, xover.alpha),
            ...		= simple.error(paste("xover.type must be one of '1pt', '2pt', 'kpt' or 'uniform'. ", 
                                      "Instead it is '", xover.type, "'", sep = "")))
-  })
-}
 
-setup.xover <- function(reproduction.env){
-  with(reproduction.env, {
-    xover.swapMask <- choose.xover.swapMask(environment())
     xover <- xover.fgen(xover.swapMask)
   })
 }
-
-xover.fn <- function(GA.env){GA.env$xover}
-
 
 setup.selection.env <- function(GA.env, selection.args = new.selection.args()){
   
   add.to.env(selection.env(GA.env), selection.args)
   with(selection.env(GA.env), {
-  
-    if(is.integer(prob.mutation)) prob.mutation <- prob.mutation / chr.length
+
     selection.env <- environment()
     add.to.env(selection.env, selection.args)
-    setup.elitism(selection.env)
-      
+    
+    #Setup.elitism      
+    if(elitism)
+      select.elite <- select.elite.population.fgen(elite.fn = elite.fn, elite.size = elite.size, decreasing = decreasing)
+    else
+      select.elite <- NULL
+    
     select.fgen <- select.population.fgen
     select.chr <- switch(selection.type, 
                          simple.tournament  = select.fgen(simple.tournament.selection, fitness.env(parent.env(environment())), tourn.size, decreasing, `%>%`),
@@ -221,34 +219,6 @@ setup.selection.env <- function(GA.env, selection.args = new.selection.args()){
   })
 }
 
-add.to.env <- function(env, arg.list){
-  arg.names <- names(arg.list)
-  for(name in arg.names){
-    env[[name]] <- arg.list[[name]]
-    
-  }
-}
-
-
-new.selection.args <- function(selection.type = "simple.tournament", tourn.size = 2, prob.select.worse = 0, decreasing = TRUE, `%>%` = `>`, elitism = TRUE, elite.size = 2){
-  selection.type; tourn.size; prob.select.worse; decreasing; `%>%`; elitism; elite.size
-  as.list(environment())
-}
-
-new.elite.args <- function(elite.size = 2, decreasing = TRUE){
-  elite.size; decreasing	
-  as.list(environment())
-}
-
-setup.elitism <- function(selection.env){
-  with(selection.env, {
-    if(elitism)
-      select.elite <- select.elite.population.fgen(elite.fn = elite.selection, elite.size = elite.size, decreasing = decreasing)
-    else
-      select.elite <- NULL
-  })
-}
-
 setup.reporting <- function(GA.env, reporting.fn){
-    GA.env$reporting.fn = reporting.fn
+  GA.env$reporting.fn = reporting.fn
 }

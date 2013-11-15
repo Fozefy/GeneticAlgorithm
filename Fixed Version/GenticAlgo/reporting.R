@@ -138,7 +138,6 @@ create.crossover.stats <- function(cross)
   
   crossover.env = new.env()
   crossover.env$numCrossovers = length(returnList(cross))
-  print(crossover.env$numCrossovers)
   
   return(crossover.env)
 }

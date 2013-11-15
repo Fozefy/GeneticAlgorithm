@@ -1,4 +1,11 @@
-## crossover
+#Determine the number of chromosomes to be crossed
+xover.count <- function(P, elite.count, xover.prob, xover=NULL){
+  xover.count <- (P - elite.count) %/% 2
+  if(is.null(xover))
+    xover <- (runif(xover.count) < xover.prob)
+  sum(xover)
+}
+
 chr.xover <- function(chr1, chr2, swapMask.fn = xover.mask.2point, swapMask=NULL){
   chr1; chr2; swapMask.fn; swapMask
   print("generic base function does nothing - chr.xover")
@@ -57,6 +64,7 @@ xover.mask.kpoint <- function(chr.length, k, verbose=FALSE){
   swapMask
 } 
 
+#Should these be in 'defaultGAProblems'?
 xover.mask.1point <- function(chr.length, verbose=FALSE){
   xoverPoint <-sample(1:chr.length, 1)
   if(verbose)
@@ -113,16 +121,3 @@ logic.print.vector <- function(logic.vector, false.char="F", true.char="T"){
   vector.length <- length(logic.vector)
   ifelse(logic.vector,rep(true.char, vector.length), rep(false.char, vector.length))
 }
-
-setMethod("ga.print",
-          signature = c("returnValues.xover"),
-          definition = function(obj, max = 0, print.xpts=FALSE, mask.sep=" ", ...){
-            sm <- swap.mask(obj)
-            cat("Xover Information\n")
-            cat(addLeadingBlanks(max))
-            cat("   swap mask = ") 
-            cat(logic.print.vector(sm), "\n", sep = mask.sep)
-            if(print.xpts)
-              cat("   xover pts =", swapMask2xpts(sm), "\n")
-          }
-)

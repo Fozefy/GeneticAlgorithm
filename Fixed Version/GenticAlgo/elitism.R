@@ -70,5 +70,3 @@ elite.selection <- function(pop, fitness.fn, elite.size = 1, decreasing = TRUE, 
 }
 
 # elite.selection(elite.size = 2, pop.fit = runif(10))
-
-truncation.selection <- elite.selection

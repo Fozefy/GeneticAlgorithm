@@ -1,15 +1,3 @@
-### population definition and creation section
-
-### Fitness Class (needed for multi-objective, stochastic and other complex fitnesses)
-
-setClass("fitness", representation(value = "numeric"))
-setMethod("initialize", 
-          signature = "fitness",
-          definition = function(.Object, chr = NULL, fitness.fn = function(chr) NULL, ...) {
-            .Object@value <- fitness.fn(chr)
-            .Object
-          })
-
 ### Chromosome Class
 
 setClass("chromosome", representation(chr.genes = "environment", fitness = "environment"))
@@ -91,64 +79,6 @@ setMethod("mode",
             mode(chromosome(x))
           }
 )
-
-unevaluated <- function(obj){
-  length(fitness(obj)) == 0  
-}
-
-setGeneric("unevaluated")
-
-setMethod("unevaluated", 
-          signature = c("list"),
-          definition = function(obj){
-            n <- length(obj)
-            answer <- vector("logical", n)
-            for(i in 1:n){
-              answer[[i]] <- unevaluted(obj[[i]])
-            }
-          }
-)
-
-is.multiobjective <- function(obj){
-  length(fitness(obj)) > 1
-}
-
-setGeneric("is.multiobjective")
-
-setMethod("is.multiobjective", 
-          signature = c("list"),
-          definition = function(obj){
-            is.multiobjective(obj[[1]])
-          }
-)
-
-fitness <- function(obj) {
-  (obj@fitness)$value
-}
-
-setGeneric("fitness")
-
-setMethod("fitness", 
-          signature = c("list"),
-          definition = function(obj){
-            n <- length(obj)
-            if(is.multiobjective(obj))
-              fit.vector <- vector("list", n)
-            else
-              fit.vector <- vector("numeric", n)
-            for(i in 1:n){
-              fit.vector[[i]] <- fitness(obj[[i]])
-            }
-            fit.vector  
-          }
-)
-
-`fitness<-` <- function(chr, value){
-  chr@fitness$value <- value
-  chr@fitness
-}
-
-setGeneric("fitness<-")
 
 new.genes.fgen <- function(new.chromosome.fn, ...){
   function(chr.length) new.chromosome.fn(chr.length, ...)

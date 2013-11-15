@@ -5,6 +5,8 @@ alleles.fgen <- function(alleles.fn, ...){
   function(genes) alleles.fn(genes, ...)
 }
 
+new.alleles <- function(rep.env){rep.env$alleles.fn}
+
 alleles.binary <- function(genes){
   1 - genes  
 }
@@ -56,7 +58,12 @@ alleles.gaussian <- function(genes, sd=1){
   genes + rnorm(count,0,sd)
 }
 
+#Determine the number of chromosomes to be determined from only mutation
+mutate.only.count <- function(popSize, xover, elite){
+  popSize - 2 * xover - elite
+}
 
+prob.mutation <- function(rep.env){rep.env$prob.mutation}
 
 chr.mutate <- function(chr, repr.env, mutation.locations = NULL, mutations = NULL){
   print("generic base function does nothing -- chr.mutate")
@@ -159,24 +166,4 @@ setMethod("[[",
             returnList(x)[[i]]
           }
 )
-
-setMethod("ga.print",
-          signature = c("returnValues.mutation"),
-          definition = function(obj, max = 0, ...){
-            cat("mcount =", mutation.count(obj), "\n")
-            cat(addLeadingBlanks(max))
-            cat("loc    =", mutation.locations(obj), "\n") 
-            cat(addLeadingBlanks(max))
-            cat("from   =", from.genes(obj), "\n")
-            cat(addLeadingBlanks(max))
-            cat("to     =", to.genes(obj), "\n")
-          }
-)
-
-setMethod("ga.print",
-          signature = c("returnList"),
-          definition = function(obj, ...){
-            ga.print(returnList(obj), ...)
-          }
-)			
 

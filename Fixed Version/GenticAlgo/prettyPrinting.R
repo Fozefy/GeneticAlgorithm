@@ -13,7 +13,6 @@ addLeadingBlanks <- function(max = 0){
   }
 }
 
-#Pretty printing
 get.open.delimiter <- function(gene.brackets){
   if(is.null(gene.brackets))
     ""
@@ -74,5 +73,45 @@ setMethod("ga.print",
               ga.print(obj[[i]], max = n, ...)
               cat("\n")  
             }	
+          }
+)
+
+setMethod("ga.print",
+          signature = c("returnValues.mutation"),
+          definition = function(obj, max = 0, ...){
+            cat("mcount =", mutation.count(obj), "\n")
+            cat(addLeadingBlanks(max))
+            cat("loc    =", mutation.locations(obj), "\n") 
+            cat(addLeadingBlanks(max))
+            cat("from   =", from.genes(obj), "\n")
+            cat(addLeadingBlanks(max))
+            cat("to     =", to.genes(obj), "\n")
+          }
+)
+
+setMethod("ga.print",
+          signature = c("returnList"),
+          definition = function(obj, ...){
+            ga.print(returnList(obj), ...)
+          }
+)
+
+setMethod("ga.print",
+          signature = c("returnValues.xover"),
+          definition = function(obj, max = 0, print.xpts=FALSE, mask.sep=" ", ...){
+            sm <- swap.mask(obj)
+            cat("Xover Information\n")
+            cat(addLeadingBlanks(max))
+            cat("   swap mask = ") 
+            cat(logic.print.vector(sm), "\n", sep = mask.sep)
+            if(print.xpts)
+              cat("   xover pts =", swapMask2xpts(sm), "\n")
+          }
+)
+
+setMethod("ga.print",
+          signature = c("population"),
+          definition = function(obj, ...){
+            ga.print(chromosomes(obj), ...)
           }
 )

@@ -110,6 +110,11 @@ setMethod("[<-",
   pop@fitness.cache
 }
 
+#Set the GA's population
+add.population <- function(reproduction.env, popn){
+  reproduction.env$pop <- popn
+}
+
 size <- function(pop){
   length(chromosomes(pop))
 }
@@ -118,12 +123,5 @@ setMethod("size",
           signature = c("population"),
           definition = function(pop){
             pop@pop.size
-          }
-)
-
-setMethod("ga.print",
-          signature = c("population"),
-          definition = function(obj, ...){
-            ga.print(chromosomes(obj), ...)
           }
 )

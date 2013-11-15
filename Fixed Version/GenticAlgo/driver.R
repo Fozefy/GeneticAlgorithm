@@ -33,17 +33,6 @@ generational.ga <- function(GA.env){
   })
 }
 
-xover.count <- function(P, elite.count, xover.prob, xover=NULL){
-  xover.count <- (P - elite.count) %/% 2
-  if(is.null(xover))
-    xover <- (runif(xover.count) < xover.prob)
-  sum(xover)
-}
-
-mutate.only.count <- function(P, x, e){
-  P - 2 * x - e
-}
-
 next.generation <- function(GA.env){  
   P <- size(reproduction.env(GA.env)$pop)
 
@@ -86,9 +75,4 @@ next.generation <- function(GA.env){
     
   #Report on the new population
   GA.env$reporting.fn(pop = new.pop, mutation = m.results, cross = x.results, elite = elite)
-}
-
-### Fitness functions
-new.fitness.fn <- function(fitness.fn, ...){
-  function(genes) fitness.fn(genes, ...)
 }
