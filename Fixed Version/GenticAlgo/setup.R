@@ -89,7 +89,7 @@ new.fitness.args <- function(fitness.fn = one.max.fn, fitnessFn.args = NULL,
   as.list(environment())
 }
 
-new.xover.args <- function (xover.prob = 0.8, xover.type = "uniform", xover.alpha = 0.3)
+new.xover.args <- function (xover.prob = 0.8, xover.type = "uniform", xover.alpha = 0.3, xover.k = 2)
 {
   xover.prob; xover.type; xover.alpha
   as.list(environment())
@@ -206,8 +206,8 @@ setup.selection.env <- function(GA.env, selection.args = new.selection.args()){
     
     select.fgen <- select.population.fgen
     select.chr <- switch(selection.type, 
-                         simple.tournament  = select.fgen(simple.tournament.selection, fitness.env(parent.env(environment())), tourn.size, decreasing, `%>%`),
-                         tournament  			= select.fgen(tournament.selection, fitness.env(parent.env(environment())), tourn.size, prob.select.worse, 
+                         simple.tournament  = select.fgen(simple.tournament.selection, tourn.size, decreasing, `%>%`),
+                         tournament  			= select.fgen(tournament.selection, tourn.size, prob.select.worse, 
                                                       decreasing, `%>%`),
                          fps 						= fitnessProportional.selection,
                          rank 						= rank.selection,  # not yet implemented ... just a stub

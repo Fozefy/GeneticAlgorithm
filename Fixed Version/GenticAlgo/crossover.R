@@ -34,8 +34,8 @@ setMethod("chr.xover",
           }
 )
 
-xover.fgen <- function(swapMask.fn){
-  function(chr1, chr2){chr.xover(chr1, chr2, swapMask.fn)}
+xover.fgen <- function(xover.swapMask){
+  function(chr1, chr2){chr.xover(chr1, chr2, xover.swapMask)}
 }
 
 xover.swapMask.fgen <- function(create.swapMask, ...){
