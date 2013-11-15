@@ -1,8 +1,7 @@
 #### Population Class
 
 setClass("population", 
-         representation(chromosomes = "environment", 
-                        fitness.cache = "environment",
+         representation(chromosomes = "environment",
                         pop.size = "numeric"))
 
 setMethod("initialize", 
@@ -17,10 +16,6 @@ setMethod("initialize",
             }
             chr.env$values <- chromosomes
             .Object@chromosomes <- chr.env
-            
-            fit.cache <- new.env()
-            fit.cache$values <- numeric(0)
-            .Object@fitness.cache <- new.env()
             
             .Object@pop.size <- length(chromosomes)
             
@@ -58,23 +53,6 @@ setMethod("fitness",
           }
 )
 
-fitness.values <- function(object){object$values}
-setGeneric("fitness.values")
-
-setMethod("fitness.values", 
-          signature = c("environment"),
-          definition = function(object){
-            object$values
-          }
-)
-
-setMethod("fitness.values", 
-          signature = c("population"),
-          definition = function(object){
-            fitness.values(object@fitness.cache)
-          }
-)
-
 setMethod("[", 
           signature = c("population"),
           definition = function(x,i,j,...,drop){
@@ -104,11 +82,6 @@ setMethod("[<-",
             x
           }
 )
-
-`fitness.cache<-` <- function(pop, value){
-  pop@fitness.cache[["values"]] <- value
-  pop@fitness.cache
-}
 
 #Set the GA's population
 add.population <- function(reproduction.env, popn){

@@ -57,7 +57,7 @@ tournament.selection <- function(fitness.env, selection.size, pop = NULL, tourn.
                                  tourn.fit = NULL, tourn.loc = NULL, 
                                  select.worse = NULL, pop.size = NULL, verbose = FALSE){
   n <- selection.size; k <- tourn.size 
-  P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, size.population(pop))
+  P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, size(pop))
   if(is.null(`%>%`))
     if(decreasing) {`%>%` <- `>`} else {`%>%` <- `<`}
   if(is.null(select.worse))

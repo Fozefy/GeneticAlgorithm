@@ -39,7 +39,6 @@ setMethod("duplicate",
 setMethod("duplicate",
           signature = c("population"),
           definition = function(obj, ...){
-            obj@fitness.cache <- duplicate(obj@fitness.cache)
             obj@chromosomes <- duplicate(obj@chromosomes)
             obj@chromosomes[["values"]] <- duplicate(obj@chromosomes[["values"]])
             obj
