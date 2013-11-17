@@ -1,8 +1,9 @@
-setClass("gen.report", representation(maxFit = "chromosome", fitness = "environment", mutation = "environment", crossover = "environment", elite = "environment"))
+setClass("gen.report", representation(maxFit = "chromosome", minFit = "chromosome", fitness = "environment", mutation = "environment", crossover = "environment", elite = "environment"))
 setMethod("initialize", 
            signature = "gen.report",
-           definition = function(.Object, maxFit, fitness, mutation, crossover, elite) {
+           definition = function(.Object, maxFit, minFit, fitness, mutation, crossover, elite) {
              .Object@maxFit <- maxFit
+             .Object@minFit <- minFit
              .Object@fitness <- fitness
              .Object@mutation <- mutation
              .Object@crossover <- crossover
@@ -23,23 +24,30 @@ base.reporting.fn <- function(pop, mutation, cross, elite)
   #We combine these measures for efficiency, but it doesn't really make sense to keep them together, so we clear it
   maxFit = fitness.stats$maxFit
   fitness.stats$maxFit = NULL
+  minFit = fitness.stats$minFit
+  fitness.stats$minFit = NULL
     
   mutation.stats <- create.mutation.stats(mutation)
   crossover.stats <- create.crossover.stats(cross)
   elite.stats <- create.elite.stats(elite)
     
-  new("gen.report", maxFit, fitness.stats, mutation.stats, crossover.stats, elite.stats)
+  new("gen.report", maxFit, minFit, fitness.stats, mutation.stats, crossover.stats, elite.stats)
 }
 
 create.fitness.stats <- function(pop)
 {
   maxFit = pop[[1]]
-  fitnesses = vector("list", length(pop))
-  for (i in 1:length(pop))
+  minFit = pop[[1]]
+  fitnesses = vector("list", size(pop))
+  for (i in 1:size(pop))
   {
     if (maxFit@fitness$value < pop[[i]]@fitness$value)
     {
       maxFit = pop[[i]]
+    }
+    if(minFit@fitness$value > pop[[i]]@fitness$value)
+    {
+      minFit = pop[[i]]
     }
     
     fitnesses[i] = pop[[i]]@fitness$value
@@ -50,6 +58,7 @@ create.fitness.stats <- function(pop)
   fitness.env = new.env()
 
   fitness.env$maxFit = maxFit
+  fitness.env$minFit = minFit
   fitness.env$max = max(fitnesses)
   fitness.env$min = min(fitnesses)
   fitness.env$SD = sd(fitnesses)
@@ -58,7 +67,7 @@ create.fitness.stats <- function(pop)
   fitness.env$median = fitness.env$quantile[3]
   fitness.env$skew = skewness(fitnesses) #requires package "moments"
   fitness.env$kurtosis = kurtosis(fitnesses)
-  
+
   return(fitness.env)
 }
 

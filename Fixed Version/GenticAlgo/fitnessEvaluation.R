@@ -49,6 +49,13 @@ setMethod("fitness",
           }
 )
 
+setMethod("fitness", 
+          signature = c("population"),
+          definition = function(obj){
+            fitness(chromosomes(obj))
+          }
+)
+
 `fitness<-` <- function(chr, value){
   chr@fitness$value <- value
   chr@fitness

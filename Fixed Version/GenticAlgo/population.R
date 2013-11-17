@@ -46,13 +46,6 @@ setMethod("chromosomes",
           }
 )
 
-setMethod("fitness", 
-          signature = c("population"),
-          definition = function(obj){
-            fitness(chromosomes(obj))
-          }
-)
-
 setMethod("[", 
           signature = c("population"),
           definition = function(x,i,j,...,drop){

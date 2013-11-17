@@ -7,7 +7,7 @@ generational.ga <- function(GA.env){
     
     currentGen.results <- NULL #Our 0 generation has no results, but we want to be able to report anyway
     reported.data <- NULL
-    for(gen in 0:max.gen){
+    for(gen in 0:(max.gen-1)){
       fitness.set <- evaluate(reproduction.env(GA.env)$pop, fitness.env$fitness.fn, fitness.env$decode.fn)
       
       #Check if we've met our goal yet
@@ -25,8 +25,10 @@ generational.ga <- function(GA.env){
       #If we've met our goal: stop!
       if (goal.reached) break
       
-      currentGen.results <- next.generation(GA.env)
+      if (gen != max.gen)
+        currentGen.results <- next.generation(GA.env)
     }
+    
     if (verbose)
       print.report(environment())
     
