@@ -93,7 +93,7 @@ setMethod("evaluate",
               fit.cache <- vector("list", n)
             else
               fit.cache <- vector("numeric", n)
-            
+
             fit.cache[[1]] <- fit1
             
             for(i in 2:n){

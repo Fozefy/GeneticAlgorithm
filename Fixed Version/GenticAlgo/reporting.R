@@ -164,5 +164,49 @@ reportAll.reporting.fn <- function(GA.env)
          
 print.report <- function(GA.env)
 {
-  cat("Generations:",length(GA.env$reported.data), "Goal Reached:", GA.env$reported.data[[length(GA.env$reported.data)]]@goal.reached)
+  cat("Generations:",length(GA.env$reported.data)-1, "Goal Reached:", GA.env$reported.data[[length(GA.env$reported.data)]]@goal.reached)
+}
+
+print.fitness.stats <-function(GA.env)
+{  
+  cat("Fitness Stats:\n")
+  for(i in 1:length(GA.env$reported.data))
+  {
+    if (!is.null(GA.env$reported.data[[i]]@currentGen.results)){
+      fitness.env = GA.env$reported.data[[i]]@currentGen.results@fitness      
+      cat("Max:",fitness.env$max, "Min:", fitness.env$min, "SD:", fitness.env$SD,"Mean:", fitness.env$mean, "Quantiles:",fitness.env$quantile,
+          "Median:",fitness.env$median, "Skew:", fitness.env$skew,"Kurtosis:", fitness.env$kurtosis,"\n")
+    }
+  }
+}
+
+print.elite.stats <-function(GA.env)
+{
+  cat("Elite Stats:\n")
+  for(i in 1:length(GA.env$reported.data))
+  {
+    if (!is.null(GA.env$reported.data[[i]]@currentGen.results)){
+      elite.env = GA.env$reported.data[[i]]@currentGen.results@elite      
+      cat("Max:",elite.env$max, "Min:", elite.env$min, "SD:", elite.env$SD,"Mean:", elite.env$mean, "Quantiles:",elite.env$quantile,
+          "Median:",elite.env$median, "Skew:", elite.env$skew,"Kurtosis:", elite.env$kurtosis,"\n")
+    }
+  }
+}
+
+print.mutation.stats <-function(GA.env)
+{
+  cat("Mutation Stats:\n")
+  for(i in 1:length(GA.env$reported.data))
+  {
+    if (!is.null(GA.env$reported.data[[i]]@currentGen.results)){
+      mutation.env = GA.env$reported.data[[i]]@currentGen.results@mutation      
+      cat("Max:",mutation.env$max, "Min:", mutation.env$min, "SD:", mutation.env$SD,"Mean:", mutation.env$mean, "Quantiles:",mutation.env$quantile,
+          "Median:",mutation.env$median, "Skew:", mutation.env$skew,"Kurtosis:", mutation.env$kurtosis,"\n")
+    }
+  }
+}
+
+print.crossover.stats <-function(GA.env)
+{
+  
 }
