@@ -67,7 +67,7 @@ DeJong.F1.Decode <-function(genes)
 }
 #TODO - create goal function
 
-#dejongGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
+#dejongGA.F1=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
 #fitness.args=new.fitness.args(fitness.fn=DeJong.F1.fitness, decode.fn=straight.decode, goal = 0))
 
 DeJong.F2.fitness <- function(genes)
@@ -83,7 +83,7 @@ DeJong.F2.fitness <- function(genes)
   -fitness #return a negative fitness to attempt to minimize
 }
 
-#dejongGA=new.GA.env(encoding.args=new.encoding.args(chr.length=24, chr.encode.type="binary"),
+#dejongGA.F2=new.GA.env(encoding.args=new.encoding.args(chr.length=24, chr.encode.type="binary"),
 #fitness.args=new.fitness.args(fitness.fn=DeJong.F2.fitness, decode.fn=straight.decode, goal = 0))
 
 DeJong.F3.fitness <- function(genes)
@@ -102,7 +102,7 @@ DeJong.F3.fitness <- function(genes)
   max(xVals)
 }
 
-#dejongGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
+#dejongGA.F3=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
 #fitness.args=new.fitness.args(fitness.fn=DeJong.F3.fitness, decode.fn=straight.decode, goal = 5.12))
 
 DeJong.F4.fitness <- function(genes)
@@ -127,7 +127,7 @@ DeJong.F4.fitness <- function(genes)
   return(total + rnorm(1))
 }
 
-#dejongGA=new.GA.env(encoding.args=new.encoding.args(chr.length=80, chr.encode.type="binary"),
+#dejongGA.F4=new.GA.env(encoding.args=new.encoding.args(chr.length=80, chr.encode.type="binary"),
                     #fitness.args=new.fitness.args(fitness.fn=DeJong.F4.fitness, decode.fn=straight.decode, goal.fn=noGoal))
 
 DeJong.F5.fitness.generator <- function()
@@ -162,24 +162,75 @@ DeJong.F5.fitness.generator <- function()
   }
 }
 
-#dejongGA=new.GA.env(encoding.args=new.encoding.args(chr.length=425, chr.encode.type="binary"),
+#dejongGA.F5=new.GA.env(encoding.args=new.encoding.args(chr.length=425, chr.encode.type="binary"),
 #fitness.args=new.fitness.args(fitness.fn=DeJong.F5.fitness.generator(), decode.fn=straight.decode, goal.fn = noGoal))
 
-
-#Convert a BCD decimal number to a decimal number
-BCD.to.Decimal <- function(binaryNumb)
+Rastrigin.fitness.fn <- function(genes)
 {
-  binaryLength = length(binaryNumb)
-  decimalNumb = 0
-  for(i in 1:binaryLength)
+  n = 10
+  chromosomeLength = 100
+  geneSize = chromosomeLength/n
+  range = 2^(geneSize)
+  
+  A = 10
+  
+  xVals = vector("list",n)
+  for (i in 1:n)
   {
-    if ( binaryNumb[i] == 1)
-      decimalNumb = decimalNumb + 2^(binaryLength - i)
+    xVals[i] = (BCD.to.Decimal(genes[((i - 1)*geneSize + 1):(i*geneSize)])*5.12*2/range) - 5.12    
   }
   
-  decimalNumb
+  total = A*n
+  for (i in 1:n)
+  {
+    total = total + xVals[[i]]^2 - A*cos(2*pi*xVals[[i]])
+  }
+  -total
 }
 
+#rastriginGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
+                    #fitness.args=new.fitness.args(fitness.fn=Rastrigin.fitness.fn, decode.fn=straight.decode, goal = 0))
+
+Rosenbrock.fitness.fn <- function(genes)
+{
+  n = 2
+  chromosomeLength = 100
+  x = BCD.to.Decimal(genes[1:(chromosomeLength/n)])
+  y = BCD.to.Decimal(genes[(chromosomeLength/n + 1) : chromosomeLength])
+  
+  total = (1 - x)^2 + 100*(y - x^2)^2
+  
+  -total
+}
+
+#rosenbrockGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
+                       #fitness.args=new.fitness.args(fitness.fn=Rosenbrock.fitness.fn, decode.fn=straight.decode, goal = 0))
+
+Schwefel.fitness.fn <-function(genes)
+{
+  n = 10
+  chromosomeLength = 100
+  geneSize = chromosomeLength/n
+  range = 2^(geneSize)
+  
+  xVals = vector("list",n)
+  for (i in 1:n)
+  {
+    xVals[i] = (BCD.to.Decimal(genes[((i - 1)*geneSize + 1):(i*geneSize)])) - 512    
+  }
+  
+  total = 418.9829*n
+  for (i in 1:n)
+  {
+    total = total - xVals[[i]]*sin(sqrt(abs(xVals[[i]])))
+  }
+  -total
+}
+
+#shwefelGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
+                        #fitness.args=new.fitness.args(fitness.fn=Schwefel.fitness.fn, decode.fn=straight.decode, goal = 0))
+
+#Convert a BCD decimal number to a decimal number
 BCD.to.Decimal <- function(binaryNumb)
 {
   L = length(binaryNumb)
