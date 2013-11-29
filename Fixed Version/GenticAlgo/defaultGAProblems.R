@@ -19,7 +19,7 @@ simpleGoal<- function(goal, epsilon)
 {
   goalFunction <- function(popFit)
   {
-    if (max(popFit) >= goal + epsilon) return(TRUE) else return(FALSE)    
+    if (max(popFit) >= (goal + epsilon)) return(TRUE) else return(FALSE)
   }
 }
 
@@ -39,13 +39,13 @@ DeJong.F1.fitness <- function(genes)
 {
   n = 10
   chromosomeLength = 100
-  geneSize
+  geneSize = chromosomeLength/n
   range = 2^(geneSize) #the number of ints in the range -5.12<= xi < 5.12
   
   xVals = vector("list",n)
   for (i in 1:n)
   {
-    xVals[i] = (BCD.to.Decimal(genes[((i - 1)*geneSize + 1):(i*geneSize)])*5.12*2/range) - 5.12    
+    xVals[i] = (GrayCode.to.Decimal(genes[((i - 1)*geneSize + 1):(i*geneSize)])*5.12*2/range) - 5.12    
   }
   
   total = 0
@@ -62,7 +62,7 @@ DeJong.F1.Decode <-function(genes)
   xVals = vector("list",n)
   for (i in 1:n)
   {
-    xVals[i] = (BCD.to.Decimal(genes[((i - 1)*n + 1):(i*n)])*5.12*2/range) - 5.12    
+    xVals[i] = (Binary.to.Decimal(genes[((i - 1)*n + 1):(i*n)])*5.12*2/range) - 5.12    
   }
 }
 #TODO - create goal function
@@ -76,8 +76,8 @@ DeJong.F2.fitness <- function(genes)
   geneSize = chromosomeLength/2
   range = 2^(geneSize) #the number of ints in the range -2.048<= x,y < 2.048
   
-  x=BCD.to.Decimal(genes[1:12])*2.048*2/range - 2.048    
-  y=BCD.to.Decimal(genes[13:24])*2.048*2/range - 2.048
+  x=GrayCode.to.Decimal(genes[1:12])*2.048*2/range - 2.048    
+  y=GrayCode.to.Decimal(genes[13:24])*2.048*2/range - 2.048
   
   fitness = 100*(x^2 - y^2)^2 + (1-x)^2
   -fitness #return a negative fitness to attempt to minimize
@@ -96,7 +96,7 @@ DeJong.F3.fitness <- function(genes)
   xVals = vector("list",n)
   for (i in 1:n)
   {
-    xVals[i] = (BCD.to.Decimal(genes[((i - 1)*geneSize + 1):(i*geneSize)])*5.12*2/range) - 5.12    
+    xVals[i] = (Binary.to.Decimal(genes[((i - 1)*geneSize + 1):(i*geneSize)])*5.12*2/range) - 5.12    
   }
   xVals = as.vector(xVals, mode = "numeric")
   max(xVals)
@@ -115,7 +115,7 @@ DeJong.F4.fitness <- function(genes)
   xVals = vector("list",n)
   for (i in 1:n)
   {
-    xVals[i] = (BCD.to.Decimal(genes[((i - 1)*(geneSize) + 1):(i*geneSize)])*1.28*2/range) - 1.28 
+    xVals[i] = (Binary.to.Decimal(genes[((i - 1)*(geneSize) + 1):(i*geneSize)])*1.28*2/range) - 1.28 
   }
   
   total = 0
@@ -144,7 +144,7 @@ DeJong.F5.fitness.generator <- function()
     xVals = vector("list",n)
     for (i in 1:n)
     {
-      xVals[i] = (BCD.to.Decimal(genes[((i - 1)*(geneSize) + 1):(i*geneSize)])*65.536*2/range) - 65.536 
+      xVals[i] = (Binary.to.Decimal(genes[((i - 1)*(geneSize) + 1):(i*geneSize)])*65.536*2/range) - 65.536 
     }
 
     total = 0.002
@@ -177,7 +177,7 @@ Rastrigin.fitness.fn <- function(genes)
   xVals = vector("list",n)
   for (i in 1:n)
   {
-    xVals[i] = (BCD.to.Decimal(genes[((i - 1)*geneSize + 1):(i*geneSize)])*5.12*2/range) - 5.12    
+    xVals[i] = (Binary.to.Decimal(genes[((i - 1)*geneSize + 1):(i*geneSize)])*5.12*2/range) - 5.12    
   }
   
   total = A*n
@@ -195,8 +195,8 @@ Rosenbrock.fitness.fn <- function(genes)
 {
   n = 2
   chromosomeLength = 100
-  x = BCD.to.Decimal(genes[1:(chromosomeLength/n)])
-  y = BCD.to.Decimal(genes[(chromosomeLength/n + 1) : chromosomeLength])
+  x = GrayCode.to.Decimal(genes[1:(chromosomeLength/n)])
+  y = GrayCode.to.Decimal(genes[(chromosomeLength/n + 1) : chromosomeLength])
   
   total = (1 - x)^2 + 100*(y - x^2)^2
   
@@ -216,7 +216,7 @@ Schwefel.fitness.fn <-function(genes)
   xVals = vector("list",n)
   for (i in 1:n)
   {
-    xVals[i] = (BCD.to.Decimal(genes[((i - 1)*geneSize + 1):(i*geneSize)])) - 512    
+    xVals[i] = (Binary.to.Decimal(genes[((i - 1)*geneSize + 1):(i*geneSize)])) - 512    
   }
   
   total = 418.9829*n
@@ -230,15 +230,22 @@ Schwefel.fitness.fn <-function(genes)
 #shwefelGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
                         #fitness.args=new.fitness.args(fitness.fn=Schwefel.fitness.fn, decode.fn=straight.decode, goal = 0))
 
-#Convert a BCD decimal number to a decimal number
-BCD.to.Decimal <- function(binaryNumb)
+#Convert a binary number to a decimal number
+Binary.to.Decimal <- function(binaryNumb)
 {
   L = length(binaryNumb)
   sum(2L^(seq_along(binaryNumb)-1L) * rev(binaryNumb))
 }
 
-#Use grayCode instead of BCD conversion
-grayCode.to.Decimal <- function(binaryNumb)
+#Use grayCode instead of standard binary conversion
+GrayCode.to.Decimal <- function(grayNumb)
 {
-
+  binaryNumb = vector("numeric",length(grayNumb))
+  binaryNumb[1] = grayNumb[1]
+  for (i in 2:length(grayNumb))
+  {
+    binaryNumb[i] = xor(grayNumb[i], binaryNumb[i - 1])
+  }
+  
+  return(Binary.to.Decimal(binaryNumb))
 }

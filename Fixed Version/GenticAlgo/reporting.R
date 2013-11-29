@@ -36,9 +36,18 @@ base.reporting.fn <- function(pop, mutation, cross, elite)
 
 create.fitness.stats <- function(pop)
 {
+  fitness.env = new.env()
+  
   maxFit = pop[[1]]
   minFit = pop[[1]]
-  fitnesses = vector("list", size(pop))
+  fitnesses = vector("numeric", size(pop))
+  
+  #TODO - Handle frequencies for symbolic GAs other than binary
+  frequency.of.0 = vector("numeric", size(pop))
+  frequency.of.1 = vector("numeric", size(pop))
+  
+  fitness.env$entropy = 0
+  
   for (i in 1:size(pop))
   {
     if (maxFit@fitness$value < pop[[i]]@fitness$value)
@@ -51,12 +60,13 @@ create.fitness.stats <- function(pop)
     }
     
     fitnesses[i] = pop[[i]]@fitness$value
-  }
-  
-  fitnesses = as.vector(fitnesses, mode = "numeric")
-  
-  fitness.env = new.env()
+    
+    frequency.of.0[i] = sum(pop[[i]]@chr.genes$genes==0)
+    frequency.of.1[i] = sum(pop[[i]]@chr.genes$genes==0)
 
+    fitness.env$entropy = fitness.env$entropy + fitnesses[i]*log2(abs(fitnesses[i]))
+  }
+  fitness.env$test = fitnesses
   fitness.env$maxFit = maxFit
   fitness.env$minFit = minFit
   fitness.env$max = max(fitnesses)
@@ -67,7 +77,10 @@ create.fitness.stats <- function(pop)
   fitness.env$median = fitness.env$quantile[3]
   fitness.env$skew = skewness(fitnesses) #requires package "moments"
   fitness.env$kurtosis = kurtosis(fitnesses)
-
+  fitness.env$frequency.of.0 = frequency.of.0
+  fitness.env$frequency.of.1 = frequency.of.1
+  fitness.env$diversity = frequency.of.0*frequency.of.1/(frequency.of.1+frequency.of.0)
+  
   return(fitness.env)
 }
 
