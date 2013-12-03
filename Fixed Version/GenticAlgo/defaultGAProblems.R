@@ -230,6 +230,72 @@ Schwefel.fitness.fn <-function(genes)
 #shwefelGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
                         #fitness.args=new.fitness.args(fitness.fn=Schwefel.fitness.fn, decode.fn=straight.decode, goal = 0))
 
+F8.Fitness <- function(genes)
+{
+  n = 10
+  chromosomeLength = 100
+  geneSize = chromosomeLength/n
+  range = 2^(geneSize)
+  
+  xVals = vector("list",n)
+  for (i in 1:n)
+  {
+    xVals[i] = (Binary.to.Decimal(genes[((i - 1)*(geneSize) + 1):(i*geneSize)])*512*2/range) - 512
+  }
+  total = cos(xVals[[1]]/sqrt(1))
+  for (i in 2:n)
+  {
+    tempTotal = tempTotal*cos(xVals[[i]]/sqrt(i))
+  }
+  
+  total = 1 - total
+  for (i in 1:n)
+  {
+    total = total + (xVals[[i]]^2)/4000
+  }
+  
+  return(total)
+}
+
+Simple.F2.fitness <- function(genes)
+{
+  chromosomeLength = 24
+  geneSize = chromosomeLength/2
+  range = 2^(geneSize) #the number of ints in the range -2.048<= x,y < 2.048
+  
+  x=GrayCode.to.Decimal(genes[1:12])*2.048*2/range - 2.048    
+  y=GrayCode.to.Decimal(genes[13:24])*2.048*2/range - 2.048
+  
+  fitness = 100*(x^2 - y^2)^2 + (1-x)^2
+  fitness
+}
+
+Simple.F8.Fitness <- function(value)
+{
+  1 + value^2/4000 - cos(value)
+}
+
+F8F2.fitness.fn <- function(genes)
+{
+  n = 20
+  chromosomeLength = 240
+  geneSize = chromosomeLength/n
+  range = 2^(geneSize)
+  
+  total = 0
+  for(i in 1:(n-1))
+  {
+    total = total + Simple.F8.Fitness(Simple.F2.fitness(genes[((i-1)*12 + 1):((i+1)*12)]))
+  }
+  total = total + Simple.F8.Fitness(Simple.F2.fitness(c(genes[((n-1)*12):chromosomeLength],genes[1:12])))
+
+  -total
+}
+
+#F8F2GA=new.GA.env(encoding.args=new.encoding.args(chr.length=240, chr.encode.type="binary"),
+#fitness.args=new.fitness.args(fitness.fn=F8F2.fitness.fn, decode.fn=straight.decode, goal = 0))
+
+
 #Convert a binary number to a decimal number
 Binary.to.Decimal <- function(binaryNumb)
 {
