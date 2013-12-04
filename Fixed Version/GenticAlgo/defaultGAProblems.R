@@ -14,6 +14,28 @@ finite.min.fn <- function(genes, gene.max){
   length(genes) * gene.max - sum(genes)
 }
 
+abc.fit <-function(chr)
+{
+  total = 0
+  for(i in 1: length(chr))
+  {
+    if (chr[[i]] == 'a')
+    {
+      total = total + 2
+    }
+    else if (chr[[i]] == 'b')
+    {
+      total = total + 1
+    }
+    else
+    {
+      total = total
+    }
+  }
+  
+  return(total)
+}
+
 #Goal functions
 simpleGoal<- function(goal, epsilon)
 {

@@ -68,7 +68,8 @@ next.generation <- function(GA.env){
   m.results <- c(restResults, p1Results, p2Results)
   #CrossOver
   x.results <- chr.xover(p1, p2, reproduction.env(GA.env)$xover.swapMask)
-
+  x.results@returnList$p1 = p1.loc
+  x.results@returnList$p2 = p2.loc
   #Create the next population
   new.pop <- new.population(chromosomes = c(elite, p1, p2, rest))
     
@@ -76,5 +77,5 @@ next.generation <- function(GA.env){
   add.population(reproduction.env(GA.env), new.pop)
     
   #Report on the new population
-  GA.env$reporting.fn(pop = new.pop, mutation = m.results, cross = x.results, elite = elite)
+  GA.env$reporting.fn(pop = new.pop, mutation = m.results, cross = x.results, elite = elite, GA.env = GA.env)
 }

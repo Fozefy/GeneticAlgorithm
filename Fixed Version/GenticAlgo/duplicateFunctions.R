@@ -18,10 +18,19 @@ setMethod("duplicate",
 setMethod("duplicate",
           signature = c("list"),
           definition = function(obj, ...){
-            for(i in 1:length(obj)){
-              obj[[i]] <- duplicate(obj[[i]])
+            
+            if (length(obj) > 0)
+            {
+              for(i in 1:length(obj)){              
+                obj[[i]] <- duplicate(obj[[i]])
+              }
+              return(obj)
             }
-            obj
+            else
+            {
+              #Return an empty list
+              list()
+            }
           }
 )
 

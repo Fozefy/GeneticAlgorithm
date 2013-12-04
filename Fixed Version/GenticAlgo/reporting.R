@@ -17,7 +17,7 @@ report <- function(gen, currentGen.results, goal.reached){
   new("base.report", gen = gen, currentGen.results = currentGen.results, goal.reached = as.logical(goal.reached))
 }
 
-base.reporting.fn <- function(pop, mutation, cross, elite)
+base.reporting.fn <- function(pop, mutation, cross, elite, ...)
 {
   fitness.stats <- create.fitness.stats(pop)
     
@@ -165,14 +165,11 @@ create.crossover.stats <- function(cross)
 }
 
 #REPORT ALL THE THINGS!!!
-reportAll.reporting.fn <- function(GA.env)
+reportAll.reporting.fn <- function(pop, mutation, cross, elite,...)
 {
-  reportAll.reporting.fn <- function(pop, mutation, cross)
-  {
-    results = c(pop, mutation, cross)
+  results = c(pop, mutation, cross, elite)
     
-    results
-  }
+  results
 }
          
 print.report <- function(GA.env)

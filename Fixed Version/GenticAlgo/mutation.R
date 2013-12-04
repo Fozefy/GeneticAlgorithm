@@ -94,10 +94,17 @@ setMethod("chr.mutate",
           signature = c("list", "environment", "ANY", "ANY"),
           definition = function(chr, repr.env, mutation.locations = NULL, mutations = NULL){
             n <- length(chr)
-            returnValues <- vector("list", n)
-            for(i in 1:n)
-              returnValues[[i]] <- chr.mutate(chr[[i]], repr.env, mutation.locations[[i]], mutations[[i]])
-            new("returnList", returnValues)
+            if (n > 0)
+            {
+              returnValues <- vector("list", n)
+              for(i in 1:n)
+                returnValues[[i]] <- chr.mutate(chr[[i]], repr.env, mutation.locations[[i]], mutations[[i]])
+              return(new("returnList", returnValues))
+            }
+            else
+            {
+              return(list())
+            }
           }
 )
 

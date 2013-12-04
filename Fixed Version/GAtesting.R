@@ -116,7 +116,6 @@ with(ga.env4, {
 })
 
 ######WORKING UP TO HERE
-
 # chr2.vector <- duplicate(pop2)
 # mutate2.fn <- mutation.genes.fgen(mutation.genes.creep, max=10, min=0)
 # mutate2 <- mutation.fgen(prob.mutation = 0.2, mutation.genes.fn = mutate2.fn)
@@ -125,7 +124,7 @@ with(ga.env4, {
 # ga.print(chr2.vector)
 # ga.print(mresults2)
 # 
-# chr3.vector <- duplicate.chromosomes(pop2)
+# chr3.vector <- duplicate(pop2)
 # mutate3.fn <- mutation.genes.fgen(mutation.genes.integer, 0:9)
 # mutate3 <- mutation.fgen(prob.mutation = 0.8, mutation.genes.fn = mutate3.fn)
 # mresults3 <- mutate3(chr3.vector)
@@ -190,6 +189,19 @@ threePt.xover <- xover.fgen(xover.swapMask.fgen(xover.mask.kpoint, 3, TRUE))
 xresults2 <- threePt.xover(p1.vector, p2.vector)
 ga.print(chr1.vector)
 ga.print(xresults2, print.xpts = TRUE)
+
+
+xoverTest.GA=new.GA.env(pop.size = 10, GA.base.args=new.GA.base.args(6),
+                        encoding.args = new.encoding.args(chr.length = 8, gene.alphabet = c("a", "b", "c","d","e","f","g"), chr.encode.type = "symbolic"),
+                        mutation.args = new.mutation.args(mutation.type = "symbolic", prob.mutation = 0),
+                        xover.args = new.xover.args(xover.type = "one.pt", xover.prob = 1.0), fitness.args=new.fitness.args(fitness.fn=abc.fit),
+                        reporting.fn=reportAll.reporting.fn)
+generational.ga(xoverTest.GA)
+ga.print(xoverTest.GA$reported.data[[2]]@currentGen.results[[1]]@chromosomes$values)
+ga.print(xoverTest.GA$reported.data[[3]]@currentGen.results[[1]]@chromosomes$values)
+xoverTest.GA$reported.data[[2]]@currentGen.results[[4]]@returnList$values
+#xoverTest.GA$reported.data[[2]]@currentGen.results[[4]]@returnList$p1
+#xoverTest.GA$reported.data[[2]]@currentGen.results[[4]]@returnList$p2
 
 ### Selection
 #Tournament selection runs, not sure how to know if its 'correct'
