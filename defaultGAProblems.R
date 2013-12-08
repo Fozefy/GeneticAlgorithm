@@ -78,19 +78,11 @@ DeJong.F1.fitness <- function(genes)
 
   -total #return a negative fitness to attempt to minimize
 }
-#TODO-use the decode function
-DeJong.F1.Decode <-function(genes)
-{
-  xVals = vector("list",n)
-  for (i in 1:n)
-  {
-    xVals[i] = (Binary.to.Decimal(genes[((i - 1)*n + 1):(i*n)])*5.12*2/range) - 5.12    
-  }
-}
+
 #TODO - create goal function
 
 #dejongGA.F1=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
-#fitness.args=new.fitness.args(fitness.fn=DeJong.F1.fitness, decode.fn=straight.decode, goal = 0))
+#fitness.args=new.fitness.args(fitness.fn=DeJong.F1.fitness,  goal = 0))
 
 DeJong.F2.fitness <- function(genes)
 {
@@ -106,7 +98,7 @@ DeJong.F2.fitness <- function(genes)
 }
 
 #dejongGA.F2=new.GA.env(encoding.args=new.encoding.args(chr.length=24, chr.encode.type="binary"),
-#fitness.args=new.fitness.args(fitness.fn=DeJong.F2.fitness, decode.fn=straight.decode, goal = 0))
+#fitness.args=new.fitness.args(fitness.fn=DeJong.F2.fitness,  goal = 0))
 
 DeJong.F3.fitness <- function(genes)
 {
@@ -125,7 +117,7 @@ DeJong.F3.fitness <- function(genes)
 }
 
 #dejongGA.F3=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
-#fitness.args=new.fitness.args(fitness.fn=DeJong.F3.fitness, decode.fn=straight.decode, goal = 5.12))
+#fitness.args=new.fitness.args(fitness.fn=DeJong.F3.fitness,  goal = 5.12))
 
 DeJong.F4.fitness <- function(genes)
 {
@@ -150,7 +142,7 @@ DeJong.F4.fitness <- function(genes)
 }
 
 #dejongGA.F4=new.GA.env(encoding.args=new.encoding.args(chr.length=80, chr.encode.type="binary"),
-                    #fitness.args=new.fitness.args(fitness.fn=DeJong.F4.fitness, decode.fn=straight.decode, goal.fn=noGoal))
+                    #fitness.args=new.fitness.args(fitness.fn=DeJong.F4.fitness,  goal.fn=noGoal))
 
 DeJong.F5.fitness.generator <- function()
 {
@@ -185,7 +177,7 @@ DeJong.F5.fitness.generator <- function()
 }
 
 #dejongGA.F5=new.GA.env(encoding.args=new.encoding.args(chr.length=425, chr.encode.type="binary"),
-#fitness.args=new.fitness.args(fitness.fn=DeJong.F5.fitness.generator(), decode.fn=straight.decode, goal.fn = noGoal))
+#fitness.args=new.fitness.args(fitness.fn=DeJong.F5.fitness.generator(),  goal.fn = noGoal))
 
 Rastrigin.fitness.fn <- function(genes)
 {
@@ -211,7 +203,7 @@ Rastrigin.fitness.fn <- function(genes)
 }
 
 #rastriginGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
-                    #fitness.args=new.fitness.args(fitness.fn=Rastrigin.fitness.fn, decode.fn=straight.decode, goal = 0))
+                    #fitness.args=new.fitness.args(fitness.fn=Rastrigin.fitness.fn,  goal = 0))
 
 Rosenbrock.fitness.fn <- function(genes)
 {
@@ -226,7 +218,7 @@ Rosenbrock.fitness.fn <- function(genes)
 }
 
 #rosenbrockGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
-                       #fitness.args=new.fitness.args(fitness.fn=Rosenbrock.fitness.fn, decode.fn=straight.decode, goal = 0))
+                       #fitness.args=new.fitness.args(fitness.fn=Rosenbrock.fitness.fn,  goal = 0))
 
 Schwefel.fitness.fn <-function(genes)
 {
@@ -250,7 +242,7 @@ Schwefel.fitness.fn <-function(genes)
 }
 
 #shwefelGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
-                        #fitness.args=new.fitness.args(fitness.fn=Schwefel.fitness.fn, decode.fn=straight.decode, goal = 0))
+                        #fitness.args=new.fitness.args(fitness.fn=Schwefel.fitness.fn,  goal = 0))
 
 F8.Fitness <- function(genes)
 {
@@ -315,7 +307,7 @@ F8F2.fitness.fn <- function(genes)
 }
 
 #F8F2GA=new.GA.env(encoding.args=new.encoding.args(chr.length=240, chr.encode.type="binary"),
-#fitness.args=new.fitness.args(fitness.fn=F8F2.fitness.fn, decode.fn=straight.decode, goal = 0))
+#fitness.args=new.fitness.args(fitness.fn=F8F2.fitness.fn,  goal = 0))
 
 
 #Convert a binary number to a decimal number

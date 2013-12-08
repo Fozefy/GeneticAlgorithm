@@ -69,7 +69,7 @@ new.fitness.fn <- function(fitness.fn, ...){
 
 ## Fitness Evaluation
 
-evaluate <- function(obj, fitness.fn, decode.fn, ...){
+evaluate <- function(obj, fitness.fn, ...){
   print("generic base function does nothing - evaluate")
 }
 
@@ -77,17 +77,17 @@ setGeneric("evaluate")
 
 setMethod("evaluate",
           signature = c("organism", "function"),
-          definition = function(obj, fitness.fn, decode.fn = identity, ...) {  
-            obj@fitness$value <- fitness.fn(decode.fn(obj@chromosome$genes))
+          definition = function(obj, fitness.fn, ...) {  
+            obj@fitness$value <- fitness.fn(obj@chromosome$genes)
             obj@fitness$value
           }
 )
 
 setMethod("evaluate", 
           signature = c("list", "function"),
-          definition = function(obj, fitness.fn, decode.fn = identity, ...) {
+          definition = function(obj, fitness.fn, ...) {
             n <- length(obj)
-            fit1 <- evaluate(obj[[1]], fitness.fn, decode.fn, ...)
+            fit1 <- evaluate(obj[[1]], fitness.fn, ...)
             
             if(is.multiobjective(obj[[1]]))
               fit.cache <- vector("list", n)
@@ -97,7 +97,7 @@ setMethod("evaluate",
             fit.cache[[1]] <- fit1
             
             for(i in 2:n){
-              fit.cache[[i]] <- evaluate(obj[[i]], fitness.fn, decode.fn, ...)
+              fit.cache[[i]] <- evaluate(obj[[i]], fitness.fn, ...)
             }
             
             fit.cache
@@ -106,9 +106,8 @@ setMethod("evaluate",
 
 setMethod("evaluate", 
           signature = c("population", "function"),
-          definition = function(obj, fitness.fn, decode.fn = identity, ...) { 
-            decode.fn
-            fit.vector <- evaluate(organisms(obj), fitness.fn, decode.fn, ...)
+          definition = function(obj, fitness.fn, ...) { 
+            fit.vector <- evaluate(organisms(obj), fitness.fn, ...)
           }
 )
 

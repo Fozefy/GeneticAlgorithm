@@ -43,7 +43,7 @@ ga.print <- function(obj, ...) cat(obj, ...)
 setGeneric("ga.print")
 
 setMethod("ga.print",
-          signature = c("chromosome"),
+          signature = c("organism"),
           definition = function(obj, max = 0, gene.sep = " ", genes.delimiters = NULL, 
                                 fitness.sep = "", fitness.delimiters = NULL, ...){
             genes.delimiter.open <- get.open.delimiter(genes.delimiters)

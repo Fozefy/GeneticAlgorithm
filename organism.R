@@ -5,9 +5,7 @@ setMethod("initialize",
           signature = "organism",
           definition = function(.Object, chr.length, 
                                 rdist = function(n) sample(c(0,1), n, replace=TRUE),
-                                fitness.fn = function(chr) {numeric(0)},
-                                decode.fn = identity,
-                                ...) {
+                                fitness.fn = function(chr) {numeric(0)}, ...) {
             genes.env <- new.env()
             if (is.null(rdist))
             {
@@ -18,7 +16,7 @@ setMethod("initialize",
             .Object@chromosome <- genes.env
             
             fitness.env <- new.env()
-            fitness.env$value <- fitness.fn(decode.fn(.Object))
+            fitness.env$value <- fitness.fn(.Object)
             .Object@fitness <- fitness.env
             
             .Object

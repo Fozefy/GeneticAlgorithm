@@ -1,7 +1,7 @@
 ############
 ### Input GA parameters
 
-# GA.parameters: fitness.fn, decode.fn, goal.fn, epsilon, max.gen
+# GA.parameters: fitness.fn, goal.fn, epsilon, max.gen
 # GA.parameters: 
 
 # chr.encode
@@ -26,7 +26,7 @@
 # Encode Environment:  chr.length, pop.size, new.population
 #   |-- Selection Environment: select.elite, select.chr
 #      |-- Reproduction Environment: mutate, xover, xover.prob
-#   |-- Fitness Environment: fitness.fn, decode.fn, goal.fn, epsilon
+#   |-- Fitness Environment: fitness.fn, goal.fn, epsilon
 
 new.GA.env <- function(pop.size = 100, verbose = TRUE,
                        GA.base.args = new.GA.base.args(), encoding.args = new.encoding.args(), mutation.args = new.mutation.args(),
@@ -78,14 +78,13 @@ new.encoding.args <- function(chr.length = 30, chr.encode.type = "binary",
   as.list(environment())
 }
 
-new.fitness.args <- function(fitness.fn = one.max.fn, fitnessFn.args = NULL,
-                             decode.fn = one.max.decode, decodeFn.args = NULL,
-                             goal.fn = NULL, goal = 30, epsilon = 0){
+new.fitness.args <- function(fitness.fn = one.max.fn, fitnessFn.args = NULL, goal.fn = NULL, goal = 30, epsilon = 0)
+{
   if (is.null(goal.fn))
   {
     goal.fn = simpleGoal(goal, epsilon)
   }
-  fitness.fn; fitnessFn.args; decode.fn; decodeFn.args; goal.fn; epsilon
+  fitness.fn; fitnessFn.args; goal.fn; epsilon
   as.list(environment())
 }
 
@@ -228,7 +227,7 @@ generational.ga <- function(GA.env){
     currentGen.results <- NULL #Our 0 generation has no results, but we want to be able to report anyway
     reported.data <- NULL
     for(gen in 0:max.gen){
-      fitness.set <- evaluate(reproduction.env(GA.env)$pop, fitness.env$fitness.fn, fitness.env$decode.fn)
+      fitness.set <- evaluate(reproduction.env(GA.env)$pop, fitness.env$fitness.fn)
       
       #Check if we've met our goal yet
       if (!is.null(fitness.env(GA.env)$goal.fn))
