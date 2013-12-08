@@ -1,5 +1,225 @@
-##### Genetic Algorithm
+############
+### Input GA parameters
 
+# GA.parameters: fitness.fn, decode.fn, goal.fn, epsilon, max.gen
+# GA.parameters: 
+
+# chr.encode
+#     chr.encode.type: character = {"binary", "spin", "symbolic", "seq", "integer", "dist", "real"}
+# 		chr.mode: character = {"numeric", "character", "logical", "complex", "raw", "list", "expression", "name"}
+# 		chr.length
+# pop.size
+# select.elite 
+#	 elite.size
+# select.chr
+#	 tournament
+#		 tournament.size	
+# mutate
+#		mutate.type: character = {"binary", "boolean", "complement", "spin", 
+#											 "symbolic", "integer", "creap", "uniform", "gaussian"} 
+# 		prob.mutation
+# xover
+#		xover.type: character = {"1pt", "2pt", "kpt", "uniform") 
+# 		xover.prob
+
+# Control Parameters: max.gen, report.stats, environments  
+# Encode Environment:  chr.length, pop.size, new.population
+#   |-- Selection Environment: select.elite, select.chr
+#      |-- Reproduction Environment: mutate, xover, xover.prob
+#   |-- Fitness Environment: fitness.fn, decode.fn, goal.fn, epsilon
+
+new.GA.env <- function(pop.size = 100, verbose = TRUE,
+                       GA.base.args = new.GA.base.args(), encoding.args = new.encoding.args(), mutation.args = new.mutation.args(),
+                       fitness.args = new.fitness.args(goal = encoding.args$chr.length), xover.args = new.xover.args(), selection.args = new.selection.args(),
+                       reporting.fn = base.reporting.fn){
+  GA.env <- new.env()
+  setup.GA.envTree(GA.env)
+  setup.GA.base.env(GA.env, GA.base.args, pop.size, verbose)
+  setup.encoding.env(GA.env, encoding.args)
+  setup.fitness.env(GA.env, fitness.args)
+  setup.reproduction.env(GA.env, mutation.args, xover.args)
+  setup.selection.env(GA.env, selection.args)
+  setup.reporting(GA.env, reporting.fn)
+  GA.env
+}
+
+#Convenience functions for accessing inner environments
+encoding.env <- function(GA){GA$encoding.env}
+fitness.env <- function(GA){GA$fitness.env}
+selection.env <- function(GA){GA$selection.env}
+reproduction.env <- function(GA){GA$reproduction.env}
+
+#Create all of the GA's inner environments
+setup.GA.envTree <- function(GA.env) {
+  GA.env$encoding.env <- new.env(parent = GA.env)
+  GA.env$fitness.env <- new.env(parent = GA.env)
+  GA.env$selection.env <- new.env(parent = GA.env)
+  GA.env$reproduction.env <- new.env(parent = GA.env)
+}
+
+#Helper function for setting up environments - adds a list of args to env
+add.to.env <- function(env, arg.list){
+  arg.names <- names(arg.list)
+  for(name in arg.names){
+    env[[name]] <- arg.list[[name]]   
+  }
+}
+
+#######################################Create the GA's arguements
+new.GA.base.args <- function(max.gen = 100){
+  max.gen
+  as.list(environment())
+}
+
+new.encoding.args <- function(chr.length = 30, chr.encode.type = "binary", 
+                              gene.alphabet = NULL, rdist = NULL, rdist.args = NULL, 
+                              gene.mode = NULL, seq.args = NULL){
+  chr.length; chr.encode.type; gene.alphabet; rdist; rdist.args; gene.mode; seq.args
+  as.list(environment())
+}
+
+new.fitness.args <- function(fitness.fn = one.max.fn, fitnessFn.args = NULL,
+                             decode.fn = one.max.decode, decodeFn.args = NULL,
+                             goal.fn = NULL, goal = 30, epsilon = 0){
+  if (is.null(goal.fn))
+  {
+    goal.fn = simpleGoal(goal, epsilon)
+  }
+  fitness.fn; fitnessFn.args; decode.fn; decodeFn.args; goal.fn; epsilon
+  as.list(environment())
+}
+
+new.xover.args <- function (xover.prob = 0.8, xover.type = "uniform", xover.alpha = 0.3, xover.k = 2)
+{
+  xover.prob; xover.type; xover.alpha
+  as.list(environment())
+}
+
+new.mutation.args <- function(gene.delta = NULL, gene.sd = NULL, prob.mutation = 2, mutation.type = "binary", not.equal.op = `!=`){
+  gene.delta; gene.sd
+  as.list(environment())
+}
+
+new.selection.args <- function(selection.type = "simple.tournament", tourn.size = 2, prob.select.worse = 0, decreasing = TRUE, `%>%` = `>`, elitism = TRUE, elite.size = 2, elite.fn = truncation.selection){
+  selection.type; tourn.size; prob.select.worse; decreasing; `%>%`; elitism; elite.size; elite.fn
+  as.list(environment())
+}
+
+##################Setup the GA environments as per the appropriate args
+setup.GA.base.env <- function(GA.env, GA.base.args = list(), pop.size = 100, verbose){
+  add.to.env(GA.env, GA.base.args)
+  GA.env$pop.size = pop.size
+  GA.env$verbose = verbose
+}
+
+setup.encoding.env <- function(GA.env, encoding.args = new.encoding.args()){
+  add.to.env(encoding.env(GA.env), encoding.args)
+  with(encoding.env(GA.env), {
+    if(encoding.args$chr.encode.type == "seq" || encoding.args$chr.encode.type == "integer"){
+      gene.values <- do.call(seq, seq.args)
+      gene.max <- max(gene.values)
+      gene.min <- min(gene.values)
+    }
+    
+    new.genes.fn <- switch(encoding.args$chr.encode.type,
+                           binary   = new.genes.binary,
+                           spin 		= new.genes.spin,
+                           symbolic	= new.genes.fgen(new.genes.symbolic, gene.alphabet),
+                           seq 		= new.genes.fgen(new.genes.symbolic, gene.values),
+                           integer 	= new.genes.fgen(new.genes.symbolic, gene.values),
+                           dist 		= new.genes.fgen(new.genes.dist, rdist, rdist.args),
+                           real 		= new.genes.fgen(new.genes.dist, rdist, rdist.args),
+                           ... 		= simpleError(paste("chr.encode.type must be one of 'binary', 'spin' ", 
+                                                     "'symbolic', 'seq', 'integer', 'dist' or 'real'.",
+                                                     "Instead it is '", chr.encode.type, "'", sep = "")))
+    
+  })	
+}
+
+setup.fitness.env <- function(GA.env, fitness.args){
+  add.to.env(fitness.env(GA.env), fitness.args)
+}
+
+setup.reproduction.env <- function(GA.env, mutation.args = new.mutation.args(), xover.args = new.xover.args()){
+  add.to.env(reproduction.env(GA.env), mutation.args)
+  setup.mutation(reproduction.env(GA.env))
+  
+  add.to.env(reproduction.env(GA.env), xover.args)
+  setup.xover(reproduction.env(GA.env))
+}
+
+setup.mutation <- function(reproduction.env){
+  with(reproduction.env, {
+    if(prob.mutation > 1) 
+      prob.mutation <- prob.mutation / encoding.env(parent.env(environment()))$chr.length
+    
+    alleles.fn <- switch(mutation.type, 
+                         binary 		= alleles.binary,
+                         boolean 		= alleles.boolean,
+                         complement 	= alleles.fgen(alleles.complement, encoding.env(GA.env)$gene.alphabet),
+                         spin 			= alleles.spin,
+                         symbolic 	= alleles.fgen(alleles.symbolic, encoding.env(GA.env)$gene.alphabet),
+                         integer 		= alleles.fgen(alleles.integer, encoding.env(GA.env)$gene.values),
+                         creap 		= alleles.fgen(alleles.creap, encoding.env(GA.env)$gene.max, encoding.env(GA.env)$gene.min),
+                         uniform 		= alleles.fgen(alleles.uniform, encoding.env(GA.env)$gene.delta),
+                         gaussian 	= alleles.fgen(alleles.gaussian, encoding.env(GA.env)$gene.sd),
+                         ...			= simple.error(paste("mutation.type must be one of 'binary', 'boolean', 'complement', ", 
+                                                    "'spin', 'symbolic', 'integer', 'creap', 'uniform' or 'gaussian'.",
+                                                    "Instead it is '", mutation.type, "'", sep = "")))
+    
+    mutate <- mutate.fgen(environment())
+  })
+}
+
+setup.xover <- function(reproduction.env){
+  with(reproduction.env, {
+    xsm.fgen <- xover.swapMask.fgen
+    xover.swapMask <- switch(xover.type, 
+                             one.pt  = xover.mask.1point,
+                             two.pt	= xsm.fgen(xover.mask.kpoint, 2),
+                             k.pt 		= xsm.fgen(xover.mask.kpoint, xover.k),
+                             uniform 	= xsm.fgen(xover.mask.uniform, xover.alpha),
+                             ...		= simple.error(paste("xover.type must be one of '1pt', '2pt', 'kpt' or 'uniform'. ", 
+                                                       "Instead it is '", xover.type, "'", sep = "")))
+    
+    xover <- xover.fgen(xover.swapMask)
+  })
+}
+
+setup.selection.env <- function(GA.env, selection.args = new.selection.args()){
+  
+  add.to.env(selection.env(GA.env), selection.args)
+  with(selection.env(GA.env), {
+    
+    selection.env <- environment()
+    add.to.env(selection.env, selection.args)
+    
+    #Setup.elitism      
+    if(elitism)
+      select.elite <- select.elite.population.fgen(elite.fn = elite.fn, elite.size = elite.size, decreasing = decreasing)
+    else
+      select.elite <- NULL
+    
+    select.fgen <- select.population.fgen
+    select.chr <- switch(selection.type, 
+                         simple.tournament  = select.fgen(simple.tournament.selection, tourn.size, decreasing, `%>%`),
+                         tournament  			= select.fgen(tournament.selection, tourn.size, prob.select.worse, 
+                                                      decreasing, `%>%`),
+                         fps 						= fitnessProportional.selection,
+                         rank 						= rank.selection,  # not yet implemented ... just a stub
+                         ...						= simple.error(paste("select.chr.type must be one of ", 
+                                                       "'simple.tournament', 'tournament', 'fps' or 'rank'. ", 
+                                                       "Instead it is '", select.chr.type, "'", sep = "")))
+    
+    selection.env
+  })
+}
+
+setup.reporting <- function(GA.env, reporting.fn){
+  GA.env$reporting.fn = reporting.fn
+}
+
+##### Genetic Algorithm
 generational.ga <- function(GA.env){
   with(GA.env, {
     pop <- new.population(GA.env)
