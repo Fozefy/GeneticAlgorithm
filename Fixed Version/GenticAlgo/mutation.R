@@ -72,7 +72,7 @@ chr.mutate <- function(chr, repr.env, mutation.locations = NULL, mutations = NUL
 setGeneric("chr.mutate")
 
 setMethod("chr.mutate",
-          signature = c("chromosome", "environment", "ANY", "ANY"),
+          signature = c("organism", "environment", "ANY", "ANY"),
           definition = function(chr, repr.env, mutation.locations = NULL, mutations = NULL){
             chr.length <- length(chr)
             `%!=%` <- repr.env$not.equal.op

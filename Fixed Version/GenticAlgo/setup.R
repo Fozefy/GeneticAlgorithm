@@ -132,11 +132,7 @@ setup.encoding.env <- function(GA.env, encoding.args = new.encoding.args()){
                            ... 		= simpleError(paste("chr.encode.type must be one of 'binary', 'spin' ", 
                                                      "'symbolic', 'seq', 'integer', 'dist' or 'real'.",
                                                      "Instead it is '", chr.encode.type, "'", sep = "")))
-    
-    new.chromosome <- function(chr.length){
-      new("chromosome", chr.length, new.genes.fn)
-    }
-    
+        
   })	
 }
 

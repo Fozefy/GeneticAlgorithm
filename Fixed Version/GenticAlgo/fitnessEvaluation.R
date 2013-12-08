@@ -52,7 +52,7 @@ setMethod("fitness",
 setMethod("fitness", 
           signature = c("population"),
           definition = function(obj){
-            fitness(chromosomes(obj))
+            fitness(organisms(obj))
           }
 )
 
@@ -76,9 +76,9 @@ evaluate <- function(obj, fitness.fn, decode.fn, ...){
 setGeneric("evaluate")
 
 setMethod("evaluate",
-          signature = c("chromosome", "function"),
+          signature = c("organism", "function"),
           definition = function(obj, fitness.fn, decode.fn = identity, ...) {  
-            obj@fitness$value <- fitness.fn(decode.fn(obj@chr.genes$genes))
+            obj@fitness$value <- fitness.fn(decode.fn(obj@chromosome$genes))
             obj@fitness$value
           }
 )
@@ -108,7 +108,7 @@ setMethod("evaluate",
           signature = c("population", "function"),
           definition = function(obj, fitness.fn, decode.fn = identity, ...) { 
             decode.fn
-            fit.vector <- evaluate(chromosomes(obj), fitness.fn, decode.fn, ...)
+            fit.vector <- evaluate(organisms(obj), fitness.fn, decode.fn, ...)
           }
 )
 

@@ -1,69 +1,69 @@
 #### Population Class
 
 setClass("population", 
-         representation(chromosomes = "environment",
+         representation(organisms = "environment",
                         pop.size = "numeric"))
 
 setMethod("initialize", 
           signature = "population",
-          definition = function(.Object, GA.env = NULL, chromosomes = NULL, ...) {
+          definition = function(.Object, GA.env = NULL, organisms = NULL, ...) {
             chr.env <- new.env()
-            if(is.null(chromosomes)){
+            if(is.null(organisms)){
               if(!is.null(GA.env))
-                chromosomes <- create.random.chromosomes(GA.env)
+                organisms <- create.random.organisms(GA.env)
               else
                 simple.error("Either GA.env or chromosomes must be defined. Both are NULL.")
             }
-            chr.env$values <- chromosomes
-            .Object@chromosomes <- chr.env
+            chr.env$values <- organisms
+            .Object@organisms <- chr.env
             
-            .Object@pop.size <- length(chromosomes)
+            .Object@pop.size <- length(organisms)
             
             .Object
           }
 )
 
-create.random.chromosomes <- function(GA.env){
+create.random.organisms <- function(GA.env){
   P <- GA.env$pop.size
-  chromosomes <- vector("list", P)
+  organisms <- vector("list", P)
   for(i in 1:P){
-    chromosomes[[i]] <- new.chromosome(GA.env)
+    organisms[[i]] <- new.organism(GA.env)
   }
-  chromosomes
+  organisms
 }
 
-new.population <- function(GA.env = NULL, chromosomes = NULL){
-  new("population", GA.env = GA.env, chromosomes = chromosomes)  
+new.population <- function(GA.env = NULL, organisms = NULL){
+  new("population", GA.env = GA.env, organisms = organisms)  
 }
 
-chromosomes <- function(object){object$values}
-setGeneric("chromosomes")
+organisms <- function(object){object$values}
+setGeneric("organisms")
 
-setMethod("chromosomes", 
+setMethod("organisms", 
           signature = c("population"),
           definition = function(object){
-            chromosomes(object@chromosomes)
+            organisms(object@organisms)
           }
 )
 
 setMethod("[", 
           signature = c("population"),
           definition = function(x,i,j,...,drop){
-            chromosomes(x)[i]
+            organisms(x)[i]
           }
 )
 
 setMethod("[[", 
           signature = c("population"),
           definition = function(x,i,j,...,drop){
-            chromosomes(x)[[i]]
+            organisms(x)[[i]]
           }
 )
 
 setMethod("[[<-", 
           signature = c("population", "ANY", "ANY"),
           definition = function(x, i, value){
-            x@chromosomes[["values"]][[i]] <- value
+            x@organisms[["values"]][[i]] <- value
             x
           }
 )
@@ -71,7 +71,7 @@ setMethod("[[<-",
 setMethod("[<-", 
           signature = c("population", "ANY", "ANY"),
           definition = function(x, i, value){
-            x@chromosomes[["values"]][i] <- value
+            x@organisms[["values"]][i] <- value
             x
           }
 )
@@ -82,7 +82,7 @@ add.population <- function(reproduction.env, popn){
 }
 
 size <- function(pop){
-  length(chromosomes(pop))
+  length(organisms(pop))
 }
 setGeneric("size")
 setMethod("size",
@@ -103,7 +103,7 @@ setMethod("getFitnesses",
             fitnesses = NULL
             for(i in 1:size(pop))
             {
-              fitnesses = c(fitnesses, pop@chromosomes$values[[i]]@fitness$value)
+              fitnesses = c(fitnesses, pop@organisms$values[[i]]@fitness$value)
             }
             fitnesses
           }

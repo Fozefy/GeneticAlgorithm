@@ -14,7 +14,7 @@ chr.xover <- function(chr1, chr2, swapMask.fn = xover.mask.2point, swapMask=NULL
 setGeneric("chr.xover")
 
 setMethod("chr.xover",
-          signature = c("chromosome", "chromosome", "function", "ANY"),
+          signature = c("organism", "organism", "function", "ANY"),
           definition = function(chr1, chr2, swapMask.fn = xover.mask.2point, swapMask=NULL){
             if(is.null(swapMask))
               swapMask <- swapMask.fn(length(chr1))
@@ -102,7 +102,7 @@ swap.genes <- function(chr1, chr2, mask){
 setGeneric("swap.genes")
 
 setMethod("swap.genes",
-          signature = c("chromosome", "chromosome", "logical"),
+          signature = c("organism", "organism", "logical"),
           definition = function(chr1, chr2, mask){
             temp <- duplicate(chr1)
             temp[mask] <- chr1[mask]

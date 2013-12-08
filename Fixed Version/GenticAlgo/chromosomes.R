@@ -1,8 +1,8 @@
 ### Chromosome Class
 
-setClass("chromosome", representation(chr.genes = "environment", fitness = "environment"))
+setClass("organism", representation(chromosome = "environment", fitness = "environment"))
 setMethod("initialize", 
-          signature = "chromosome",
+          signature = "organism",
           definition = function(.Object, chr.length, 
                                 rdist = function(n) sample(c(0,1), n, replace=TRUE),
                                 fitness.fn = function(chr) {numeric(0)},
@@ -15,7 +15,7 @@ setMethod("initialize",
             }
             chr.length
             genes.env$genes <- rdist(chr.length)
-            .Object@chr.genes <- genes.env
+            .Object@chromosome <- genes.env
             
             fitness.env <- new.env()
             fitness.env$value <- fitness.fn(decode.fn(.Object))
@@ -25,58 +25,57 @@ setMethod("initialize",
           }
 )
 
-new.chromosome <- function(GA.env){
-  new("chromosome", encoding.env(GA.env)$chr.length, rdist = encoding.env(GA.env)$new.genes.fn)
+new.organism <- function(GA.env){
+  new("organism", encoding.env(GA.env)$chr.length, rdist = encoding.env(GA.env)$new.genes.fn)
 }
 
-chromosome <- function(object){object@chr.genes[["genes"]]}
-setGeneric("chromosome")
-genes <- function(object){object@chr.genes[["genes"]]}
+organism <- function(object){object@chromosome[["genes"]]}
+setGeneric("organism")
+genes <- function(object){object@chromosome[["genes"]]}
 setGeneric("genes")
 
 setMethod("[", 
-          signature = c("chromosome"),
+          signature = c("organism"),
           definition = function(x,i,j,...,drop){
-            chromosome(x)[i]
+            organism(x)[i]
           }
 )
 
 setMethod("[[", 
-          signature = c("chromosome"),
+          signature = c("organism"),
           definition = function(x,i,j,...,drop){
-            chromosome(x)[[i]]
+            organism(x)[[i]]
           }
 )
 
 setMethod("[[<-", 
-          signature = c("chromosome", "ANY", "ANY"),
+          signature = c("organism", "ANY", "ANY"),
           definition = function(x, i, value){
-            x@chr.genes[["genes"]][[i]] <- value
+            x@chromosome[["genes"]][[i]] <- value
             x
           }
 )
 
 setMethod("[<-", 
-          signature = c("chromosome", "ANY", "ANY"),
+          signature = c("organism", "ANY", "ANY"),
           definition = function(x, i, value){
-            x@chr.genes[["genes"]][i] <- value
+            x@chromosome[["genes"]][i] <- value
             x
           }
 )
 
-
 setMethod("length", 
-          signature = c("chromosome"),
+          signature = c("organism"),
           definition = function(x){
-            length(chromosome(x))
+            length(organism(x))
           }
 )
 
 setGeneric("mode")
 setMethod("mode", 
-          signature = c("chromosome"),
+          signature = c("organism"),
           definition = function(x){
-            mode(chromosome(x))
+            mode(organism(x))
           }
 )
 

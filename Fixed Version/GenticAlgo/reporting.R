@@ -1,4 +1,4 @@
-setClass("gen.report", representation(maxFit = "chromosome", minFit = "chromosome", fitness = "environment", mutation = "environment", crossover = "environment", elite = "environment"))
+setClass("gen.report", representation(maxFit = "organism", minFit = "organism", fitness = "environment", mutation = "environment", crossover = "environment", elite = "environment"))
 setMethod("initialize", 
            signature = "gen.report",
            definition = function(.Object, maxFit, minFit, fitness, mutation, crossover, elite) {
@@ -61,8 +61,8 @@ create.fitness.stats <- function(pop)
     
     fitnesses[i] = pop[[i]]@fitness$value
     
-    frequency.of.0[i] = sum(pop[[i]]@chr.genes$genes==0)
-    frequency.of.1[i] = sum(pop[[i]]@chr.genes$genes==0)
+    frequency.of.0[i] = sum(pop[[i]]@chromosome$genes==0)
+    frequency.of.1[i] = sum(pop[[i]]@chromosome$genes==0)
 
     fitness.env$entropy = fitness.env$entropy + fitnesses[i]*log2(abs(fitnesses[i]))
   }

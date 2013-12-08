@@ -13,16 +13,16 @@ elite.selection <- function(pop, elite.size = 1, decreasing = TRUE, pop.fit = NU
   #ignores decreasing
   pop.loc = vector("list", elite.size)
   
-  pop.loc[[1]] = pop@chromosomes$values[[1]]
+  pop.loc[[1]] = pop@organisms$values[[1]]
   for(i in 2:elite.size)
   {
-    testFitness = pop@chromosomes$values[[i]]@fitness$value
+    testFitness = pop@organisms$values[[i]]@fitness$value
     for (j in 1:i)
     {
       if (j == i)
       {
         #Got to an empty part of the list, just add it
-        pop.loc[[j]] <- pop@chromosomes$values[[i]]
+        pop.loc[[j]] <- pop@organisms$values[[i]]
       }
       else if (testFitness > pop.loc[[j]]@fitness$value)
       {
@@ -34,15 +34,15 @@ elite.selection <- function(pop, elite.size = 1, decreasing = TRUE, pop.fit = NU
             pop.loc[[k+1]] = pop.loc[[k]]
           }          
         }
-        pop.loc[[j]] <- pop@chromosomes$values[[i]]
+        pop.loc[[j]] <- pop@organisms$values[[i]]
       
       }
     }
   }
   
-  for (i in elite.size:length(pop@chromosomes$values))
+  for (i in elite.size:length(pop@organisms$values))
   {
-    testFitness = pop@chromosomes$values[[i]]@fitness$value
+    testFitness = pop@organisms$values[[i]]@fitness$value
     for (j in 1:elite.size)
     {
       if (testFitness > pop.loc[[j]]@fitness$value)
@@ -55,7 +55,7 @@ elite.selection <- function(pop, elite.size = 1, decreasing = TRUE, pop.fit = NU
             pop.loc[[k+1]] = pop.loc[[k]]
           }          
         }
-        pop.loc[[j]] <- pop@chromosomes$values[[i]]
+        pop.loc[[j]] <- pop@organisms$values[[i]]
       }
     }
   }

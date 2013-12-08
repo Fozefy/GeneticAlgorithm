@@ -71,7 +71,7 @@ next.generation <- function(GA.env){
   x.results@returnList$p1 = p1.loc
   x.results@returnList$p2 = p2.loc
   #Create the next population
-  new.pop <- new.population(chromosomes = c(elite, p1, p2, rest))
+  new.pop <- new.population(organisms = c(elite, p1, p2, rest))
     
   #Set the current population to the new population
   add.population(reproduction.env(GA.env), new.pop)

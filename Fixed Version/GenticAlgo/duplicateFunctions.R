@@ -35,21 +35,19 @@ setMethod("duplicate",
 )
 
 setMethod("duplicate",
-          signature = c("chromosome"),
+          signature = c("organism"),
           definition = function(obj, ...){
-            obj@chr.genes <- duplicate(obj@chr.genes)
+            obj@chromosome <- duplicate(obj@chromosome)
             obj@fitness <- duplicate(obj@fitness)
             obj
           }
 )
 
-
-
 setMethod("duplicate",
           signature = c("population"),
           definition = function(obj, ...){
-            obj@chromosomes <- duplicate(obj@chromosomes)
-            obj@chromosomes[["values"]] <- duplicate(obj@chromosomes[["values"]])
+            obj@organisms <- duplicate(obj@organisms)
+            obj@organisms[["values"]] <- duplicate(obj@organisms[["values"]])
             obj
           }
 )
