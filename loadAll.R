@@ -1,4 +1,4 @@
-source('chromosomes.R')
+source('organism.R')
 source('elitism.R')
 source('selection.R')
 source('population.R')
