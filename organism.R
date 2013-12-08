@@ -1,4 +1,4 @@
-### Chromosome Class
+### Organism Class
 
 setClass("organism", representation(chromosome = "environment", fitness = "environment"))
 setMethod("initialize", 
