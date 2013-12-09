@@ -1,72 +1,60 @@
 #### Elitism
 
-select.elite.population.fgen <- function(elite.fn, ...){
+select.elite.population.fgen <- function(elite.fn, elite.size, decreasing, ...){
   function(pop)
-    elite.fn(pop = pop, ...)
+    elite.fn(pop = pop, elite.size = elite.size, decreasing = decreasing, ...)
 }
 
 #note: elite.selection only works with integer or floating point fitness ordered by <= or >=
-
 elite.selection <- function(pop, elite.size = 1, decreasing = TRUE, pop.fit = NULL, verbose = FALSE){
+  print(decreasing)
+  #Sort the organisms to put the 'best' at the top of our list
+  sortedOrganisms = pop@organisms$values
+  class(sortedOrganisms) <- "organismList"
+  sortedOrganisms = sort(sortedOrganisms, decreasing = decreasing)
 
-  #TODO: Elitism very inefficient and won't work in all cases, but works in the basic case.....should be fixed
-  #ignores decreasing
-  pop.loc = vector("list", elite.size)
-  
-  pop.loc[[1]] = pop@organisms$values[[1]]
-  for(i in 2:elite.size)
+  #Fill our elite list with the top fitness values
+  eliteList = vector("list", elite.size)
+  eliteList[1] = sortedOrganisms[1]
+  if (elite.size > 1)
   {
-    testFitness = pop@organisms$values[[i]]@fitness$value
-    for (j in 1:i)
+    elitesFilled = 1
+    for(i in 2:length(sortedOrganisms))
     {
-      if (j == i)
+      #Check if we already have this elite
+      foundMatch = FALSE
+      for (j in 1:elitesFilled)
       {
-        #Got to an empty part of the list, just add it
-        pop.loc[[j]] <- pop@organisms$values[[i]]
-      }
-      else if (testFitness > pop.loc[[j]]@fitness$value)
-      {
-        if (j < i)
+        if (identical(eliteList[[j]]@chromosome$genes, sortedOrganisms[[i]]@chromosome$genes))
         {
-          #shift the numbers to keep the highest at the top
-          for (k in j:(i-1))
-          {
-            pop.loc[[k+1]] = pop.loc[[k]]
-          }          
+          foundMatch = TRUE
         }
-        pop.loc[[j]] <- pop@organisms$values[[i]]
+      }
       
-      }
-    }
-  }
-  
-  for (i in elite.size:length(pop@organisms$values))
-  {
-    testFitness = pop@organisms$values[[i]]@fitness$value
-    for (j in 1:elite.size)
-    {
-      if (testFitness > pop.loc[[j]]@fitness$value)
+      if (!foundMatch)
       {
-        if (j < elite.size)
-        {
-          #shift the numbers to keep the highest at the top
-          for (k in j:(elite.size-1))
-          {
-            pop.loc[[k+1]] = pop.loc[[k]]
-          }          
-        }
-        pop.loc[[j]] <- pop@organisms$values[[i]]
-      }
+        elitesFilled = elitesFilled + 1
+        eliteList[elitesFilled] = sortedOrganisms[[i]]
+      }      
+      
+      if (elitesFilled == elite.size) break
+      else if (i == length(sortedOrganisms)) cat("Too many duplicates in population to generate",elite.size, "elites, Returning: ",elitesFilled)
     }
   }
-  
-  #P <- ifelse(is.null(pop.fit), size(pop), length(pop.fit))
-  #if(is.null(pop.fit))
-  #  pop.fit <- fitness.fn(pop)
-  #pop.loc <- order(pop.fit, decreasing = decreasing)
-  #if (verbose) print(pop.fit)
-  
-  pop.loc[1:elite.size]
+cat("Elite Fitnes:", eliteList[[1]]@fitness$value)
+  return(eliteList)
 }
 
-# elite.selection(elite.size = 2, pop.fit = runif(10))
+#Used for sortation
+`[.organismList` <- function(x, i) {
+  class(x) <- "list"
+  structure(x[i], class="organismList")
+}
+
+`>.organismList` <- function(e1, e2) {
+  e1[[1]]@fitness$value > e2[[1]]@fitness$value
+}
+
+`==.organismList` <- function(e1, e2) {
+  e1[[1]]@fitness$value == e2[[1]]@fitness$value
+}  
