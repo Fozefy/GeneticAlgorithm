@@ -52,14 +52,11 @@ tournament.selection.vprint <- function(tourn.fit, select.worse, tourn.loc, sele
   print(selection.fit)  
 }
 
-tournament.selection <- function(selection.size, pop = NULL, tourn.size = 2, prob.select.worse = 0, 
-                                 decreasing = FALSE, `%>%` = NULL,
-                                 tourn.fit = NULL, tourn.loc = NULL, 
-                                 select.worse = NULL, pop.size = NULL, verbose = FALSE){
+tournament.selection <- function(selection.size, pop = NULL, tourn.size = 2, prob.select.worse = 0, maximizing = TRUE,
+                                 tourn.fit = NULL, tourn.loc = NULL, select.worse = NULL, pop.size = NULL, verbose = FALSE){
   n <- selection.size; k <- tourn.size 
   P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, size(pop))
-  if(is.null(`%>%`))
-    if(decreasing) {`%>%` <- `>`} else {`%>%` <- `<`}
+  if(maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
   if(is.null(select.worse))
     select.worse <- new.select.worse.matrix(n, k, prob.select.worse)
   if(is.null(tourn.loc))
@@ -81,14 +78,11 @@ tournament.selection <- function(selection.size, pop = NULL, tourn.size = 2, pro
   selection.loc
 }
 
-simple.tournament.selection <- function(selection.size, pop = NULL, tourn.size = 2, 
-                                        decreasing = FALSE, `%>%` = NULL,
-                                        tourn.fit = NULL, tourn.loc = NULL, 
-                                        pop.size = NULL, verbose = FALSE){
+simple.tournament.selection <- function(selection.size, pop = NULL, tourn.size = 2, maximizing = TRUE,
+                                        tourn.fit = NULL, tourn.loc = NULL, pop.size = NULL, verbose = FALSE){
   n <- selection.size; k <- tourn.size
   P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, pop@pop.size) 
-  if(is.null(`%>%`))
-    if(decreasing) {`%>%` <- `>`} else {`%>%` <- `<`}
+  if(maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
   if(is.null(tourn.loc))
     tourn.loc <- new.tournaments.locations(n, k, P)
   if(is.null(tourn.fit))

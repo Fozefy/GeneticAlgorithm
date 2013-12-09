@@ -37,11 +37,18 @@ abc.fit <-function(chr)
 }
 
 #Goal functions
-simpleGoal<- function(goal, epsilon)
+simpleGoal<- function(goal, epsilon, maximizing = TRUE)
 {
   goalFunction <- function(popFit)
   {
-    if (max(popFit) >= (goal + epsilon)) return(TRUE) else return(FALSE)
+    if (maximizing)
+    {
+      if (max(popFit) >= (goal - epsilon)) return(TRUE) else return(FALSE)
+    }
+    else
+    {
+      if (min(popFit) <= (goal + epsilon)) return(TRUE) else return(FALSE)
+    }
   }
 }
 

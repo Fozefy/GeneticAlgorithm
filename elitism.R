@@ -1,17 +1,17 @@
 #### Elitism
 
-select.elite.population.fgen <- function(elite.fn, elite.size, decreasing, ...){
+select.elite.population.fgen <- function(elite.fn, elite.size, maximizing, ...){
   function(pop)
-    elite.fn(pop = pop, elite.size = elite.size, decreasing = decreasing, ...)
+    elite.fn(pop = pop, elite.size = elite.size, maximizing = maximizing, ...)
 }
 
 #note: elite.selection only works with integer or floating point fitness ordered by <= or >=
-elite.selection <- function(pop, elite.size = 1, decreasing = TRUE, pop.fit = NULL, verbose = FALSE){
-  print(decreasing)
+elite.selection <- function(pop, elite.size = 1, maximizing = TRUE, pop.fit = NULL, verbose = FALSE){
+
   #Sort the organisms to put the 'best' at the top of our list
   sortedOrganisms = pop@organisms$values
   class(sortedOrganisms) <- "organismList"
-  sortedOrganisms = sort(sortedOrganisms, decreasing = decreasing)
+  sortedOrganisms = sort(sortedOrganisms, decreasing = maximizing)
 
   #Fill our elite list with the top fitness values
   eliteList = vector("list", elite.size)
@@ -41,7 +41,7 @@ elite.selection <- function(pop, elite.size = 1, decreasing = TRUE, pop.fit = NU
       else if (i == length(sortedOrganisms)) cat("Too many duplicates in population to generate",elite.size, "elites, Returning: ",elitesFilled)
     }
   }
-cat("Elite Fitnes:", eliteList[[1]]@fitness$value)
+
   return(eliteList)
 }
 

@@ -36,9 +36,9 @@ new.GA.env <- function(pop.size = 100, verbose = TRUE,
   setup.GA.envTree(GA.env)
   setup.GA.base.env(GA.env, GA.base.args, pop.size, verbose)
   setup.encoding.env(GA.env, encoding.args)
-  setup.fitness.env(GA.env, fitness.args)
   setup.reproduction.env(GA.env, mutation.args, xover.args)
   setup.selection.env(GA.env, selection.args)
+  setup.fitness.env(GA.env, fitness.args)
   setup.reporting(GA.env, reporting.fn)
   GA.env
 }
@@ -80,11 +80,7 @@ new.encoding.args <- function(chr.length = 30, chr.encode.type = "binary",
 
 new.fitness.args <- function(fitness.fn = one.max.fn, fitnessFn.args = NULL, goal.fn = NULL, goal = 30, epsilon = 0)
 {
-  if (is.null(goal.fn))
-  {
-    goal.fn = simpleGoal(goal, epsilon)
-  }
-  fitness.fn; fitnessFn.args; goal.fn; epsilon
+  fitness.fn; fitnessFn.args; goal.fn; goal; epsilon
   as.list(environment())
 }
 
@@ -99,8 +95,8 @@ new.mutation.args <- function(gene.delta = NULL, gene.sd = NULL, prob.mutation =
   as.list(environment())
 }
 
-new.selection.args <- function(selection.type = "simple.tournament", tourn.size = 2, prob.select.worse = 0, decreasing = TRUE, `%>%` = `>`, elitism = TRUE, elite.size = 2, elite.fn = truncation.selection){
-  selection.type; tourn.size; prob.select.worse; decreasing; `%>%`; elitism; elite.size; elite.fn
+new.selection.args <- function(selection.type = "simple.tournament", tourn.size = 2, prob.select.worse = 0, maximizing = TRUE, elitism = TRUE, elite.size = 2, elite.fn = truncation.selection){
+  selection.type; tourn.size; prob.select.worse; maximizing; elitism; elite.size; elite.fn
   as.list(environment())
 }
 
@@ -137,6 +133,11 @@ setup.encoding.env <- function(GA.env, encoding.args = new.encoding.args()){
 
 setup.fitness.env <- function(GA.env, fitness.args){
   add.to.env(fitness.env(GA.env), fitness.args)
+  
+  if (is.null(fitness.env(GA.env)$goal.fn))
+  {
+    GA.env$fitness.env$goal.fn <- simpleGoal(fitness.env(GA.env)$goal, fitness.env(GA.env)$epsilon, selection.env(GA.env)$maximizing)
+  }
 }
 
 setup.reproduction.env <- function(GA.env, mutation.args = new.mutation.args(), xover.args = new.xover.args()){
@@ -189,21 +190,17 @@ setup.selection.env <- function(GA.env, selection.args = new.selection.args()){
   
   add.to.env(selection.env(GA.env), selection.args)
   with(selection.env(GA.env), {
-    
-    selection.env <- environment()
-    add.to.env(selection.env, selection.args)
-    
+
     #Setup.elitism      
     if(elitism)
-      select.elite <- select.elite.population.fgen(elite.fn = elite.fn, elite.size = elite.size, decreasing = decreasing)
+      select.elite <- select.elite.population.fgen(elite.fn = elite.fn, elite.size = elite.size, maximizing = maximizing)
     else
       select.elite <- NULL
     
     select.fgen <- select.population.fgen
     select.chr <- switch(selection.type, 
-                         simple.tournament  = select.fgen(simple.tournament.selection, tourn.size, decreasing, `%>%`),
-                         tournament  			= select.fgen(tournament.selection, tourn.size, prob.select.worse, 
-                                                      decreasing, `%>%`),
+                         simple.tournament  = select.fgen(simple.tournament.selection, tourn.size, maximizing),
+                         tournament  			= select.fgen(tournament.selection, tourn.size, prob.select.worse, maximizing),
                          fps 						= fitnessProportional.selection,
                          rank 						= rank.selection,  # not yet implemented ... just a stub
                          ...						= simple.error(paste("select.chr.type must be one of ", 
@@ -239,7 +236,7 @@ generational.ga <- function(GA.env){
       reported.data <- c(reported.data, report(gen, currentGen.results, goal.reached))
   
       if (verbose)
-        print(max(fitness.set))
+        print(if (selection.env(GA.env)$maximizing)max(fitness.set) else min(fitness.set))
       
       #If we've met our goal: stop!
       if (goal.reached) break
@@ -270,8 +267,8 @@ next.generation <- function(GA.env){
 
   #Find the chromosomes to be crossed
   p1.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop)
-  p2.loc <- selection.env(GA.env)$selection.env$select.chr(xover.size, reproduction.env(GA.env)$pop)
-  rest.loc <- selection.env(GA.env)$selection.env$select.chr(mut.size, reproduction.env(GA.env)$pop)
+  p2.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop)
+  rest.loc <- selection.env(GA.env)$select.chr(mut.size, reproduction.env(GA.env)$pop)
 
   elite <- if (!is.null(elite)) duplicate(elite) else NULL   
   p1 <- duplicate(reproduction.env(GA.env)$pop[p1.loc])
