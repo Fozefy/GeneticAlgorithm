@@ -239,6 +239,9 @@ top4(pop4)
 ga = new.GA.env(selection.args=new.selection.args(maximizing = FALSE), fitness.args=new.fitness.args(goal=0))
 ga = new.GA.env(selection.args=new.selection.args(maximizing = TRUE), fitness.args=new.fitness.args(goal=30))
 
+#Test two pops
+ga = new.GA.env(GA.base.args=new.GA.base.args(numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max, goal=90))
+
 #Time the GA
 ptm <- proc.time()
 ga<-new.GA.env()

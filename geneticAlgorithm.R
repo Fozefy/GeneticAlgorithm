@@ -66,8 +66,8 @@ add.to.env <- function(env, arg.list){
 }
 
 #######################################Create the GA's arguements
-new.GA.base.args <- function(max.gen = 100){
-  max.gen
+new.GA.base.args <- function(max.gen = 100, numPop = 1){
+  max.gen; numPop
   as.list(environment())
 }
 
@@ -218,13 +218,41 @@ setup.reporting <- function(GA.env, reporting.fn){
 ##### Genetic Algorithm
 generational.ga <- function(GA.env){
   with(GA.env, {
-    pop <- new.population(GA.env)
+    pop = vector("list", GA.env$numPop)
+    for (i in 1:GA.env$numPop)
+    {
+      pop[i] <- new.population(GA.env)
+    }
     add.population(reproduction.env(GA.env), pop)
     
     currentGen.results <- NULL #Our 0 generation has no results, but we want to be able to report anyway
     reported.data <- NULL
     for(gen in 0:max.gen){
-      fitness.set <- evaluate(reproduction.env(GA.env)$pop, fitness.env$fitness.fn)
+      fitness.set = vector("list", GA.env$numPop)
+      if (GA.env$numPop > 1)
+      {
+        for (i in 1:GA.env$numPop)
+        {
+          if (i == 1)
+          {
+            otherPops = pop[2:GA.env$numPop]
+          }
+          else if (i == GA.env$numPop)
+          {
+            otherPops = pop[1: (i - 1)]
+          }
+          else
+          {
+            otherPops = c(pop[1:(i-1)],pop[(i+1):GA.env$numPop])
+          }
+          
+          fitness.set[[i]] <- evaluate(reproduction.env(GA.env)$pop[[i]], fitness.env$fitness.fn, otherPops)
+        }
+      }
+      else
+      {
+        fitness.set[[1]] <- evaluate(reproduction.env(GA.env)$pop[[i]], fitness.env$fitness.fn)
+      }
       
       #Check if we've met our goal yet
       if (!is.null(fitness.env(GA.env)$goal.fn))
@@ -235,8 +263,8 @@ generational.ga <- function(GA.env){
       #Save the data we've reported so far
       reported.data <- c(reported.data, report(gen, currentGen.results, goal.reached))
   
-      if (verbose)
-        print(if (selection.env(GA.env)$maximizing)max(fitness.set) else min(fitness.set))
+      if (verbose) #TODO - Figure out what to print for multiple pops, just print first for now
+        print(if (selection.env(GA.env)$maximizing)max(fitness.set[[1]]) else min(fitness.set[[1]]))
       
       #If we've met our goal: stop!
       if (goal.reached) break
@@ -251,47 +279,55 @@ generational.ga <- function(GA.env){
   })
 }
 
-next.generation <- function(GA.env){  
-  P <- size(reproduction.env(GA.env)$pop)
-
-  #Find elites
-  if(is.null(selection.env(GA.env)$select.elite))
-    elite = NULL
-  else
-    elite <- selection.env(GA.env)$select.elite(reproduction.env(GA.env)$pop)
-    
-  #Get number of each repro group
-  elite.size <- if (!is.null(elite)) length(elite) else 0
-  xover.size <- xover.count(P, elite.size, reproduction.env(GA.env)$xover.prob)
-  mut.size <- mutate.only.count(P, xover.size, elite.size)
-
-  #Find the chromosomes to be crossed
-  p1.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop)
-  p2.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop)
-  rest.loc <- selection.env(GA.env)$select.chr(mut.size, reproduction.env(GA.env)$pop)
-
-  elite <- if (!is.null(elite)) duplicate(elite) else NULL   
-  p1 <- duplicate(reproduction.env(GA.env)$pop[p1.loc])
-  p2 <- duplicate(reproduction.env(GA.env)$pop[p2.loc])
-  rest <- duplicate(reproduction.env(GA.env)$pop[rest.loc])
-
-  #Perform reproduction
-  #Mutate
-  restResults = reproduction.env(GA.env)$mutate(rest)
-  p1Results = reproduction.env(GA.env)$mutate(p1)
-  p2Results = reproduction.env(GA.env)$mutate(p2)
-  #Store Mutation results
-  m.results <- c(restResults, p1Results, p2Results)
-  #CrossOver
-  x.results <- chr.xover(p1, p2, reproduction.env(GA.env)$xover.swapMask)
-  x.results@returnList$p1 = p1.loc
-  x.results@returnList$p2 = p2.loc
-  #Create the next population
-  new.pop <- new.population(organisms = c(elite, p1, p2, rest))
-    
+next.generation <- function(GA.env){
+  new.pop = vector("list", GA.env$numPop)
+  mutation.results = vector("list", GA.env$numPop)
+  xover.results = vector("list", GA.env$numPop)
+  elite = vector("list", GA.env$numPop)
+  
+  for (i in 1:GA.env$numPop)
+  {
+    P <- size(reproduction.env(GA.env)$pop[[i]])
+  
+    #Find elites
+    if(is.null(selection.env(GA.env)$select.elite))
+      elite[[i]] = NULL
+    else
+      elite[[i]] <- selection.env(GA.env)$select.elite(reproduction.env(GA.env)$pop[[i]])
+      
+    #Get number of each repro group
+    elite.size <- if (!is.null(elite[[i]])) length(elite[[i]]) else 0
+    xover.size <- xover.count(P, elite.size, reproduction.env(GA.env)$xover.prob)
+    mut.size <- mutate.only.count(P, xover.size, elite.size)
+  
+    #Find the chromosomes to be crossed
+    p1.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]])
+    p2.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]])
+    rest.loc <- selection.env(GA.env)$select.chr(mut.size, reproduction.env(GA.env)$pop[[i]])
+  
+    elite[[i]] <- if (!is.null(elite[[i]])) duplicate(elite[[i]]) else NULL   
+    p1 <- duplicate(reproduction.env(GA.env)$pop[[i]][p1.loc])
+    p2 <- duplicate(reproduction.env(GA.env)$pop[[i]][p2.loc])
+    rest <- duplicate(reproduction.env(GA.env)$pop[[i]][rest.loc])
+  
+    #Perform reproduction
+    #Mutate
+    restResults = reproduction.env(GA.env)$mutate(rest)
+    p1Results = reproduction.env(GA.env)$mutate(p1)
+    p2Results = reproduction.env(GA.env)$mutate(p2)
+    #Store Mutation results
+    mutation.results[[i]] <- c(restResults, p1Results, p2Results)
+    #CrossOver
+    xover.results[[i]] <- chr.xover(p1, p2, reproduction.env(GA.env)$xover.swapMask)
+    xover.results[[i]]@returnList$p1 = p1.loc
+    xover.results[[i]]@returnList$p2 = p2.loc
+    #Create the next population
+    new.pop[i] <- new.population(organisms = c(elite[[i]], p1, p2, rest))
+  }
+  
   #Set the current population to the new population
   add.population(reproduction.env(GA.env), new.pop)
     
   #Report on the new population
-  GA.env$reporting.fn(pop = new.pop, mutation = m.results, cross = x.results, elite = elite, GA.env = GA.env)
+  GA.env$reporting.fn(pop = new.pop, mutation = mutation.results, cross = xover.results, elite = elite, GA.env = GA.env)
 }

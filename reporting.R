@@ -1,4 +1,4 @@
-setClass("gen.report", representation(maxFit = "organism", minFit = "organism", fitness = "environment", mutation = "environment", crossover = "environment", elite = "environment"))
+setClass("gen.report", representation(maxFit = "organism", minFit = "organism", fitness = "list", mutation = "list", crossover = "list", elite = "list"))
 setMethod("initialize", 
            signature = "gen.report",
            definition = function(.Object, maxFit, minFit, fitness, mutation, crossover, elite) {
@@ -19,18 +19,27 @@ report <- function(gen, currentGen.results, goal.reached){
 
 base.reporting.fn <- function(pop, mutation, cross, elite, ...)
 {
-  fitness.stats <- create.fitness.stats(pop)
-    
-  #We combine these measures for efficiency, but it doesn't really make sense to keep them together, so we clear it
-  maxFit = fitness.stats$maxFit
-  fitness.stats$maxFit = NULL
-  minFit = fitness.stats$minFit
-  fitness.stats$minFit = NULL
-    
-  mutation.stats <- create.mutation.stats(mutation)
-  crossover.stats <- create.crossover.stats(cross)
-  elite.stats <- create.elite.stats(elite)
-    
+  fitness.stats = vector("list", length(pop))
+  mutation.stats = vector("list", length(pop))
+  crossover.stats = vector("list", length(pop))
+  elite.stats = vector("list", length(pop))
+  
+  #Create stats for each population seperately
+  for (i in 1:length(pop))
+  {
+    fitness.stats[[i]] <- create.fitness.stats(pop[[i]])
+      
+    #We combine these measures for efficiency, but it doesn't really make sense to keep them together, so we clear it
+    maxFit = fitness.stats[[i]]$maxFit
+    fitness.stats[[i]]$maxFit = NULL
+    minFit = fitness.stats[[i]]$minFit
+    fitness.stats[[i]]$minFit = NULL
+      
+    mutation.stats[[i]] <- create.mutation.stats(mutation[[i]])
+    crossover.stats[[i]] <- create.crossover.stats(cross[[i]])
+    elite.stats[[i]] <- create.elite.stats(elite[[i]])
+  } 
+  
   new("gen.report", maxFit, minFit, fitness.stats, mutation.stats, crossover.stats, elite.stats)
 }
 

@@ -6,12 +6,19 @@ straight.decode <- function(chr){
 one.max.decode <- straight.decode
 
 #Default fitness function
-one.max.fn <- function(genes){
-  sum(genes)  
+one.max.fn <- function(organism){
+  sum(organism@chromosome$genes)
 }
 
 finite.min.fn <- function(genes, gene.max){
   length(genes) * gene.max - sum(genes)
+}
+
+#Variant of one.max with two pops, takes a gene of the same id in the other pop and addes at half value to fitness
+twoPop.one.max <- function(organism, otherPop, id){
+  otherGenes = otherPop[[1]]@organisms$values[[id]]@chromosome$genes
+  
+  sum(organism@chromosome$genes)*2 + sum(otherGenes)
 }
 
 abc.fit <-function(chr)
@@ -41,13 +48,14 @@ simpleGoal<- function(goal, epsilon, maximizing = TRUE)
 {
   goalFunction <- function(popFit)
   {
+    #The default goal function only checks the first population's fitness
     if (maximizing)
     {
-      if (max(popFit) >= (goal - epsilon)) return(TRUE) else return(FALSE)
+      if (max(popFit[[1]]) >= (goal - epsilon)) return(TRUE) else return(FALSE)
     }
     else
     {
-      if (min(popFit) <= (goal + epsilon)) return(TRUE) else return(FALSE)
+      if (min(popFit[[1]]) <= (goal + epsilon)) return(TRUE) else return(FALSE)
     }
   }
 }
