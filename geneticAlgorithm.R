@@ -66,8 +66,8 @@ add.to.env <- function(env, arg.list){
 }
 
 #######################################Create the GA's arguements
-new.GA.base.args <- function(max.gen = 100, numPop = 1){
-  max.gen; numPop
+new.GA.base.args <- function(max.gen = 100, numPop = 1, popAdjMatrix = NULL){
+  max.gen; numPop; popAdjMatrix
   as.list(environment())
 }
 
@@ -217,14 +217,15 @@ setup.reporting <- function(GA.env, reporting.fn){
 
 ##### Genetic Algorithm
 generational.ga <- function(GA.env){
-  with(GA.env, {
+
     pop = vector("list", GA.env$numPop)
     for (i in 1:GA.env$numPop)
     {
       pop[i] <- new.population(GA.env)
+      pop[[i]]@popNum = i
     }
     add.population(reproduction.env(GA.env), pop)
-    
+  with(GA.env, {
     currentGen.results <- NULL #Our 0 generation has no results, but we want to be able to report anyway
     reported.data <- NULL
     for(gen in 0:max.gen){
@@ -235,18 +236,25 @@ generational.ga <- function(GA.env){
         {
           if (i == 1)
           {
-            otherPops = pop[2:GA.env$numPop]
+            otherPops = reproduction.env(GA.env)$pop[2:GA.env$numPop]
           }
           else if (i == GA.env$numPop)
           {
-            otherPops = pop[1: (i - 1)]
+            otherPops = reproduction.env(GA.env)$pop[1: (i - 1)]
           }
           else
           {
-            otherPops = c(pop[1:(i-1)],pop[(i+1):GA.env$numPop])
+            otherPops = c(reproduction.env(GA.env)$pop[1:(i-1)],reproduction.env(GA.env)$pop[(i+1):GA.env$numPop])
           }
           
-          fitness.set[[i]] <- evaluate(reproduction.env(GA.env)$pop[[i]], fitness.env$fitness.fn, otherPops)
+          if (is.null(GA.env$popAdjMatrix))
+          {
+            fitness.set[[i]] <- evaluate(reproduction.env(GA.env)$pop[[i]], fitness.env$fitness.fn, otherPops)
+          }
+          else
+          {
+            fitness.set[[i]] <- evaluate(reproduction.env(GA.env)$pop[[i]], fitness.env$fitness.fn, otherPops, popAdjMatrix)
+          }
         }
       }
       else
@@ -305,7 +313,7 @@ next.generation <- function(GA.env){
     p2.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]])
     rest.loc <- selection.env(GA.env)$select.chr(mut.size, reproduction.env(GA.env)$pop[[i]])
   
-    elite[[i]] <- if (!is.null(elite[[i]])) duplicate(elite[[i]]) else NULL   
+    elite[[i]] <- if (!is.null(elite[[i]])) duplicate(elite[[i]]) else NULL
     p1 <- duplicate(reproduction.env(GA.env)$pop[[i]][p1.loc])
     p2 <- duplicate(reproduction.env(GA.env)$pop[[i]][p2.loc])
     rest <- duplicate(reproduction.env(GA.env)$pop[[i]][rest.loc])
@@ -323,6 +331,7 @@ next.generation <- function(GA.env){
     xover.results[[i]]@returnList$p2 = p2.loc
     #Create the next population
     new.pop[i] <- new.population(organisms = c(elite[[i]], p1, p2, rest))
+    new.pop[[i]]@popNum = i
   }
   
   #Set the current population to the new population

@@ -15,9 +15,8 @@ finite.min.fn <- function(genes, gene.max){
 }
 
 #Variant of one.max with two pops, takes a gene of the same id in the other pop and addes at half value to fitness
-twoPop.one.max <- function(organism, otherPop, id){
-  otherGenes = otherPop[[1]]@organisms$values[[id]]@chromosome$genes
-  
+twoPop.one.max <- function(organism, otherPopValues){
+  otherGenes = otherPopValues[[1]]@chromosome$genes
   sum(organism@chromosome$genes)*2 + sum(otherGenes)
 }
 

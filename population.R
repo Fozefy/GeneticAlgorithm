@@ -2,7 +2,8 @@
 
 setClass("population", 
          representation(organisms = "environment",
-                        pop.size = "numeric"))
+                        pop.size = "numeric",
+                        popNum = "numeric"))
 
 setMethod("initialize", 
           signature = "population",

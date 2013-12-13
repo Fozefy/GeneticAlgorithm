@@ -76,23 +76,36 @@ evaluate <- function(obj, fitness.fn, ...){
 setGeneric("evaluate")
 
 setMethod("evaluate", 
-          signature = c("list", "function"),
-          definition = function(obj, fitness.fn, otherPop = NULL) {
-            n <- length(obj)
+          signature = c("population", "function"),
+          definition = function(obj, fitness.fn, otherPop = NULL, adjMatrix = NULL) {
+            organisms = obj@organisms$values
+            
+            n <- length(organisms)
             
             #TODO - Use an id to help fitness.fn deal with other Pop, maybe adj matrix + id?
             
             if (is.null(otherPop))
             {
-              fit1 <- obj[[1]]@fitness$value <- fitness.fn(obj[[1]])
+              fit1 <- organisms[[1]]@fitness$value <- fitness.fn(organisms[[1]])
             }
             else
             {
-              #TODO - remove the 3rd arguement and store it in the object somehow (see todo above)
-              fit1 <- obj[[1]]@fitness$value <- fitness.fn(obj[[1]], otherPop, 1)
+              if (is.null(adjMatrix))
+              {
+                fit1 <- organisms[[1]]@fitness$value <- fitness.fn(organisms[[1]], otherPop)
+              }
+              else if (length(otherPop) == 1)
+              {
+                fit1 <- organisms[[1]]@fitness$value <- fitness.fn(organisms[[1]], otherPop[[1]]@organisms$values[adjMatrix[[1,obj@popNum]]])
+              }
+              else
+              {
+                #We'll just have to pass the whole pop, will need to figure out how to handle this when we actually create the model
+                fit1 <- organisms[[1]]@fitness$value <- fitness.fn(organisms[[1]], otherPop)
+              }
             }
             
-            if(is.multiobjective(obj[[1]]))
+            if(is.multiobjective(organisms[[1]]))
               fit.cache <- vector("list", n)
             else
               fit.cache <- vector("numeric", n)
@@ -103,11 +116,23 @@ setMethod("evaluate",
             {
               if (is.null(otherPop))
               {
-                fit.cache[[i]] <- obj[[i]]@fitness$value <- fitness.fn(obj[[i]])
+                fit.cache[[i]] <- organisms[[i]]@fitness$value <- fitness.fn(organisms[[i]])
               }
               else
               {
-                fit.cache[[i]] <- obj[[i]]@fitness$value <- fitness.fn(obj[[i]], otherPop, i)
+                if (is.null(adjMatrix))
+                {
+                  fit.cache[[i]] <- organisms[[i]]@fitness$value <- fitness.fn(organisms[[i]], otherPop)
+                }
+                else if (length(otherPop) == 1)
+                {
+                  fit.cache[[i]] <- organisms[[i]]@fitness$value <- fitness.fn(organisms[[i]], otherPop[[1]]@organisms$values[adjMatrix[[i,obj@popNum]]])
+                }
+                else
+                {
+                  #We'll just have to pass the whole pop, will need to figure out how to handle this when we actually create the model
+                  fit1 <- organisms[[i]]@fitness$value <- fitness.fn(organisms[[i]], otherPop)
+                }
               }
             }
             
@@ -115,12 +140,6 @@ setMethod("evaluate",
           }
 )
 
-setMethod("evaluate", 
-          signature = c("population", "function"),
-          definition = function(obj, fitness.fn, ...) { 
-            fit.vector <- evaluate(organisms(obj), fitness.fn, ...)
-          }
-)
 
 ### Fitness Class (needed for multi-objective, stochastic and other complex fitnesses)
 setClass("fitness", representation(value = "numeric"))
