@@ -66,8 +66,8 @@ add.to.env <- function(env, arg.list){
 }
 
 #######################################Create the GA's arguements
-new.GA.base.args <- function(max.gen = 100, numPop = 1, popAdjMatrix = NULL){
-  max.gen; numPop; popAdjMatrix
+new.GA.base.args <- function(max.gen = 100, numPop = 1){
+  max.gen; numPop
   as.list(environment())
 }
 
@@ -78,9 +78,9 @@ new.encoding.args <- function(chr.length = 30, chr.encode.type = "binary",
   as.list(environment())
 }
 
-new.fitness.args <- function(fitness.fn = one.max.fn, fitnessFn.args = NULL, goal.fn = NULL, goal = 30, epsilon = 0)
+new.fitness.args <- function(fitness.fn = one.max.fn, fitnessFn.args = NULL, goal.fn = NULL, goal = 30, epsilon = 0, externalConnectionsMatrix = NULL)
 {
-  fitness.fn; fitnessFn.args; goal.fn; goal; epsilon
+  fitness.fn; fitnessFn.args; goal.fn; goal; epsilon; externalConnectionsMatrix
   as.list(environment())
 }
 
@@ -225,41 +225,35 @@ generational.ga <- function(GA.env){
       pop[[i]]@popNum = i
     }
     add.population(reproduction.env(GA.env), pop)
+    
   with(GA.env, {
     currentGen.results <- NULL #Our 0 generation has no results, but we want to be able to report anyway
     reported.data <- NULL
     for(gen in 0:max.gen){
-      fitness.set = vector("list", GA.env$numPop)
-      if (GA.env$numPop > 1)
+      fitness.set = vector("list", numPop)
+      if (numPop > 1)
       {
-        for (i in 1:GA.env$numPop)
+        for (i in 1:numPop)
         {
           if (i == 1)
           {
-            otherPops = reproduction.env(GA.env)$pop[2:GA.env$numPop]
+            otherPops = reproduction.env(GA.env)$pop[2:numPop]
           }
-          else if (i == GA.env$numPop)
+          else if (i == numPop)
           {
             otherPops = reproduction.env(GA.env)$pop[1: (i - 1)]
           }
           else
           {
-            otherPops = c(reproduction.env(GA.env)$pop[1:(i-1)],reproduction.env(GA.env)$pop[(i+1):GA.env$numPop])
+            otherPops = c(reproduction.env(GA.env)$pop[1:(i-1)],reproduction.env(GA.env)$pop[(i+1):numPop])
           }
           
-          if (is.null(GA.env$popAdjMatrix))
-          {
-            fitness.set[[i]] <- evaluate(reproduction.env(GA.env)$pop[[i]], fitness.env$fitness.fn, otherPops)
-          }
-          else
-          {
-            fitness.set[[i]] <- evaluate(reproduction.env(GA.env)$pop[[i]], fitness.env$fitness.fn, otherPops, popAdjMatrix)
-          }
+          fitness.set[[i]] <- evaluate(reproduction.env(GA.env)$pop[[i]], fitness.env$fitness.fn, otherPops, fitness.env(GA.env)$externalConnectionsMatrix)
         }
       }
       else
       {
-        fitness.set[[1]] <- evaluate(reproduction.env(GA.env)$pop[[i]], fitness.env$fitness.fn)
+        fitness.set[[1]] <- evaluate(reproduction.env(GA.env)$pop[[1]], fitness.env$fitness.fn)
       }
       
       #Check if we've met our goal yet

@@ -1,6 +1,6 @@
 ### Organism Class
 
-setClass("organism", representation(chromosome = "environment", fitness = "environment"))
+setClass("organism", representation(chromosome = "environment", fitness = "environment", index = "numeric"))
 setMethod("initialize", 
           signature = "organism",
           definition = function(.Object, chr.length, 

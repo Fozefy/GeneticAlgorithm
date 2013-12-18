@@ -69,7 +69,7 @@ new.fitness.fn <- function(fitness.fn, ...){
 
 ## Fitness Evaluation
 
-evaluate <- function(obj, fitness.fn, ...){
+evaluate <- function(pop, fitness.fn, ...){
   print("generic base function does nothing - evaluate")
 }
 
@@ -77,34 +77,13 @@ setGeneric("evaluate")
 
 setMethod("evaluate", 
           signature = c("population", "function"),
-          definition = function(obj, fitness.fn, otherPop = NULL, adjMatrix = NULL) {
-            organisms = obj@organisms$values
+          definition = function(pop, fitness.fn, otherPops = NULL, externalConnectionsMatrix = NULL) {
+            organisms = pop@organisms$values
             
             n <- length(organisms)
             
-            #TODO - Use an id to help fitness.fn deal with other Pop, maybe adj matrix + id?
-            
-            if (is.null(otherPop))
-            {
-              fit1 <- organisms[[1]]@fitness$value <- fitness.fn(organisms[[1]])
-            }
-            else
-            {
-              if (is.null(adjMatrix))
-              {
-                fit1 <- organisms[[1]]@fitness$value <- fitness.fn(organisms[[1]], otherPop)
-              }
-              else if (length(otherPop) == 1)
-              {
-                fit1 <- organisms[[1]]@fitness$value <- fitness.fn(organisms[[1]], otherPop[[1]]@organisms$values[adjMatrix[[1,obj@popNum]]])
-              }
-              else
-              {
-                #We'll just have to pass the whole pop, will need to figure out how to handle this when we actually create the model
-                fit1 <- organisms[[1]]@fitness$value <- fitness.fn(organisms[[1]], otherPop)
-              }
-            }
-            
+            fit1 <- organisms[[1]]@fitness$value <- fitness.fn(organisms[[1]], pop, otherPops, externalConnectionsMatrix)
+
             if(is.multiobjective(organisms[[1]]))
               fit.cache <- vector("list", n)
             else
@@ -114,26 +93,8 @@ setMethod("evaluate",
             
             for(i in 2:n)
             {
-              if (is.null(otherPop))
-              {
-                fit.cache[[i]] <- organisms[[i]]@fitness$value <- fitness.fn(organisms[[i]])
-              }
-              else
-              {
-                if (is.null(adjMatrix))
-                {
-                  fit.cache[[i]] <- organisms[[i]]@fitness$value <- fitness.fn(organisms[[i]], otherPop)
-                }
-                else if (length(otherPop) == 1)
-                {
-                  fit.cache[[i]] <- organisms[[i]]@fitness$value <- fitness.fn(organisms[[i]], otherPop[[1]]@organisms$values[adjMatrix[[i,obj@popNum]]])
-                }
-                else
-                {
-                  #We'll just have to pass the whole pop, will need to figure out how to handle this when we actually create the model
-                  fit1 <- organisms[[i]]@fitness$value <- fitness.fn(organisms[[i]], otherPop)
-                }
-              }
+              
+              fit.cache[[i]] <- organisms[[i]]@fitness$value <- fitness.fn(organisms[[i]], pop, otherPops, externalConnectionsMatrix)
             }
             
             fit.cache

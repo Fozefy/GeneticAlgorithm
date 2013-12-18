@@ -240,7 +240,7 @@ ga = new.GA.env(selection.args=new.selection.args(maximizing = FALSE), fitness.a
 ga = new.GA.env(selection.args=new.selection.args(maximizing = TRUE), fitness.args=new.fitness.args(goal=30))
 
 #Test two pops
-ga = new.GA.env(GA.base.args=new.GA.base.args(numPop=2, popAdjMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max, goal=90))
+ga = new.GA.env(GA.base.args=new.GA.base.args(numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max, goal=90, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)))
 
 #Time the GA
 ptm <- proc.time()

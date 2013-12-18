@@ -1,12 +1,5 @@
-#Decode Functions
-straight.decode <- function(chr){
-  chr
-}
-
-one.max.decode <- straight.decode
-
 #Default fitness function
-one.max.fn <- function(organism){
+one.max.fn <- function(organism, ...){
   sum(organism@chromosome$genes)
 }
 
@@ -15,13 +8,14 @@ finite.min.fn <- function(genes, gene.max){
 }
 
 #Variant of one.max with two pops, takes a gene of the same id in the other pop and addes at half value to fitness
-twoPop.one.max <- function(organism, otherPopValues){
-  otherGenes = otherPopValues[[1]]@chromosome$genes
+twoPop.one.max <- function(organism, pop, otherPops, externalConnectionsMatrix){
+  otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index, pop@popNum]]]@chromosome$genes
   sum(organism@chromosome$genes)*2 + sum(otherGenes)
 }
 
-abc.fit <-function(chr)
+abc.fit <-function(organism)
 {
+  chr = organism@chromosome$genes
   total = 0
   for(i in 1: length(chr))
   {
@@ -71,8 +65,10 @@ truncation.selection <- elite.selection
 #F1
 #This will be represented by a 100 digit long binary number filling the range -5.12<= xi <5.12
 #Fitness Function
-DeJong.F1.fitness <- function(genes)
+DeJong.F1.fitness <- function(organism, ...)
 {
+  genes = organism@chromosome$genes
+  
   n = 10
   chromosomeLength = 100
   geneSize = chromosomeLength/n
@@ -90,16 +86,17 @@ DeJong.F1.fitness <- function(genes)
     total = total + xVals[[i]]^2
   }
 
-  -total #return a negative fitness to attempt to minimize
+  total
 }
 
 #TODO - create goal function
 
-#dejongGA.F1=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
-#fitness.args=new.fitness.args(fitness.fn=DeJong.F1.fitness,  goal = 0))
+#dejongGA.F1=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=DeJong.F1.fitness, goal = 0),selection.args=new.selection.args(maximizing = FALSE))
 
-DeJong.F2.fitness <- function(genes)
+DeJong.F2.fitness <- function(organism, ...)
 {
+  genes = organism@chromosome$genes
+  
   chromosomeLength = 24
   geneSize = chromosomeLength/2
   range = 2^(geneSize) #the number of ints in the range -2.048<= x,y < 2.048
@@ -108,14 +105,15 @@ DeJong.F2.fitness <- function(genes)
   y=GrayCode.to.Decimal(genes[13:24])*2.048*2/range - 2.048
   
   fitness = 100*(x^2 - y^2)^2 + (1-x)^2
-  -fitness #return a negative fitness to attempt to minimize
+  fitness
 }
 
-#dejongGA.F2=new.GA.env(encoding.args=new.encoding.args(chr.length=24, chr.encode.type="binary"),
-#fitness.args=new.fitness.args(fitness.fn=DeJong.F2.fitness,  goal = 0))
+#dejongGA.F2=new.GA.env(encoding.args=new.encoding.args(chr.length=24, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=DeJong.F2.fitness, goal = 0),selection.args=new.selection.args(maximizing = FALSE))
 
-DeJong.F3.fitness <- function(genes)
+DeJong.F3.fitness <- function(organism, ...)
 {
+  genes = organism@chromosome$genes
+  
   n = 10
   chromosomeLength = 100
   geneSize = chromosomeLength/n
@@ -130,11 +128,12 @@ DeJong.F3.fitness <- function(genes)
   max(xVals)
 }
 
-#dejongGA.F3=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
-#fitness.args=new.fitness.args(fitness.fn=DeJong.F3.fitness,  goal = 5.12))
+#dejongGA.F3=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=DeJong.F3.fitness, goal = 5.12))
 
-DeJong.F4.fitness <- function(genes)
+DeJong.F4.fitness <- function(organism, ...)
 {
+  genes = organism@chromosome$genes
+  
   n = 10
   chromosomeLength = 80
   geneSize = chromosomeLength/n
@@ -155,15 +154,16 @@ DeJong.F4.fitness <- function(genes)
   return(total + rnorm(1))
 }
 
-#dejongGA.F4=new.GA.env(encoding.args=new.encoding.args(chr.length=80, chr.encode.type="binary"),
-                    #fitness.args=new.fitness.args(fitness.fn=DeJong.F4.fitness,  goal.fn=noGoal))
+#dejongGA.F4=new.GA.env(encoding.args=new.encoding.args(chr.length=80, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=DeJong.F4.fitness, goal.fn=noGoal))
 
 DeJong.F5.fitness.generator <- function()
 {
   a = matrix(data = runif(25*25)*65.536*2 - 65.536,nrow=25,ncol=25)
   
-  DeJong.F5.fitness <- function(genes)
+  DeJong.F5.fitness <- function(organism, ...)
   {
+    genes = organism@chromosome$genes
+    
     n = 25
     chromosomeLength = 425
     geneSize = chromosomeLength/n
@@ -190,11 +190,12 @@ DeJong.F5.fitness.generator <- function()
   }
 }
 
-#dejongGA.F5=new.GA.env(encoding.args=new.encoding.args(chr.length=425, chr.encode.type="binary"),
-#fitness.args=new.fitness.args(fitness.fn=DeJong.F5.fitness.generator(),  goal.fn = noGoal))
+#dejongGA.F5=new.GA.env(encoding.args=new.encoding.args(chr.length=425, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=DeJong.F5.fitness.generator(), goal.fn = noGoal))
 
-Rastrigin.fitness.fn <- function(genes)
+Rastrigin.fitness.fn <- function(organism, ...)
 {
+  genes = organism@chromosome$genes
+  
   n = 10
   chromosomeLength = 100
   geneSize = chromosomeLength/n
@@ -213,14 +214,15 @@ Rastrigin.fitness.fn <- function(genes)
   {
     total = total + xVals[[i]]^2 - A*cos(2*pi*xVals[[i]])
   }
-  -total
+  total
 }
 
-#rastriginGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
-                    #fitness.args=new.fitness.args(fitness.fn=Rastrigin.fitness.fn,  goal = 0))
+#rastriginGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=Rastrigin.fitness.fn, goal = 0), selection.args=new.selection.args(maximizing = FALSE))
 
-Rosenbrock.fitness.fn <- function(genes)
+Rosenbrock.fitness.fn <- function(organism, ...)
 {
+  genes = organism@chromosome$genes
+  
   n = 2
   chromosomeLength = 100
   x = GrayCode.to.Decimal(genes[1:(chromosomeLength/n)])
@@ -228,14 +230,15 @@ Rosenbrock.fitness.fn <- function(genes)
   
   total = (1 - x)^2 + 100*(y - x^2)^2
   
-  -total
+  total
 }
 
-#rosenbrockGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
-                       #fitness.args=new.fitness.args(fitness.fn=Rosenbrock.fitness.fn,  goal = 0))
+#rosenbrockGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=Rosenbrock.fitness.fn, goal = 0), selection.args=new.selection.args(maximizing = FALSE))
 
-Schwefel.fitness.fn <-function(genes)
+Schwefel.fitness.fn <-function(organism, ...)
 {
+  genes = organism@chromosome$genes
+  
   n = 10
   chromosomeLength = 100
   geneSize = chromosomeLength/n
@@ -252,14 +255,16 @@ Schwefel.fitness.fn <-function(genes)
   {
     total = total - xVals[[i]]*sin(sqrt(abs(xVals[[i]])))
   }
-  -total
+  
+  total
 }
 
-#shwefelGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"),
-                        #fitness.args=new.fitness.args(fitness.fn=Schwefel.fitness.fn,  goal = 0))
+#shwefelGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=Schwefel.fitness.fn, goal = 0), selection.args=new.selection.args(maximizing = FALSE))
 
-F8.Fitness <- function(genes)
+F8.Fitness <- function(organism, ...)
 {
+  genes = organism@chromosome$genes
+  
   n = 10
   chromosomeLength = 100
   geneSize = chromosomeLength/n
@@ -303,8 +308,10 @@ Simple.F8.Fitness <- function(value)
   1 + value^2/4000 - cos(value)
 }
 
-F8F2.fitness.fn <- function(genes)
+F8F2.fitness.fn <- function(organism, ...)
 {
+  genes = organism@chromosome$genes
+  
   n = 20
   chromosomeLength = 240
   geneSize = chromosomeLength/n
@@ -317,11 +324,10 @@ F8F2.fitness.fn <- function(genes)
   }
   total = total + Simple.F8.Fitness(Simple.F2.fitness(c(genes[((n-1)*12):chromosomeLength],genes[1:12])))
 
-  -total
+  total
 }
 
-#F8F2GA=new.GA.env(encoding.args=new.encoding.args(chr.length=240, chr.encode.type="binary"),
-#fitness.args=new.fitness.args(fitness.fn=F8F2.fitness.fn,  goal = 0))
+#F8F2GA=new.GA.env(encoding.args=new.encoding.args(chr.length=240, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=F8F2.fitness.fn, goal = 0), selection.args=new.selection.args(maximizing = FALSE))
 
 
 #Convert a binary number to a decimal number
