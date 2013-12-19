@@ -14,8 +14,8 @@ elite.selection <- function(pop, elite.size = 1, maximizing = TRUE, pop.fit = NU
   sortedOrganisms = sort(sortedOrganisms, decreasing = maximizing)
 
   #Fill our elite list with the top fitness values
-  eliteList = vector("list", elite.size)
-  eliteList[1] = sortedOrganisms[1]
+  eliteList = c(sortedOrganisms[[1]])
+
   if (elite.size > 1)
   {
     elitesFilled = 1
@@ -28,13 +28,14 @@ elite.selection <- function(pop, elite.size = 1, maximizing = TRUE, pop.fit = NU
         if (identical(eliteList[[j]]@chromosome$genes, sortedOrganisms[[i]]@chromosome$genes))
         {
           foundMatch = TRUE
+          break
         }
       }
       
       if (!foundMatch)
       {
         elitesFilled = elitesFilled + 1
-        eliteList[elitesFilled] = sortedOrganisms[[i]]
+        eliteList[[elitesFilled]] = sortedOrganisms[[i]]
       }      
       
       if (elitesFilled == elite.size) break

@@ -69,15 +69,25 @@ new.fitness.fn <- function(fitness.fn, ...){
 
 ## Fitness Evaluation
 
-evaluate <- function(pop, fitness.fn, ...){
+evaluate <- function(obj, fitness.fn, ...){
   print("generic base function does nothing - evaluate")
 }
 
 setGeneric("evaluate")
 
 setMethod("evaluate", 
+          signature = c("organism", "function"),
+          definition = function(obj, fitness.fn, pop, otherPops = NULL, externalConnectionsMatrix = NULL) {
+            organism = obj
+            fit1 <- organism@fitness$value <- fitness.fn(organism, pop, otherPops, externalConnectionsMatrix)
+            
+            fit1
+          }
+)
+setMethod("evaluate", 
           signature = c("population", "function"),
-          definition = function(pop, fitness.fn, otherPops = NULL, externalConnectionsMatrix = NULL) {
+          definition = function(obj, fitness.fn, otherPops = NULL, externalConnectionsMatrix = NULL) {
+            pop = obj
             organisms = pop@organisms$values
             
             n <- length(organisms)
@@ -92,8 +102,7 @@ setMethod("evaluate",
             fit.cache[[1]] <- fit1
             
             for(i in 2:n)
-            {
-              
+            {              
               fit.cache[[i]] <- organisms[[i]]@fitness$value <- fitness.fn(organisms[[i]], pop, otherPops, externalConnectionsMatrix)
             }
             
@@ -101,6 +110,41 @@ setMethod("evaluate",
           }
 )
 
+setMethod("evaluate", 
+          signature = c("list", "function"),
+          definition = function(obj, fitness.fn, otherPops = NULL, externalConnectionsMatrix = NULL) {
+            pops = obj
+            numPop = length(pops)
+            
+            fitness.set = vector("list", numPop)
+            if (numPop > 1)
+            {
+              for (i in 1:numPop)
+              {
+                if (i == 1)
+                {
+                  otherPops = pops[2:numPop]
+                }
+                else if (i == numPop)
+                {
+                  otherPops = pops[1: (i - 1)]
+                }
+                else
+                {
+                  otherPops = c(pops[1:(i-1)], pops[(i+1):numPop])
+                }
+                
+                fitness.set[[i]] <- evaluate(pops[[i]], fitness.fn, otherPops, externalConnectionsMatrix)
+              }
+            }
+            else
+            {
+              fitness.set[[1]] <- evaluate(pops[[1]], fitness.fn)
+            }
+            
+            return(fitness.set)
+          }
+)
 
 ### Fitness Class (needed for multi-objective, stochastic and other complex fitnesses)
 setClass("fitness", representation(value = "numeric"))

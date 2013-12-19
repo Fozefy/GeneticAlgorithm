@@ -229,36 +229,13 @@ generational.ga <- function(GA.env){
   with(GA.env, {
     currentGen.results <- NULL #Our 0 generation has no results, but we want to be able to report anyway
     reported.data <- NULL
-    for(gen in 0:max.gen){
-      fitness.set = vector("list", numPop)
-      if (numPop > 1)
-      {
-        for (i in 1:numPop)
-        {
-          if (i == 1)
-          {
-            otherPops = reproduction.env(GA.env)$pop[2:numPop]
-          }
-          else if (i == numPop)
-          {
-            otherPops = reproduction.env(GA.env)$pop[1: (i - 1)]
-          }
-          else
-          {
-            otherPops = c(reproduction.env(GA.env)$pop[1:(i-1)],reproduction.env(GA.env)$pop[(i+1):numPop])
-          }
-          
-          fitness.set[[i]] <- evaluate(reproduction.env(GA.env)$pop[[i]], fitness.env$fitness.fn, otherPops, fitness.env(GA.env)$externalConnectionsMatrix)
-        }
-      }
-      else
-      {
-        fitness.set[[1]] <- evaluate(reproduction.env(GA.env)$pop[[1]], fitness.env$fitness.fn)
-      }
-      
+    
+    GA.env$fitness.env$fitness.set <- evaluate(reproduction.env(GA.env)$pop,  fitness.env(GA.env)$fitness.fn, fitness.env(GA.env)$externalConnectionsMatrix)
+    
+    for(gen in 0:max.gen){  
       #Check if we've met our goal yet
       if (!is.null(fitness.env(GA.env)$goal.fn))
-        goal.reached = fitness.env(GA.env)$goal.fn(fitness.set)
+        goal.reached = fitness.env(GA.env)$goal.fn(fitness.env(GA.env)$fitness.set)
       else
         goal.reached = FALSE
           
@@ -266,7 +243,7 @@ generational.ga <- function(GA.env){
       reported.data <- c(reported.data, report(gen, currentGen.results, goal.reached))
   
       if (verbose) #TODO - Figure out what to print for multiple pops, just print first for now
-        print(if (selection.env(GA.env)$maximizing)max(fitness.set[[1]]) else min(fitness.set[[1]]))
+        print(if (selection.env(GA.env)$maximizing)max(fitness.env(GA.env)$fitness.set[[1]]) else min(fitness.env(GA.env)$fitness.set[[1]]))
       
       #If we've met our goal: stop!
       if (goal.reached) break
@@ -297,7 +274,7 @@ next.generation <- function(GA.env){
     else
       elite[[i]] <- selection.env(GA.env)$select.elite(reproduction.env(GA.env)$pop[[i]])
       
-    #Get number of each repro group
+    #Get number of each reproduction group
     elite.size <- if (!is.null(elite[[i]])) length(elite[[i]]) else 0
     xover.size <- xover.count(P, elite.size, reproduction.env(GA.env)$xover.prob)
     mut.size <- mutate.only.count(P, xover.size, elite.size)
@@ -306,12 +283,12 @@ next.generation <- function(GA.env){
     p1.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]])
     p2.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]])
     rest.loc <- selection.env(GA.env)$select.chr(mut.size, reproduction.env(GA.env)$pop[[i]])
-  
+
     elite[[i]] <- if (!is.null(elite[[i]])) duplicate(elite[[i]]) else NULL
     p1 <- duplicate(reproduction.env(GA.env)$pop[[i]][p1.loc])
     p2 <- duplicate(reproduction.env(GA.env)$pop[[i]][p2.loc])
     rest <- duplicate(reproduction.env(GA.env)$pop[[i]][rest.loc])
-  
+    
     #Perform reproduction
     #Mutate
     restResults = reproduction.env(GA.env)$mutate(rest)
@@ -323,9 +300,48 @@ next.generation <- function(GA.env){
     xover.results[[i]] <- chr.xover(p1, p2, reproduction.env(GA.env)$xover.swapMask)
     xover.results[[i]]@returnList$p1 = p1.loc
     xover.results[[i]]@returnList$p2 = p2.loc
+    
     #Create the next population
-    new.pop[i] <- new.population(organisms = c(elite[[i]], p1, p2, rest))
+    new.pop[[i]] = duplicate(reproduction.env(GA.env)$pop[[i]])
+
+    
+    #NOTE: ALL OF THIS IS JUST IN TESTING, pops might not want to be created like this
+    #Put all of our reproduced organisms in the appropriate locations within the new population
+    new.pop[[i]][rest.loc] = rest
+    new.pop[[i]][p1.loc] = p1
+    new.pop[[i]][p2.loc] = p2
+
     new.pop[[i]]@popNum = i
+  }
+
+  GA.env$fitness.env$fitness.set <- evaluate(new.pop, fitness.env(GA.env)$fitness.fn, fitness.env(GA.env)$externalConnectionsMatrix)
+
+  #Now we can add elites, now that their fitness is accurate
+  #Doing hard tournament here, causing GREAT reduction is GA performance
+  for (i in 1:GA.env$numPop)
+  {
+    if(!is.null(elite[[i]]))
+    {
+      for(j in 1:length(elite[[i]]))
+      {
+        evaluate(elite[[i]][[j]], fitness.env(GA.env)$fitness.fn, new.pop[[i]], fitness.env(GA.env)$externalConnectionsMatrix)
+        if (new.pop[[i]][[elite[[i]][[j]]@index]]@fitness$value < elite[[i]][[j]]@fitness$value)
+        {
+          #TODO - Pop1 is based on previous pop2, could cause issues if this pop2 location was an elite
+          new.pop[[i]][[elite[[i]][[j]]@index]] = elite[[i]][[j]]
+          GA.env$fitness.env$fitness.set[[i]][[j]] = elite[[i]][[j]]@fitness$value
+        }
+      }
+    }
+  }
+  
+  #TODO - is this necessary? Might be best to remove this with a better solution for handling elites
+  if (GA.env$numPop > 1)
+  {
+    for (i in 1:GA.env$numPop)
+    {
+      evaluate(elite[[i]][[j]], fitness.env$fitness.fn, reproduction.env(GA.env)$pop, fitness.env(GA.env)$externalConnectionsMatrix)    
+    }
   }
   
   #Set the current population to the new population
