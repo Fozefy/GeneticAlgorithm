@@ -118,6 +118,7 @@ create.mutation.stats <- function(mutation)
   mutation.counts = as.vector(mutation.counts, mode = "numeric")
   
   mutation.env = new.env()
+  mutation.env$numMutations = numMutations
   mutation.env$max = max(mutation.counts)
   mutation.env$min = min(mutation.counts)
   mutation.env$SD = sd(mutation.counts)
