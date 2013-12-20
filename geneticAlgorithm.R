@@ -95,8 +95,8 @@ new.mutation.args <- function(gene.delta = NULL, gene.sd = NULL, prob.mutation =
   as.list(environment())
 }
 
-new.selection.args <- function(selection.type = "simple.tournament", tourn.size = 2, prob.select.worse = 0, maximizing = TRUE, elitism = TRUE, elite.size = 2, elite.fn = truncation.selection){
-  selection.type; tourn.size; prob.select.worse; maximizing; elitism; elite.size; elite.fn
+new.selection.args <- function(selection.type = "simple.tournament", tourn.size = 2, prob.select.worse = 0, maximizing = TRUE, elitism = TRUE, elite.size = 2, elite.fn = truncation.selection, adjMatrix = NULL){
+  selection.type; tourn.size; prob.select.worse; maximizing; elitism; elite.size; elite.fn; adjMatrix
   as.list(environment())
 }
 
@@ -281,7 +281,17 @@ next.generation <- function(GA.env){
   
     #Find the chromosomes to be crossed
     p1.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]])
-    p2.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]])
+    
+    if (is.null(selection.env(GA.env)$adjMatrix))
+    {
+      #We have no spatial component in our loca network, so we can choose any nodes
+      p2.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]])
+    }
+    else
+    {
+      #We have a spatial network with an adj matrix, we can only choose local nodes
+      p2.loc <- local.selection(reproduction.env(GA.env)$pop[[i]], p1.loc, selection.env(GA.env)$select.chr, selection.env(GA.env)$adjMatrix)
+    }
     rest.loc <- selection.env(GA.env)$select.chr(mut.size, reproduction.env(GA.env)$pop[[i]])
 
     elite[[i]] <- if (!is.null(elite[[i]])) duplicate(elite[[i]]) else NULL
@@ -302,48 +312,59 @@ next.generation <- function(GA.env){
     xover.results[[i]]@returnList$p2 = p2.loc
     
     #Create the next population
-    new.pop[[i]] = duplicate(reproduction.env(GA.env)$pop[[i]])
-
-    
-    #NOTE: ALL OF THIS IS JUST IN TESTING, pops might not want to be created like this
-    #Put all of our reproduced organisms in the appropriate locations within the new population
-    new.pop[[i]][rest.loc] = rest
-    new.pop[[i]][p1.loc] = p1
-    new.pop[[i]][p2.loc] = p2
-
+    if (is.null(fitness.env(GA.env)$externalConnectionsMatrix) && is.null(selection.env(GA.env)$adjMatrix))
+    {
+      #We have no spatial component in our GA, so just make it in whatever order
+      new.pop[i] <- new.population(organisms = c(elite[[i]], p1, p2, rest))
+    }
+    else
+    {
+      #We needed the new pop to be based on a spatial relationship so they can't move around
+      new.pop[[i]] = duplicate(reproduction.env(GA.env)$pop[[i]])
+      
+      #NOTE: ALL OF THIS IS JUST IN TESTING, pops might not want to be created like this
+      #Put all of our reproduced organisms in the appropriate locations within the new population
+      new.pop[[i]][rest.loc] = rest
+      new.pop[[i]][p1.loc] = p1
+      new.pop[[i]][p2.loc] = p2
+    }
     new.pop[[i]]@popNum = i
   }
 
+  #Find fitnesses for new.pop
   GA.env$fitness.env$fitness.set <- evaluate(new.pop, fitness.env(GA.env)$fitness.fn, fitness.env(GA.env)$externalConnectionsMatrix)
-
-  #Now we can add elites, now that their fitness is accurate
-  #Doing hard tournament here, causing GREAT reduction is GA performance
-  for (i in 1:GA.env$numPop)
+  
+  if (!is.null(fitness.env(GA.env)$externalConnectionsMatrix) || !is.null(selection.env(GA.env)$adjMatrix))
   {
-    if(!is.null(elite[[i]]))
+    #Now we can add elites, now that their fitness is accurate
+    #Doing hard tournament here, causing GREAT reduction is GA performance
+    if(selection.env(GA.env)$maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
+    for (i in 1:GA.env$numPop)
     {
-      for(j in 1:length(elite[[i]]))
+      if(!is.null(elite[[i]]))
       {
-        evaluate(elite[[i]][[j]], fitness.env(GA.env)$fitness.fn, new.pop[[i]], fitness.env(GA.env)$externalConnectionsMatrix)
-        if (new.pop[[i]][[elite[[i]][[j]]@index]]@fitness$value < elite[[i]][[j]]@fitness$value)
+        for(j in 1:length(elite[[i]]))
         {
-          #TODO - Pop1 is based on previous pop2, could cause issues if this pop2 location was an elite
-          new.pop[[i]][[elite[[i]][[j]]@index]] = elite[[i]][[j]]
-          GA.env$fitness.env$fitness.set[[i]][[j]] = elite[[i]][[j]]@fitness$value
+          evaluate(elite[[i]][[j]], fitness.env(GA.env)$fitness.fn, new.pop[[i]], fitness.env(GA.env)$externalConnectionsMatrix)
+          if (elite[[i]][[j]]@fitness$value %>% new.pop[[i]][[elite[[i]][[j]]@index]]@fitness$value)
+          {
+            #TODO - Pop1 is based on previous pop2, could cause issues if this pop2 location was an elite
+            new.pop[[i]][[elite[[i]][[j]]@index]] = elite[[i]][[j]]
+            GA.env$fitness.env$fitness.set[[i]][[j]] = elite[[i]][[j]]@fitness$value
+          }
         }
       }
     }
-  }
-  
-  #TODO - is this necessary? Might be best to remove this with a better solution for handling elites
-  if (GA.env$numPop > 1)
-  {
-    for (i in 1:GA.env$numPop)
+    
+    #TODO - is this necessary? Might be best to remove this with a better solution for handling elites
+    if (GA.env$numPop > 1)
     {
-      evaluate(elite[[i]][[j]], fitness.env$fitness.fn, reproduction.env(GA.env)$pop, fitness.env(GA.env)$externalConnectionsMatrix)    
+      for (i in 1:GA.env$numPop)
+      {
+        evaluate(elite[[i]][[j]], fitness.env$fitness.fn, reproduction.env(GA.env)$pop, fitness.env(GA.env)$externalConnectionsMatrix)    
+      }
     }
   }
-  
   #Set the current population to the new population
   add.population(reproduction.env(GA.env), new.pop)
     

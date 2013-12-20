@@ -139,3 +139,20 @@ fitnessProportional.selection <- function(n, pop, select=NULL, pop.cumfit = NULL
 rank.selection <- function(n, pop = NULL, select=NULL){
   
 }
+
+#Selecting partners based on an adj matrix
+local.selection <- function(pop, selectionPartners, selection.fn, adjMatrix)
+{
+  selection.loc = NULL
+  for (i in 1:length(selectionPartners))
+  {
+    #Create a subpopultion containing the possible mates
+    subPop = new.population(organisms=pop[adjMatrix[,selectionPartners[[i]]]])
+    
+    selection.loc[[i]] = selection.fn(1, subPop)
+    
+    #The index returned was the one in the subPop, we need the index in the origional pop
+    selection.loc[[i]] = subPop[[selection.loc[[i]]]]@index
+  }
+  selection.loc
+}
