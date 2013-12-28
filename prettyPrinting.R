@@ -39,6 +39,26 @@ get.close.delimiter <- function(gene.brackets){
     substr(gene.brackets, 2, 2)
 }
 
+print.best <- function(fitness.set, maximizing, numPop)
+{
+  best = if (maximizing) max else min
+  if (numPop == 1)
+  {
+    print(best(fitness.set))
+  }
+  else
+  {
+    string = best(fitness.set[[1]])
+    for(i in 2:numPop)
+    {
+      string = paste(string,",",best(fitness.set[[i]]))
+    }
+    
+    print(string)
+  }
+  
+}
+
 ga.print <- function(obj, ...) cat(obj, ...)
 setGeneric("ga.print")
 

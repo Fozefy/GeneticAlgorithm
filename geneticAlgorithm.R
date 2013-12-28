@@ -231,7 +231,7 @@ generational.ga <- function(GA.env){
     reported.data <- NULL
     
     GA.env$fitness.env$fitness.set <- evaluate(reproduction.env(GA.env)$pop,  fitness.env(GA.env)$fitness.fn, fitness.env(GA.env)$externalConnectionsMatrix)
-    GA.env$fitness.env$fitness.set=GA.env$fitness.env$fitness.set[[1]] #TODO - JUST here to make work for now, need to eventually use all
+
     for(gen in 0:max.gen){  
       #Check if we've met our goal yet
       if (!is.null(fitness.env(GA.env)$goal.fn))
@@ -243,7 +243,7 @@ generational.ga <- function(GA.env){
       reported.data <- c(reported.data, report(gen, currentGen.results, goal.reached))
   
       if (verbose) #TODO - Figure out what to print for multiple pops, just printing from final pop for now
-        print(if (selection.env(GA.env)$maximizing)max(fitness.env(GA.env)$fitness.set) else min(fitness.env(GA.env)$fitness.set))
+        print.best(fitness.env(GA.env)$fitness.set, selection.env(GA.env)$maximizing, GA.env$numPop)
       
       #If we've met our goal: stop!
       if (goal.reached) break
@@ -334,7 +334,7 @@ next.generation <- function(GA.env){
       #Find fitnesses for new.pop (we do this here as a spatial GA needs to find fitness while creating pop)
       if(GA.env$numPop > 1)
       {
-        GA.env$fitness.env$fitness.set <- evaluate(new.pop[[i]], fitness.env(GA.env)$fitness.fn, reproduction.env(GA.env)$pop[-i], fitness.env(GA.env)$externalConnectionsMatrix)
+        GA.env$fitness.env$fitness.set[[i]] <- evaluate(new.pop[[i]], fitness.env(GA.env)$fitness.fn, reproduction.env(GA.env)$pop[-i], fitness.env(GA.env)$externalConnectionsMatrix)
       }
       else
       {
@@ -370,7 +370,7 @@ next.generation <- function(GA.env){
       #Find fitnesses for new.pop
       if(GA.env$numPop > 1)
       {
-        GA.env$fitness.env$fitness.set <- evaluate(new.pop[[i]], fitness.env(GA.env)$fitness.fn, reproduction.env(GA.env)$pop[-i], fitness.env(GA.env)$externalConnectionsMatrix)
+        GA.env$fitness.env$fitness.set[[i]] <- evaluate(new.pop[[i]], fitness.env(GA.env)$fitness.fn, reproduction.env(GA.env)$pop[-i], fitness.env(GA.env)$externalConnectionsMatrix)
       }
       else
       {
@@ -398,8 +398,15 @@ next.generation <- function(GA.env){
           if (elite[[i]][[j]]@fitness$value %>% new.pop[[i]][[elite[[i]][[j]]@index]]@fitness$value)
           {
             new.pop[[i]][[elite[[i]][[j]]@index]] = elite[[i]][[j]]
-            
-            GA.env$fitness.env$fitness.set[j] = elite[[i]][[j]]@fitness$value
+          
+            if(GA.env$numPop > 1)
+            {
+              GA.env$fitness.env$fitness.set[[i]][[j]] = elite[[i]][[j]]@fitness$value
+            }
+            else
+            {
+              GA.env$fitness.env$fitness.set[[j]] = elite[[i]][[j]]@fitness$value
+            }
           }
         }
       }
