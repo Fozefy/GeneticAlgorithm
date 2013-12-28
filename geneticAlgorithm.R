@@ -84,9 +84,9 @@ new.fitness.args <- function(fitness.fn = one.max.fn, fitnessFn.args = NULL, goa
   as.list(environment())
 }
 
-new.xover.args <- function (xover.prob = 0.8, xover.type = "uniform", xover.alpha = 0.3, xover.k = 2)
+new.xover.args <- function (xover.prob = 0.8, xover.type = "uniform", xover.alpha = 0.3, xover.k = 2, keepSecondaryParent = TRUE)
 {
-  xover.prob; xover.type; xover.alpha
+  xover.prob; xover.type; xover.alpha; keepSecondaryParent
   as.list(environment())
 }
 
@@ -231,7 +231,7 @@ generational.ga <- function(GA.env){
     reported.data <- NULL
     
     GA.env$fitness.env$fitness.set <- evaluate(reproduction.env(GA.env)$pop,  fitness.env(GA.env)$fitness.fn, fitness.env(GA.env)$externalConnectionsMatrix)
-    
+    GA.env$fitness.env$fitness.set=GA.env$fitness.env$fitness.set[[1]] #TODO - JUST here to make work for now, need to eventually use all
     for(gen in 0:max.gen){  
       #Check if we've met our goal yet
       if (!is.null(fitness.env(GA.env)$goal.fn))
@@ -242,8 +242,8 @@ generational.ga <- function(GA.env){
       #Save the data we've reported so far
       reported.data <- c(reported.data, report(gen, currentGen.results, goal.reached))
   
-      if (verbose) #TODO - Figure out what to print for multiple pops, just print first for now
-        print(if (selection.env(GA.env)$maximizing)max(fitness.env(GA.env)$fitness.set[[1]]) else min(fitness.env(GA.env)$fitness.set[[1]]))
+      if (verbose) #TODO - Figure out what to print for multiple pops, just printing from final pop for now
+        print(if (selection.env(GA.env)$maximizing)max(fitness.env(GA.env)$fitness.set) else min(fitness.env(GA.env)$fitness.set))
       
       #If we've met our goal: stop!
       if (goal.reached) break
@@ -277,22 +277,29 @@ next.generation <- function(GA.env){
     #Get number of each reproduction group
     elite.size <- if (!is.null(elite[[i]])) length(elite[[i]]) else 0
     xover.size <- xover.count(P, elite.size, reproduction.env(GA.env)$xover.prob)
-    mut.size <- mutate.only.count(P, xover.size, elite.size)
+    mut.size <- mutate.only.count(P, xover.size, elite.size, reproduction.env(GA.env)$keepSecondaryParent)
   
     #Find the chromosomes to be crossed
     p1.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]])
     
     if (is.null(selection.env(GA.env)$adjMatrix))
     {
-      #We have no spatial component in our loca network, so we can choose any nodes
+      #We have no spatial component in our local network, so we can choose any nodes
       p2.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]])
+      
+      #Use standard selection to find the nodes to be only mutated
+      rest.loc <- selection.env(GA.env)$select.chr(mut.size, reproduction.env(GA.env)$pop[[i]])
     }
     else
     {
       #We have a spatial network with an adj matrix, we can only choose local nodes
       p2.loc <- local.selection(reproduction.env(GA.env)$pop[[i]], p1.loc, selection.env(GA.env)$select.chr, selection.env(GA.env)$adjMatrix)
+      
+      #We don't want to choose the same nodes we are crossing over in our spatial GA
+      #if we do that then they are just overwritten, find unselected nodes
+      #TODO - Is it better if we just select the rest of the nodes, the overall number is irrelevant in a spatial GA
+      rest.loc <- select.unselected.nodes(mut.size, reproduction.env(GA.env)$pop[[i]], c(p1.loc,p2.loc), selection.env(GA.env)$select.chr)
     }
-    rest.loc <- selection.env(GA.env)$select.chr(mut.size, reproduction.env(GA.env)$pop[[i]])
 
     elite[[i]] <- if (!is.null(elite[[i]])) duplicate(elite[[i]]) else NULL
     p1 <- duplicate(reproduction.env(GA.env)$pop[[i]][p1.loc])
@@ -311,60 +318,97 @@ next.generation <- function(GA.env){
     xover.results[[i]]@returnList$p1 = p1.loc
     xover.results[[i]]@returnList$p2 = p2.loc
     
-    #Create the next population
+    #Create the next generation's population
     if (is.null(fitness.env(GA.env)$externalConnectionsMatrix) && is.null(selection.env(GA.env)$adjMatrix))
     {
       #We have no spatial component in our GA, so just make it in whatever order
-      new.pop[i] <- new.population(organisms = c(elite[[i]], p1, p2, rest))
+      if (reproduction.env(GA.env)$keepSecondaryParent)
+      {
+        new.pop[i] <- new.population(organisms = c(elite[[i]], p1, p2, rest))
+      }
+      else
+      {
+        new.pop[i] <- new.population(organisms = c(elite[[i]], p1, rest))
+      }
+      
+      #Find fitnesses for new.pop (we do this here as a spatial GA needs to find fitness while creating pop)
+      if(GA.env$numPop > 1)
+      {
+        GA.env$fitness.env$fitness.set <- evaluate(new.pop[[i]], fitness.env(GA.env)$fitness.fn, reproduction.env(GA.env)$pop[-i], fitness.env(GA.env)$externalConnectionsMatrix)
+      }
+      else
+      {
+        GA.env$fitness.env$fitness.set <- evaluate(new.pop[[i]], fitness.env(GA.env)$fitness.fn)
+      } 
     }
     else
     {
       #We needed the new pop to be based on a spatial relationship so they can't move around
       new.pop[[i]] = duplicate(reproduction.env(GA.env)$pop[[i]])
       
-      #NOTE: ALL OF THIS IS JUST IN TESTING, pops might not want to be created like this
-      #Put all of our reproduced organisms in the appropriate locations within the new population
+      if (reproduction.env(GA.env)$keepSecondaryParent)
+      {
+        new.pop[[i]][p1.loc] = p1
+        new.pop[[i]][p2.loc] = p2
+      }
+      else
+      {
+        #Put all of our reproduced organisms in the appropriate locations within the new population
+        #We will choose which child to use at random (we  can't just choose the first as you then take first gene section from p1 always)
+        for (j in 1:length(p1.loc))
+        {
+          new.pop[[i]][p1.loc[[j]]] = if (runif(1) > 0.5) p1[[j]] else p2[[j]]
+        }
+      }
+      #TODO - Customize to allow for:
+      #Which child to be used based on fitness
+      #-Another option to be added could be using a location variable rather than requiring p1 be from that loc
+      #new.pop[[i]][p2.loc] = p2  
+      
       new.pop[[i]][rest.loc] = rest
-      new.pop[[i]][p1.loc] = p1
-      new.pop[[i]][p2.loc] = p2
-    }
-    new.pop[[i]]@popNum = i
-  }
-
-  #Find fitnesses for new.pop
-  GA.env$fitness.env$fitness.set <- evaluate(new.pop, fitness.env(GA.env)$fitness.fn, fitness.env(GA.env)$externalConnectionsMatrix)
-  
-  if (!is.null(fitness.env(GA.env)$externalConnectionsMatrix) || !is.null(selection.env(GA.env)$adjMatrix))
-  {
-    #Now we can add elites, now that their fitness is accurate
-    #Doing hard tournament here, causing GREAT reduction is GA performance
-    if(selection.env(GA.env)$maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
-    for (i in 1:GA.env$numPop)
-    {
+      
+      #Find fitnesses for new.pop
+      if(GA.env$numPop > 1)
+      {
+        GA.env$fitness.env$fitness.set <- evaluate(new.pop[[i]], fitness.env(GA.env)$fitness.fn, reproduction.env(GA.env)$pop[-i], fitness.env(GA.env)$externalConnectionsMatrix)
+      }
+      else
+      {
+        GA.env$fitness.env$fitness.set <- evaluate(new.pop[[i]], fitness.env(GA.env)$fitness.fn)
+      } 
+      
+      #Now we can add elites, we knock out other nodes if elite has better fitness
       if(!is.null(elite[[i]]))
       {
+        if(selection.env(GA.env)$maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
+        
         for(j in 1:length(elite[[i]]))
         {
-          evaluate(elite[[i]][[j]], fitness.env(GA.env)$fitness.fn, new.pop[[i]], fitness.env(GA.env)$externalConnectionsMatrix)
+          if(GA.env$numPop > 1)
+          {
+            evaluate(elite[[i]][[j]], fitness.env(GA.env)$fitness.fn, new.pop[[i]], reproduction.env(GA.env)$pop[-1], fitness.env(GA.env)$externalConnectionsMatrix)
+          }
+          else
+          {
+            #We might have a spatial GA, but without a second pop (no coevolution)
+            evaluate(elite[[i]][[j]], fitness.env(GA.env)$fitness.fn, new.pop[[i]])            
+          }
+
+          #Do a hard tournament, replace the node in elite's spot if elite is still better
           if (elite[[i]][[j]]@fitness$value %>% new.pop[[i]][[elite[[i]][[j]]@index]]@fitness$value)
           {
-            #TODO - Pop1 is based on previous pop2, could cause issues if this pop2 location was an elite
             new.pop[[i]][[elite[[i]][[j]]@index]] = elite[[i]][[j]]
-            GA.env$fitness.env$fitness.set[[i]][[j]] = elite[[i]][[j]]@fitness$value
+            
+            GA.env$fitness.env$fitness.set[j] = elite[[i]][[j]]@fitness$value
           }
         }
       }
     }
     
-    #TODO - is this necessary? Might be best to remove this with a better solution for handling elites
-    if (GA.env$numPop > 1)
-    {
-      for (i in 1:GA.env$numPop)
-      {
-        evaluate(elite[[i]][[j]], fitness.env$fitness.fn, reproduction.env(GA.env)$pop, fitness.env(GA.env)$externalConnectionsMatrix)    
-      }
-    }
+    new.pop[[i]]@popNum = i
   }
+  
+  
   #Set the current population to the new population
   add.population(reproduction.env(GA.env), new.pop)
     

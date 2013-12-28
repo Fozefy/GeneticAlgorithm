@@ -156,3 +156,17 @@ local.selection <- function(pop, selectionPartners, selection.fn, adjMatrix)
   }
   selection.loc
 }
+#Select nodes which haven't been selected yet
+select.unselected.nodes <- function(selection.size, pop, alreadySelected, selection.fn)
+{
+  subPop = new.population(organisms = pop[-alreadySelected])
+  
+  selection.loc = selection.fn(selection.size, subPop)
+  
+  for (i in 1:length(selection.loc))
+  {
+    selection.loc[[i]] = subPop[[selection.loc[[i]]]]@index
+  }
+  
+  selection.loc
+}

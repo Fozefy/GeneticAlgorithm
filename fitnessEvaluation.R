@@ -89,9 +89,9 @@ setMethod("evaluate",
           definition = function(obj, fitness.fn, otherPops = NULL, externalConnectionsMatrix = NULL) {
             pop = obj
             organisms = pop@organisms$values
-            
+
             n <- length(organisms)
-            
+
             fit1 <- organisms[[1]]@fitness$value <- fitness.fn(organisms[[1]], pop, otherPops, externalConnectionsMatrix)
 
             if(is.multiobjective(organisms[[1]]))
@@ -112,10 +112,10 @@ setMethod("evaluate",
 
 setMethod("evaluate", 
           signature = c("list", "function"),
-          definition = function(obj, fitness.fn, otherPops = NULL, externalConnectionsMatrix = NULL) {
+          definition = function(obj, fitness.fn, externalConnectionsMatrix = NULL) {
             pops = obj
             numPop = length(pops)
-            
+
             fitness.set = vector("list", numPop)
             if (numPop > 1)
             {
@@ -133,7 +133,7 @@ setMethod("evaluate",
                 {
                   otherPops = c(pops[1:(i-1)], pops[(i+1):numPop])
                 }
-                
+
                 fitness.set[[i]] <- evaluate(pops[[i]], fitness.fn, otherPops, externalConnectionsMatrix)
               }
             }

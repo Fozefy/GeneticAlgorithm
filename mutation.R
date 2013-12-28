@@ -59,8 +59,15 @@ alleles.gaussian <- function(genes, sd=1){
 }
 
 #Determine the number of chromosomes to be determined from only mutation
-mutate.only.count <- function(popSize, xover, elite){
-  popSize - 2 * xover - elite
+mutate.only.count <- function(popSize, xover, elite, keepSecondaryParent){
+  if (keepSecondaryParent)
+  {
+    popSize - 2 * xover - elite
+  }
+  else
+  {
+    popSize - xover - elite
+  }
 }
 
 prob.mutation <- function(rep.env){rep.env$prob.mutation}
