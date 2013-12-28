@@ -242,6 +242,9 @@ ga = new.GA.env(selection.args=new.selection.args(maximizing = TRUE), fitness.ar
 #Test two pops
 ga = new.GA.env(GA.base.args=new.GA.base.args(numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max, goal=90, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE))
 
+#Two pops with no elite
+ga = new.GA.env(GA.base.args=new.GA.base.args(numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max, goal=90, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=FALSE))
+
 #Time the GA
 ptm <- proc.time()
 ga<-new.GA.env()

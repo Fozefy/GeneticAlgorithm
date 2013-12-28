@@ -37,7 +37,7 @@ base.reporting.fn <- function(pop, mutation, cross, elite, ...)
       
     mutation.stats[[i]] <- create.mutation.stats(mutation[[i]])
     crossover.stats[[i]] <- create.crossover.stats(cross[[i]])
-    elite.stats[[i]] <- create.elite.stats(elite[[i]])
+    if (!is.null(elite)) elite.stats[[i]] <- create.elite.stats(elite[[i]])
   } 
   
   new("gen.report", maxFit, minFit, fitness.stats, mutation.stats, crossover.stats, elite.stats)

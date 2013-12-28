@@ -270,12 +270,12 @@ next.generation <- function(GA.env){
   
     #Find elites
     if(is.null(selection.env(GA.env)$select.elite))
-      elite[[i]] = NULL
+      elite = NULL
     else
       elite[[i]] <- selection.env(GA.env)$select.elite(reproduction.env(GA.env)$pop[[i]])
       
     #Get number of each reproduction group
-    elite.size <- if (!is.null(elite[[i]])) length(elite[[i]]) else 0
+    elite.size <- if (!is.null(elite)) length(elite[[i]]) else 0
     xover.size <- xover.count(P, elite.size, reproduction.env(GA.env)$xover.prob)
     mut.size <- mutate.only.count(P, xover.size, elite.size, reproduction.env(GA.env)$keepSecondaryParent)
   
@@ -301,11 +301,11 @@ next.generation <- function(GA.env){
       rest.loc <- select.unselected.nodes(mut.size, reproduction.env(GA.env)$pop[[i]], c(p1.loc,p2.loc), selection.env(GA.env)$select.chr)
     }
 
-    elite[[i]] <- if (!is.null(elite[[i]])) duplicate(elite[[i]]) else NULL
+    if (!is.null(elite)) elite[[i]] = duplicate(elite[[i]])
     p1 <- duplicate(reproduction.env(GA.env)$pop[[i]][p1.loc])
     p2 <- duplicate(reproduction.env(GA.env)$pop[[i]][p2.loc])
     rest <- duplicate(reproduction.env(GA.env)$pop[[i]][rest.loc])
-    
+
     #Perform reproduction
     #Mutate
     restResults = reproduction.env(GA.env)$mutate(rest)
@@ -322,14 +322,12 @@ next.generation <- function(GA.env){
     if (is.null(fitness.env(GA.env)$externalConnectionsMatrix) && is.null(selection.env(GA.env)$adjMatrix))
     {
       #We have no spatial component in our GA, so just make it in whatever order
-      if (reproduction.env(GA.env)$keepSecondaryParent)
-      {
-        new.pop[i] <- new.population(organisms = c(elite[[i]], p1, p2, rest))
-      }
-      else
-      {
-        new.pop[i] <- new.population(organisms = c(elite[[i]], p1, rest))
-      }
+      organisms = NULL #Create the set of organisms
+      if (!is.null(elite)) organisms = elite[[i]]
+      organisms = c(organisms, p1, rest)
+      if (reproduction.env(GA.env)$keepSecondaryParent) organisms = c(organisms, p2)
+
+      new.pop[i] <- new.population(organisms = organisms)
       
       #Find fitnesses for new.pop (we do this here as a spatial GA needs to find fitness while creating pop)
       if(GA.env$numPop > 1)
@@ -376,9 +374,9 @@ next.generation <- function(GA.env){
       {
         GA.env$fitness.env$fitness.set <- evaluate(new.pop[[i]], fitness.env(GA.env)$fitness.fn)
       } 
-      
+
       #Now we can add elites, we knock out other nodes if elite has better fitness
-      if(!is.null(elite[[i]]))
+      if(!is.null(elite))
       {
         if(selection.env(GA.env)$maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
         
