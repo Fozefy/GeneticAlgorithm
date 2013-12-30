@@ -156,6 +156,7 @@ local.selection <- function(pop, selectionPartners, selection.fn, adjMatrix)
   }
   selection.loc
 }
+
 #Select nodes which haven't been selected yet
 select.unselected.nodes <- function(selection.size, pop, alreadySelected, selection.fn)
 {
@@ -169,4 +170,65 @@ select.unselected.nodes <- function(selection.size, pop, alreadySelected, select
   }
   
   selection.loc
+}
+
+spatial.selection <- function(pop, p1, p1.loc, p2, p2.loc, rest, rest.loc, elite, fitness.env, otherPops, i, maximizing)
+{
+  #We needed the new pop to be based on a spatial relationship so they can't move around
+  new.pop = duplicate(pop)
+
+  #Put all of our reproduced organisms in the appropriate locations within the new population
+  #We will choose which child to use at random (we  can't just choose the first as you then take first gene section from p1 always)
+  for (j in 1:length(p1.loc))
+  {
+    new.pop[p1.loc[[j]]] = if (runif(1) > 0.5) p1[[j]] else p2[[j]]
+  }
+  
+  new.pop[rest.loc] = rest
+
+  #Find fitnesses for new.pop
+  if(!is.null(otherPops))
+  {
+    fitness.env$fitness.set[[i]] <- evaluate(new.pop, fitness.env$fitness.fn, otherPops, fitness.env$externalConnectionsMatrix)
+  }
+  else
+  {
+    fitness.env$fitness.set <- evaluate(new.pop, fitness.env(GA.env)$fitness.fn)
+  }
+  
+  #Now we can add elites, we knock out other nodes if elite has better fitness
+  if(!is.null(elite))
+  {
+    if(selection.env(GA.env)$maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
+    
+    for(j in 1:length(elite))
+    {
+      if(!is.null(otherPops))
+      {
+        evaluate(elite[[j]], fitness.env$fitness.fn, new.pop, otherPops, fitness.env$externalConnectionsMatrix)
+      }
+      else
+      {
+        #We have a spatial GA, but without a second pop (no coevolution)
+        evaluate(elite[[j]], fitness.env$fitness.fn, new.pop)            
+      }
+      
+      #Do a hard tournament, replace the node in elite's spot if elite is still better
+      if (elite[[j]]@fitness$value %>% new.pop[[elite[[j]]@index]]@fitness$value)
+      {
+        new.pop[[elite[[j]]@index]] = elite[[j]]
+        
+        if(!is.null(otherPops))
+        {
+          fitness.env$fitness.set[[i]][[elite[[j]]@index]] = elite[[j]]@fitness$value
+        }
+        else
+        {
+          fitness.env$fitness.set[[elite[[j]]@index]] = elite[[j]]@fitness$value
+        }
+      }
+    }
+  }
+  
+  return(new.pop)
 }
