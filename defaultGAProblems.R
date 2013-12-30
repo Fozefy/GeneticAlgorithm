@@ -7,10 +7,14 @@ finite.min.fn <- function(genes, gene.max){
   length(genes) * gene.max - sum(genes)
 }
 
-#Variant of one.max with two pops, takes a gene of the same id in the other pop and addes at half value to fitness
-twoPop.one.max <- function(organism, pop, otherPops, externalConnectionsMatrix){
-  otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index, pop@popNum]]]@chromosome$genes
+#Variant of one.max with two pops, takes a gene of the same id in the other pop and adds at half value to fitness
+twoPop.one.max <- function(organism, popNum, otherPops, externalConnectionsMatrix){
+  otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index, popNum]]]@chromosome$genes
   sum(organism@chromosome$genes)*2 + sum(otherGenes)
+}
+
+twoPop.one.max.seperate <- function(organism, pop, otherPops, externalConnectionsMatrix){
+  sum(organism@chromosome$genes)*3
 }
 
 abc.fit <-function(organism)

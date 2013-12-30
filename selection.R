@@ -147,36 +147,23 @@ local.selection <- function(pop, selectionPartners, selection.fn, adjMatrix)
   for (i in 1:length(selectionPartners))
   {
     #Create a subpopultion containing the possible mates
-    subPop = new.population(organisms=pop[adjMatrix[,selectionPartners[[i]]]])
+    subPop = new.population(organisms=pop[adjMatrix[selectionPartners[[i]],]])
     
     selection.loc[[i]] = selection.fn(1, subPop)
     
     #The index returned was the one in the subPop, we need the index in the origional pop
     selection.loc[[i]] = subPop[[selection.loc[[i]]]]@index
+    
+    #cat("Possible partners",adjMatrix[selectionPartners[[i]],],"chosen partner:",selection.loc[[i]],"\n")
   }
   selection.loc
 }
 
-#Select nodes which haven't been selected yet
-select.unselected.nodes <- function(selection.size, pop, alreadySelected, selection.fn)
-{
-  subPop = new.population(organisms = pop[-alreadySelected])
-  
-  selection.loc = selection.fn(selection.size, subPop)
-  
-  for (i in 1:length(selection.loc))
-  {
-    selection.loc[[i]] = subPop[[selection.loc[[i]]]]@index
-  }
-  
-  selection.loc
-}
-
-spatial.selection <- function(pop, p1, p1.loc, p2, p2.loc, rest, rest.loc, elite, fitness.env, otherPops, i, maximizing)
+spatial.selection.random.child <- function(pop, p1, p1.loc, p2, p2.loc, rest, rest.loc, elite, maximizing)
 {
   #We needed the new pop to be based on a spatial relationship so they can't move around
   new.pop = duplicate(pop)
-
+  
   #Put all of our reproduced organisms in the appropriate locations within the new population
   #We will choose which child to use at random (we  can't just choose the first as you then take first gene section from p1 always)
   for (j in 1:length(p1.loc))
@@ -185,47 +172,99 @@ spatial.selection <- function(pop, p1, p1.loc, p2, p2.loc, rest, rest.loc, elite
   }
   
   new.pop[rest.loc] = rest
-
-  #Find fitnesses for new.pop
-  if(!is.null(otherPops))
-  {
-    fitness.env$fitness.set[[i]] <- evaluate(new.pop, fitness.env$fitness.fn, otherPops, fitness.env$externalConnectionsMatrix)
-  }
-  else
-  {
-    fitness.env$fitness.set <- evaluate(new.pop, fitness.env(GA.env)$fitness.fn)
-  }
   
   #Now we can add elites, we knock out other nodes if elite has better fitness
   if(!is.null(elite))
   {
-    if(selection.env(GA.env)$maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
+    if(maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
     
     for(j in 1:length(elite))
-    {
-      if(!is.null(otherPops))
-      {
-        evaluate(elite[[j]], fitness.env$fitness.fn, new.pop, otherPops, fitness.env$externalConnectionsMatrix)
-      }
-      else
-      {
-        #We have a spatial GA, but without a second pop (no coevolution)
-        evaluate(elite[[j]], fitness.env$fitness.fn, new.pop)            
-      }
-      
+    {    
       #Do a hard tournament, replace the node in elite's spot if elite is still better
       if (elite[[j]]@fitness$value %>% new.pop[[elite[[j]]@index]]@fitness$value)
       {
         new.pop[[elite[[j]]@index]] = elite[[j]]
-        
-        if(!is.null(otherPops))
-        {
-          fitness.env$fitness.set[[i]][[elite[[j]]@index]] = elite[[j]]@fitness$value
-        }
-        else
-        {
-          fitness.env$fitness.set[[elite[[j]]@index]] = elite[[j]]@fitness$value
-        }
+      }
+    }
+  }
+  
+  return(new.pop)
+}
+
+
+#Not working yet, see todo below
+# spatial.selection.parent.tournament <- function(pop, p1, p1.loc, p2, p2.loc, rest, rest.loc, elite, maximizing)
+# {
+#   #We needed the new pop to be based on a spatial relationship so they can't move around
+#   new.pop = duplicate(pop)
+#   
+#   if(maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
+#   
+#   #Put all of our reproduced organisms in the appropriate locations within the new population
+#   #We will choose which child to use at random (we  can't just choose the first as you then take first gene section from p1 always)
+#   for (j in 1:length(p1.loc))
+#   {
+#     if (p1[[j]]@fitness$value %>% p2[[j]]@fitness$value)
+#     {
+#       if (p1[[j]]@fitness$value %>% new.pop[[p1.loc[[j]]]]@fitness$value)
+#       {
+#         #We are better than our parent, we can change
+#         new.pop[p1.loc[[j]]] = new.pop[p1.loc[[j]]]
+#       }
+#     }
+#     else
+#     {
+#       if (p2[[j]]@fitness$value %>% new.pop[[p1.loc[[j]]]]@fitness$value)
+#       {
+#         new.pop[p1.loc[[j]]]=p2[[j]]
+#       }
+#     }
+#   }
+#   #TODO - We need to update parent fitness as when the other population changes the parent needs to change
+#   new.pop[rest.loc] = rest
+#   
+#   #Now we can add elites, we knock out other nodes if elite has better fitness
+#   if(!is.null(elite))
+#   {    
+#     for(j in 1:length(elite))
+#     {    
+#       #Do a hard tournament, replace the node in elite's spot if elite is still better
+#       if (elite[[j]]@fitness$value %>% new.pop[[elite[[j]]@index]]@fitness$value)
+#       {
+#         new.pop[[elite[[j]]@index]] = elite[[j]]
+#       }
+#     }
+#   }
+#   
+#   return(new.pop)
+# }
+
+spatial.selection <- function(pop, p1, p1.loc, p2, p2.loc, rest, rest.loc, elite, maximizing)
+{
+  #We needed the new pop to be based on a spatial relationship so they can't move around
+  new.pop = duplicate(pop)
+
+  if(maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
+  
+  #Put all of our reproduced organisms in the appropriate locations within the new population
+  #We will choose which child to use at random (we  can't just choose the first as you then take first gene section from p1 always)
+  for (j in 1:length(p1.loc))
+  {
+    new.pop[p1.loc[[j]]] = if (p1[[j]]@fitness$value %>% p2[[j]]@fitness$value) p1[[j]] else p2[[j]]
+    new.pop[[p1.loc[[j]]]]@index = p1.loc[[j]]
+  }
+  
+  new.pop[rest.loc] = rest
+
+  #Now we can add elites, we knock out other nodes if elite has better fitness
+  if(!is.null(elite))
+  {    
+    for(j in 1:length(elite))
+    {    
+      #Do a hard tournament, replace the node in elite's spot if elite is still better
+      if (elite[[j]]@fitness$value %>% new.pop[[elite[[j]]@index]]@fitness$value)
+      {
+        new.pop[[elite[[j]]@index]] = elite[[j]]
       }
     }
   }

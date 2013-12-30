@@ -77,9 +77,9 @@ setGeneric("evaluate")
 
 setMethod("evaluate", 
           signature = c("organism", "function"),
-          definition = function(obj, fitness.fn, pop, otherPops = NULL, externalConnectionsMatrix = NULL) {
+          definition = function(obj, fitness.fn, popNum, otherPops = NULL, externalConnectionsMatrix = NULL) {
             organism = obj
-            fit1 <- organism@fitness$value <- fitness.fn(organism, pop, otherPops, externalConnectionsMatrix)
+            fit1 <- organism@fitness$value <- fitness.fn(organism, popNum, otherPops, externalConnectionsMatrix)
             
             fit1
           }
@@ -92,7 +92,7 @@ setMethod("evaluate",
 
             n <- length(organisms)
 
-            fit1 <- organisms[[1]]@fitness$value <- fitness.fn(organisms[[1]], pop, otherPops, externalConnectionsMatrix)
+            fit1 <- organisms[[1]]@fitness$value <- fitness.fn(organisms[[1]], pop@popNum, otherPops, externalConnectionsMatrix)
 
             if(is.multiobjective(organisms[[1]]))
               fit.cache <- vector("list", n)
@@ -103,7 +103,7 @@ setMethod("evaluate",
             
             for(i in 2:n)
             {              
-              fit.cache[[i]] <- organisms[[i]]@fitness$value <- fitness.fn(organisms[[i]], pop, otherPops, externalConnectionsMatrix)
+              fit.cache[[i]] <- organisms[[i]]@fitness$value <- fitness.fn(organisms[[i]], pop@popNum, otherPops, externalConnectionsMatrix)
             }
             
             fit.cache
@@ -145,6 +145,17 @@ setMethod("evaluate",
             return(fitness.set)
           }
 )
+
+evaluateOrganismList <- function(organisms, fitness.fn, popNum, otherPops = NULL, externalConnectionsMatrix = NULL)
+{
+  fitness.set = NULL
+  for (i in 1:length(organisms))
+  {
+    fitness.set[[i]] = evaluate(organisms[[i]], fitness.fn, popNum, otherPops, externalConnectionsMatrix)
+  }
+  
+  fitness.set
+}
 
 ### Fitness Class (needed for multi-objective, stochastic and other complex fitnesses)
 setClass("fitness", representation(value = "numeric"))
