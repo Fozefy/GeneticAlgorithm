@@ -44,7 +44,7 @@ print.best <- function(fitness.set, maximizing, numPop)
   best = if (maximizing) max else min
   if (numPop == 1)
   {
-    print(best(fitness.set))
+    print(best(fitness.set[[1]]))
   }
   else
   {
