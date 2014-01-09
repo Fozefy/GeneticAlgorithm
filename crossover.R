@@ -6,7 +6,7 @@ xover.count <- function(P, elite.count, xover.prob, xover=NULL){
   sum(xover)
 }
 
-chr.xover <- function(chr1, chr2, swapMask.fn = xover.mask.2point, swapMask=NULL){
+chr.xover <- function(chr1, chr2, swapMask.fn = xover.mask.2point, swapMask=NULL, ...){
   chr1; chr2; swapMask.fn; swapMask
   print("generic base function does nothing - chr.xover")
 }
@@ -25,11 +25,30 @@ setMethod("chr.xover",
 
 setMethod("chr.xover",
           signature = c("list", "list", "function", "ANY"),
-          definition = function(chr1, chr2, swapMask.fn, swapMask=NULL){
-            n <- length(chr1)
+          definition = function(chr1, chr2, swapMask.fn, swapMask=NULL, xover.list = NULL){
+            
+            if (is.null(xover.list))
+            {
+              n <- length(chr1)
+            }
+            else
+            {
+              n <- length(xover.list)
+              chr2[-xover.list] = 0              
+            }
+            
             return.values <- vector("list", n)
             for(i in 1:n)
-              return.values[[i]] <- chr.xover(chr1[[i]], chr2[[i]], swapMask.fn, swapMask[[i]])
+            {
+              if (class(chr2[[i]]) == "numeric")
+              {
+                  return.values[[i]] <- chr.xover(chr1[[i]], chr2[[i]], swapMask.fn, swapMask[[i]])
+                  chr2[[i]]@index = i
+              }
+              
+              chr1[[i]]@index = i
+            }
+            
             new("returnList", return.values)
           }
 )

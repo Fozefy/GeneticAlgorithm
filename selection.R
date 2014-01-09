@@ -5,6 +5,12 @@ select.population.fgen <- function(selection.fn, ...){
     selection.fn(selection.size = selection.size, pop = pop, ...)
 }
 
+#Uniform Selection
+uniform.selection <- function(selection.size, pop.size)
+{
+  sample(1:pop.size, selection.size, replace = FALSE)
+}
+
 # tournament selection
 
 new.tournaments.locations <- function(selection.size, tourn.size, pop.size){
@@ -55,7 +61,7 @@ tournament.selection.vprint <- function(tourn.fit, select.worse, tourn.loc, sele
 tournament.selection <- function(selection.size, pop = NULL, tourn.size = 2, prob.select.worse = 0, maximizing = TRUE,
                                  tourn.fit = NULL, tourn.loc = NULL, select.worse = NULL, pop.size = NULL, verbose = FALSE){
   n <- selection.size; k <- tourn.size 
-  P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, size(pop))
+  P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, length(pop))
   if(maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
   if(is.null(select.worse))
     select.worse <- new.select.worse.matrix(n, k, prob.select.worse)
@@ -81,7 +87,7 @@ tournament.selection <- function(selection.size, pop = NULL, tourn.size = 2, pro
 simple.tournament.selection <- function(selection.size, pop = NULL, tourn.size = 2, maximizing = TRUE,
                                         tourn.fit = NULL, tourn.loc = NULL, pop.size = NULL, verbose = FALSE){
   n <- selection.size; k <- tourn.size
-  P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, pop@pop.size) 
+  P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, length(pop)) 
   if(maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
   if(is.null(tourn.loc))
     tourn.loc <- new.tournaments.locations(n, k, P)
@@ -140,134 +146,93 @@ rank.selection <- function(n, pop = NULL, select=NULL){
   
 }
 
-#Selecting partners based on an adj matrix
-local.selection <- function(pop, selectionPartners, selection.fn, adjMatrix)
+#Selecting a primary parent for each node based on an adj matrix
+#We are selecting primary parent among the nodes and its direct neighbours of the node using the default selection.fn
+spatial.selection <- function(pop, selection.fn, adjMatrix)
 {
   selection.loc = NULL
-  for (i in 1:length(selectionPartners))
+  for (i in 1:length(pop))
   {
-    #Create a subpopultion containing the possible mates
-    subPop = new.population(organisms=pop[adjMatrix[selectionPartners[[i]],]])
-    
-    selection.loc[[i]] = selection.fn(1, subPop)
-    
-    #The index returned was the one in the subPop, we need the index in the origional pop
-    selection.loc[[i]] = subPop[[selection.loc[[i]]]]@index
-    
-    #cat("Possible partners",adjMatrix[selectionPartners[[i]],],"chosen partner:",selection.loc[[i]],"\n")
+    if(is.null(adjMatrix))
+    {
+      selection.loc[[i]] = selection.fn(1, pop)
+    }
+    else
+    {
+      selection.loc[[i]] = selection.fn(1, pop[adjMatrix[i,]])
+    }
   }
   selection.loc
 }
 
-spatial.selection.random.child <- function(pop, p1, p1.loc, p2, p2.loc, rest, rest.loc, elite, maximizing)
+spatial.child.selection.random <- function(pop, p1, p2, elite, maximizing)
 {
-  #We needed the new pop to be based on a spatial relationship so they can't move around
-  new.pop = duplicate(pop)
+  #P1 will hold the set of organisms to be used
   
-  #Put all of our reproduced organisms in the appropriate locations within the new population
-  #We will choose which child to use at random (we  can't just choose the first as you then take first gene section from p1 always)
-  for (j in 1:length(p1.loc))
+  #We will choose which child to use based on which has the better fitness
+  for (i in 1:length(p1))
   {
-    new.pop[p1.loc[[j]]] = if (runif(1) > 0.5) p1[[j]] else p2[[j]]
+    #p2 will equal 0 if this was a mutation only node, no choice to make
+    if (class(p2[[i]]) == "numeric")
+    {
+      if (sample(1:2) > 1)
+      {
+        #p2 has been randomly selected
+        p1[[i]] = p2[[i]]
+      }
+    }
   }
-  
-  new.pop[rest.loc] = rest
   
   #Now we can add elites, we knock out other nodes if elite has better fitness
   if(!is.null(elite))
   {
     if(maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
-    
     for(j in 1:length(elite))
     {    
       #Do a hard tournament, replace the node in elite's spot if elite is still better
-      if (elite[[j]]@fitness$value %>% new.pop[[elite[[j]]@index]]@fitness$value)
+      if (elite[[j]]@fitness$value %>% p1[[elite[[j]]@index]]@fitness$value)
       {
-        new.pop[[elite[[j]]@index]] = elite[[j]]
+        p1[[elite[[j]]@index]] = elite[[j]]
       }
     }
   }
   
-  return(new.pop)
+  return(p1)
 }
 
-
-#Not working yet, see todo below
-# spatial.selection.parent.tournament <- function(pop, p1, p1.loc, p2, p2.loc, rest, rest.loc, elite, maximizing)
-# {
-#   #We needed the new pop to be based on a spatial relationship so they can't move around
-#   new.pop = duplicate(pop)
-#   
-#   if(maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
-#   
-#   #Put all of our reproduced organisms in the appropriate locations within the new population
-#   #We will choose which child to use at random (we  can't just choose the first as you then take first gene section from p1 always)
-#   for (j in 1:length(p1.loc))
-#   {
-#     if (p1[[j]]@fitness$value %>% p2[[j]]@fitness$value)
-#     {
-#       if (p1[[j]]@fitness$value %>% new.pop[[p1.loc[[j]]]]@fitness$value)
-#       {
-#         #We are better than our parent, we can change
-#         new.pop[p1.loc[[j]]] = new.pop[p1.loc[[j]]]
-#       }
-#     }
-#     else
-#     {
-#       if (p2[[j]]@fitness$value %>% new.pop[[p1.loc[[j]]]]@fitness$value)
-#       {
-#         new.pop[p1.loc[[j]]]=p2[[j]]
-#       }
-#     }
-#   }
-#   #TODO - We need to update parent fitness as when the other population changes the parent needs to change
-#   new.pop[rest.loc] = rest
-#   
-#   #Now we can add elites, we knock out other nodes if elite has better fitness
-#   if(!is.null(elite))
-#   {    
-#     for(j in 1:length(elite))
-#     {    
-#       #Do a hard tournament, replace the node in elite's spot if elite is still better
-#       if (elite[[j]]@fitness$value %>% new.pop[[elite[[j]]@index]]@fitness$value)
-#       {
-#         new.pop[[elite[[j]]@index]] = elite[[j]]
-#       }
-#     }
-#   }
-#   
-#   return(new.pop)
-# }
-
-spatial.selection <- function(pop, p1, p1.loc, p2, p2.loc, rest, rest.loc, elite, maximizing)
+#Choose node based on child with better fitness
+spatial.child.selection.fitness <- function(pop, p1, p2, elite, maximizing)
 {
-  #We needed the new pop to be based on a spatial relationship so they can't move around
-  new.pop = duplicate(pop)
-
   if(maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
   
-  #Put all of our reproduced organisms in the appropriate locations within the new population
-  #We will choose which child to use at random (we  can't just choose the first as you then take first gene section from p1 always)
-  for (j in 1:length(p1.loc))
+  #P1 will hold the set of organisms to be used
+
+  #We will choose which child to use based on which has the better fitness
+  for (i in 1:length(p1))
   {
-    new.pop[p1.loc[[j]]] = if (p1[[j]]@fitness$value %>% p2[[j]]@fitness$value) p1[[j]] else p2[[j]]
-    new.pop[[p1.loc[[j]]]]@index = p1.loc[[j]]
+    #p2 will equal 0 if this was a mutation only node, no choice to make
+    if (p2[[i]] != 0)
+    {
+      if (p2[[i]]@fitness$value %>% p1[[i]]@fitness$value)
+      {
+        #p2 has a better fitness, so we use that child
+        p1[[i]] = p2[[i]]
+      }
+    }
   }
   
-  new.pop[rest.loc] = rest
-
   #Now we can add elites, we knock out other nodes if elite has better fitness
   if(!is.null(elite))
   {    
     for(j in 1:length(elite))
     {    
       #Do a hard tournament, replace the node in elite's spot if elite is still better
-      if (elite[[j]]@fitness$value %>% new.pop[[elite[[j]]@index]]@fitness$value)
+      if (elite[[j]]@fitness$value %>% p1[[elite[[j]]@index]]@fitness$value)
       {
-        new.pop[[elite[[j]]@index]] = elite[[j]]
+        p1[[elite[[j]]@index]] = elite[[j]]
       }
     }
   }
   
-  return(new.pop)
+  return(p1)
 }

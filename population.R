@@ -95,17 +95,17 @@ setMethod("size",
 )
 
 #Returns a list of the population's fitnesses
-getFitnesses <- function(pop){
+getFitnesses <- function(organisms){
   print("generic base function does nothing - getFitnesses")
 }
 setGeneric("getFitnesses")
 setMethod("getFitnesses",
-          signature = "population",
-          definition = function(pop){
+          signature = "list",
+          definition = function(organisms){
             fitnesses = NULL
-            for(i in 1:size(pop))
+            for(i in 1:length(organisms))
             {
-              fitnesses = c(fitnesses, pop@organisms$values[[i]]@fitness$value)
+              fitnesses = c(fitnesses, organisms[[i]]@fitness$value)
             }
             fitnesses
           }

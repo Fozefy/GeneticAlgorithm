@@ -95,7 +95,7 @@ new.mutation.args <- function(gene.delta = NULL, gene.sd = NULL, prob.mutation =
   as.list(environment())
 }
 
-new.selection.args <- function(selection.type = "simple.tournament", tourn.size = 2, prob.select.worse = 0, maximizing = TRUE, elitism = TRUE, elite.size = 2, elite.fn = truncation.selection, adjMatrix = NULL, spatial.selection.fn = spatial.selection){
+new.selection.args <- function(selection.type = "simple.tournament", tourn.size = 2, prob.select.worse = 0, maximizing = TRUE, elitism = TRUE, elite.size = 2, elite.fn = truncation.selection, adjMatrix = NULL, spatial.selection.fn = spatial.child.selection.random){
   selection.type; tourn.size; prob.select.worse; maximizing; elitism; elite.size; elite.fn; adjMatrix; spatial.selection.fn
   as.list(environment())
 }
@@ -249,7 +249,18 @@ generational.ga <- function(GA.env){
       if (goal.reached) break
       
       if (gen != max.gen)
-        currentGen.results <- next.generation(GA.env)
+      {
+        if (!is.null(fitness.env(GA.env)$externalConnectionsMatrix) || !is.null(selection.env(GA.env)$adjMatrix))
+        {
+          #We have a spatial or coevolutionary GA
+          currentGen.results <- next.generation.spatial(GA.env)
+        }
+        else
+        {
+          #We have a standard GA
+          currentGen.results <- next.generation.standard(GA.env)
+        }
+      }
     }
     
     if (verbose)
@@ -258,7 +269,78 @@ generational.ga <- function(GA.env){
   })
 }
 
-next.generation <- function(GA.env){
+next.generation.spatial <- function(GA.env){
+  new.pop = vector("list", GA.env$numPop)
+  mutation.results = vector("list", GA.env$numPop)
+  xover.results = vector("list", GA.env$numPop)
+  elite = vector("list", GA.env$numPop)
+  
+  for (i in 1:GA.env$numPop)
+  {
+    P <- size(reproduction.env(GA.env)$pop[[i]])
+    
+    #Find elites
+    if(is.null(selection.env(GA.env)$select.elite))
+      elite = NULL
+    else
+      elite[[i]] <- selection.env(GA.env)$select.elite(reproduction.env(GA.env)$pop[[i]])
+    
+    #Get number of each reproduction group
+    elite.size <- if (!is.null(elite)) length(elite[[i]]) else 0
+    xover.size <- xover.count(P, elite.size, reproduction.env(GA.env)$xover.prob)
+    
+    #Find the chromosomes to be crossed
+    p1.loc <- spatial.selection(reproduction.env(GA.env)$pop[[i]]@organisms$values, selection.env(GA.env)$select.chr, selection.env(GA.env)$adjMatrix)
+    p2.loc <- spatial.selection(reproduction.env(GA.env)$pop[[i]]@organisms$values, selection.env(GA.env)$select.chr, selection.env(GA.env)$adjMatrix)
+        
+    if (!is.null(elite)) elite[[i]] = duplicate(elite[[i]])
+    p1 <- duplicate(reproduction.env(GA.env)$pop[[i]][p1.loc])
+    p2 <- duplicate(reproduction.env(GA.env)$pop[[i]][p2.loc])
+    
+    #Perform reproduction
+    
+    #Mutate
+    p1Results = reproduction.env(GA.env)$mutate(p1)
+    p2Results = reproduction.env(GA.env)$mutate(p2)
+    #Store Mutation results
+    mutation.results[[i]] <- c(p1Results, p2Results)
+    
+    #CrossOver
+    nodes.for.xover = uniform.selection(xover.size, size(reproduction.env(GA.env)$pop[[i]]))
+    xover.results[[i]] <- chr.xover(p1, p2, reproduction.env(GA.env)$xover.swapMask, nodes.for.xover)
+    
+    #Evaluate the new chromosomes
+    
+    #Get the other pops
+    otherPops = NULL
+    if(GA.env$numPop > 1)
+    {
+      otherPops = reproduction.env(GA.env)$pop[-i]
+    }
+    #Get current elites
+    this.pop.elite = NULL    
+    if (!is.null(elite))
+    {
+      this.pop.elite = elite[[i]]
+    }
+      
+    #TODO - This fitness.set are all possible nodes, not just ones that will be in pop, makes stats somewhat incorrect
+    GA.env$fitness.env$fitness.set[[i]] = evaluateOrganismList(c(p1,p2[nodes.for.xover],this.pop.elite), fitness.env(GA.env)$fitness.fn, i, otherPops, fitness.env(GA.env)$externalConnectionsMatrix)
+    
+    new.pop[[i]] = new.population(organisms = selection.env(GA.env)$spatial.selection.fn(reproduction.env(GA.env)$pop[[i]], p1, p2, this.pop.elite, selection.env(GA.env)$maximizing))
+    
+    new.pop[[i]]@popNum = i
+  }
+  
+  #Set the current population to the new population
+  add.population(reproduction.env(GA.env), new.pop)
+  
+  #Report on the new population
+  GA.env$reporting.fn(pop = new.pop, mutation = mutation.results, cross = xover.results, elite = elite, GA.env = GA.env)
+}
+
+#Create the next generation for a standard GA
+next.generation.standard <- function(GA.env){
   new.pop = vector("list", GA.env$numPop)
   mutation.results = vector("list", GA.env$numPop)
   xover.results = vector("list", GA.env$numPop)
@@ -280,25 +362,11 @@ next.generation <- function(GA.env){
     mut.size <- mutate.only.count(P, xover.size, elite.size, reproduction.env(GA.env)$keepSecondaryParent)
   
     #Find the chromosomes to be crossed
-    p1.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]])
-    #TODO - When the same p1 is selected twice we are only using the second one
-    if (is.null(selection.env(GA.env)$adjMatrix))
-    {
-      #We have no spatial component in our local network, so we can choose any nodes
-      p2.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]])
+    p1.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]]@organisms$values)
+    p2.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]]@organisms$values)
       
-      #Use standard selection to find the nodes to be only mutated
-      rest.loc <- selection.env(GA.env)$select.chr(mut.size, reproduction.env(GA.env)$pop[[i]])
-    }
-    else
-    {
-      #We have a spatial network with an adj matrix, we can only choose local nodes
-      p2.loc <- local.selection(reproduction.env(GA.env)$pop[[i]], p1.loc, selection.env(GA.env)$select.chr, selection.env(GA.env)$adjMatrix)
-      
-      #We don't want to choose the same nodes we are crossing over in our spatial GA
-      #if we do that then they are just overwritten, find unselected nodes
-      rest.loc <- (1:GA.env$pop.size)[-p1.loc]
-    }
+    #Find the nodes to be only mutated
+    rest.loc <- selection.env(GA.env)$select.chr(mut.size, reproduction.env(GA.env)$pop[[i]]@organisms$values)
 
     if (!is.null(elite)) elite[[i]] = duplicate(elite[[i]])
     p1 <- duplicate(reproduction.env(GA.env)$pop[[i]][p1.loc])
@@ -318,52 +386,18 @@ next.generation <- function(GA.env){
     xover.results[[i]]@returnList$p2 = p2.loc
     
     #Create the next generation's population
-    if (is.null(fitness.env(GA.env)$externalConnectionsMatrix) && is.null(selection.env(GA.env)$adjMatrix))
-    {
-      #We have no spatial component in our GA, so just make it in whatever order
-      organisms = NULL #Create the set of organisms
-      if (!is.null(elite)) organisms = elite[[i]]
-      organisms = c(organisms, p1, rest)
-      if (reproduction.env(GA.env)$keepSecondaryParent) organisms = c(organisms, p2)
+    organisms = NULL #Create the set of organisms
+    if (!is.null(elite)) organisms = elite[[i]]
+    organisms = c(organisms, p1, rest)
+    if (reproduction.env(GA.env)$keepSecondaryParent) organisms = c(organisms, p2)
 
-      new.pop[i] <- new.population(organisms = organisms)
-      
-      #Find fitnesses for new.pop (we do this here as a spatial GA needs to find fitness while creating pop)
-      if(GA.env$numPop > 1)
-      {
-        GA.env$fitness.env$fitness.set[[i]] <- evaluate(new.pop[[i]], fitness.env(GA.env)$fitness.fn, reproduction.env(GA.env)$pop[-i], fitness.env(GA.env)$externalConnectionsMatrix)
-      }
-      else
-      {
-        GA.env$fitness.env$fitness.set <- evaluate(new.pop[[i]], fitness.env(GA.env)$fitness.fn)
-      } 
-    }
-    else
-    {
-      otherPops = NULL
-      if(GA.env$numPop > 1)
-      {
-        otherPops = reproduction.env(GA.env)$pop[-i]
-      }
-      
-      this.pop.elite = NULL
-      
-      if (!is.null(elite))
-      {
-        this.pop.elite = elite[[i]]
-      }
-
-      #Evaluate all of the new chromosomes
-      #TODO - This fitness.set are all possible nodes, not just ones that will be in pop, makes stats somewhat incorrect
-      GA.env$fitness.env$fitness.set[[i]] = evaluateOrganismList(c(p1,p2,rest,this.pop.elite), fitness.env(GA.env)$fitness.fn,reproduction.env(GA.env)$pop[[i]]@popNum, otherPops, fitness.env(GA.env)$externalConnectionsMatrix)
-
-      new.pop[[i]] = selection.env(GA.env)$spatial.selection.fn(reproduction.env(GA.env)$pop[[i]], p1, p1.loc, p2, p2.loc, rest, rest.loc, this.pop.elite, selection.env(GA.env)$maximizing)
-
-    }
-    
+    new.pop[i] <- new.population(organisms = organisms)
+  
     new.pop[[i]]@popNum = i
   }
   
+  #Find fitness of pops
+  GA.env$fitness.env$fitness.set <- evaluate(new.pop, fitness.env(GA.env)$fitness.fn)
   
   #Set the current population to the new population
   add.population(reproduction.env(GA.env), new.pop)
