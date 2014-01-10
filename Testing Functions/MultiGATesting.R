@@ -1,8 +1,9 @@
-source("spatialConstructors.R")
+source("Testing Functions/spatialConstructors.R")
 
 #Test Many
 graph = gridConstructor(100)
-n=20
+n=40
+
 results = vector("list",n)
 generations = c(1)
 maxFit = c(1)
@@ -14,6 +15,7 @@ for (i in 1:n)
   generations[i] = ga$gen
   maxFit[i] = ga$currentGen.results@maxFit@fitness$value
   print(paste(i,"Complete"))
+  rm(ga)
 }
 
 results2 = vector("list",n)
@@ -21,7 +23,7 @@ generations2 = c(1)
 maxFit2 = c(1)
 for (i in 1:20)
 {
-  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=500,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max, goal=90, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=FALSE,adjMatrix=graph), verbose=FALSE)
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=500,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max, goal=90, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=FALSE,adjMatrix=graph), verbose=TRUE)
   generational.ga(ga)
   results2[[i]] = ga$reported.data
   generations2[i] = ga$gen
@@ -29,6 +31,7 @@ for (i in 1:20)
   print(paste(i,"Complete"))
 }
 
+#Print fitness result graphs to files
 for (a in 1:n)
 {
   fitNum = a
@@ -66,4 +69,53 @@ for (i in 1:20)
   generations4[i] = ga$gen
   maxFit4[i] = ga$currentGen.results@elite[[1]]$maxFit@fitness$value
   print(paste(i,"Complete"))
+}
+
+#Testing Spatial Effects
+n=20
+graph = gridConstructor(100) #4 connections
+
+results = vector("list",n)
+generations = c(1)
+maxFit = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=500,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max, goal=90, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE)
+  generational.ga(ga)
+  results[[i]]=ga$reported.data
+  generations[i] = ga$gen
+  maxFit[i] = ga$currentGen.results@maxFit@fitness$value
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+
+graph = gridConstructor.withDiag(100) #9 connections
+
+results2 = vector("list",n)
+generations2 = c(1)
+maxFit2 = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=500,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max, goal=90, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE)
+  generational.ga(ga)
+  results2[[i]]=ga$reported.data
+  generations2[i] = ga$gen
+  maxFit2[i] = ga$currentGen.results@maxFit@fitness$value
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+
+graph = complete.graph(100) #complete connections
+results3 = vector("list",n)
+generations3 = c(1)
+maxFit3 = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=500,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max, goal=90, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE)
+  generational.ga(ga)
+  results3[[i]]=ga$reported.data
+  generations3[i] = ga$gen
+  maxFit3[i] = ga$currentGen.results@maxFit@fitness$value
+  print(paste(i,"Complete"))
+  rm(ga)
 }

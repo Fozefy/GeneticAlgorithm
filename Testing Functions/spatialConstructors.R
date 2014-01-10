@@ -28,12 +28,133 @@ testfun<-function(value, index)
 #graph = t(mapply(testfun,test, seq_along(test)))
 
 #Complete Graph
-testfun<-function(value)
+complete.graph <- function(popSize)
 {
-  1:100
+  testfun<-function(value)
+  {
+    1:popSize
+  }
+  
+  graph = mapply(testfun,1:popSize)
+  
+  return(t(graph))
 }
-#test = 1:100
-#graph = mapply(testfun,test)
+
+gridConstructor.withDiag <-function(popSize)
+{
+  sideLength = sqrt(popSize)
+  graph = matrix(nrow=popSize,ncol=8)
+  for (i in 1:popSize)
+  {
+    #Connections above
+    if(i <= sideLength)
+    {
+      graph[i,1] = popSize - sideLength + i
+      
+      if (i %% sideLength == 1)
+      {
+        graph[i,2] = popSize
+        graph[i,3] = popSize - sideLength + i + 1
+      }
+      else if(i %% sideLength == 0)
+      {
+        graph[i,2] = popSize - sideLength + i - 1
+        graph[i,3] = popSize - sideLength + 1
+      }
+      else
+      {
+        graph[i,2] = popSize - sideLength + i - 1
+        graph[i,3] = popSize - sideLength + i + 1
+      }
+      
+    }
+    else
+    {
+      graph[i,1] = i - sideLength
+      
+      if (i %% sideLength == 1)
+      {
+        graph[i,2] = i - 1
+        graph[i,3] = i - sideLength + 1
+      }
+      else if(i %% sideLength == 0)
+      {
+        graph[i,2] = i - sideLength - 1
+        graph[i,3] = i - sideLength*2 + 1
+      }
+      else
+      {
+        graph[i,2] = i - sideLength - 1
+        graph[i,3] = i - sideLength + 1
+      }   
+    }
+    
+    #Connections below
+    if(i > popSize - sideLength)
+    {
+      graph[i,4] = sideLength + i - popSize
+      
+      if (i %% sideLength == 1)
+      {
+        graph[i,5] = sideLength
+        graph[i,6] = sideLength + i - popSize + 1
+      }
+      else if(i %% sideLength == 0)
+      {
+        graph[i,5] = sideLength + i - popSize - 1
+        graph[i,6] = 1
+      }
+      else
+      {
+        graph[i,5] = sideLength + i - popSize - 1
+        graph[i,6] = sideLength + i - popSize + 1
+      }
+    }
+    else
+    {
+      graph[i,4] = i + sideLength
+      
+      if (i %% sideLength == 1)
+      {
+        graph[i,5] = i + sideLength*2 - 1
+        graph[i,6] = i + sideLength + 1
+      }
+      else if(i %% sideLength == 0)
+      {
+        graph[i,5] = i + sideLength - 1
+        graph[i,6] = i + 1
+      }
+      else
+      {
+        graph[i,5] = i + sideLength - 1
+        graph[i,6] = i + sideLength + 1
+      }
+    }
+    
+    #Connection to the left
+    if (i %% sideLength == 1)
+    {
+      graph[i,7] = i + sideLength - 1
+    }
+    else
+    {
+      graph[i,7] = i - 1
+    }
+    
+    #Connection to the right
+    if (i %% sideLength == 0)
+    {
+      graph[i,8] = i - sideLength + 1
+    }
+    else
+    {
+      graph[i,8] = i + 1
+    }
+  }
+  
+  graph
+}
+
 
 #Creates a grid structure - popSize must be a perfect square
 gridConstructor <- function(popSize)
