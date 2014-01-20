@@ -142,8 +142,27 @@ fitnessProportional.selection <- function(n, pop, select=NULL, pop.cumfit = NULL
 
 # fitnessProportional.selection(6, NULL, pop.cumfit = cumulate.fitness(runif(10), verbose = TRUE))
 
-rank.selection <- function(n, pop = NULL, select=NULL){
+rank.selection <- function(selection.size, pop = NULL, select=NULL, maximizing = TRUE, pop.size = NULL){
+  n <- selection.size;
+  P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, length(pop))
+
+  sortedOrganisms = pop
+  class(sortedOrganisms) <- "organismList"
+  sortedOrganisms = sort(sortedOrganisms, decreasing = maximizing)
   
+  sortedSelection = ceiling(rexp(selection.size,1/10))
+  selection.loc = NULL
+  for(i in 1:selection.size)
+  {
+    while(sortedSelection[[i]] > pop.size)
+    {
+      sortedSelection[[i]] = ceiling(rexp(1,1/10))
+    }
+
+    selection.loc[i] = sortedOrganisms[sortedSelection]@index
+  }
+
+  selection.loc
 }
 
 #Selecting a primary parent for each node based on an adj matrix
