@@ -381,10 +381,96 @@ gridConstructor <- function(popSize)
   graph
 }
 
+#Create a single ring with no additional connection
+singleRing <- function(popSize)
+{
+  graph = matrix(0,nrow=popSize,ncol=2)
+  
+  graph[1,1] = 2
+  graph[1,2] = popSize
+
+  graph[popSize,1] = 1
+  graph[popSize,2] = popSize - 1
+  
+  for (i in 2:(popSize-1))
+  {
+    graph[i,1] = i + 1
+    
+    graph[i,2] = i - 1
+  }
+  graph
+}
+
+#Creates a 'line' connection with the rest of the graph being randomly generated
+randomConstructor.withLine <-function(avgConnections, popSize)
+{
+  graph = matrix(0,nrow=popSize,ncol=2)
+  
+  for (i in 1:(popSize-1))
+  {
+    if (i == 1)
+    {
+      #1 doesn't have anything to fill its first node
+      graph[i,1] = i+1
+    }
+    else
+    {
+      graph[i,2] = i+1
+    }
+    graph[i+1,1] = i
+  }
+  
+  for (i in 1:(popSize*(avgConnections-2)/2 + 1))
+  {
+    isValid = FALSE
+    while(!isValid)
+    {
+      firstNode = sample(1:popSize,1)
+      secondNode = sample(1:popSize,1)
+      if (secondNode != firstNode && sum(graph[firstNode,]==secondNode) == 0)
+      {
+        isValid = TRUE
+      }
+    }
+    
+    #Now that we have valid connections, add them!
+    for(j in 1:length(graph[secondNode,]))
+    {
+      if (graph[secondNode,j] == 0)
+      {
+        graph[secondNode,j] = firstNode
+        break
+      }
+      else if (j == length(graph[secondNode,]))
+      {
+        #Need to add another column
+        graph = cbind(graph,0)
+        graph[secondNode,(j+1)] = firstNode
+      }
+    }
+    
+    for(j in 1:length(graph[firstNode,]))
+    {
+      if (graph[firstNode,j] == 0)
+      {
+        graph[firstNode,j] = secondNode
+        break
+      }
+      else if (j == length(graph[firstNode,]))
+      {
+        #Need to add another column
+        graph = cbind(graph,0)
+        graph[firstNode,(j+1)] = secondNode
+      }
+    }
+  }
+  graph
+}
+
 randomConstructor <- function(avgConnections, popSize)
 {
   graph = matrix(0,nrow=popSize,ncol=1)
-
+  
   for (i in 1:(popSize*avgConnections/2 - 1))
   {
     if (i <= popSize)
