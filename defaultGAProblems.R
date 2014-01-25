@@ -36,39 +36,13 @@ twoPop.one.max.predPrey <- function(organism, popNum, otherPops, externalConnect
     #Fitness = for each 1 where predator has 0
     fitness = sum(organism@chromosome$genes == 1 & otherGenes == 0)    
   }
-  return(fitness)
-}
-
-twoPop.one.max.predPrey.goal.fn <- function(goal, epsilon = 0, maximizing = TRUE)
-{
-  consecutiveMax = 0
-  goal.fn <-function(popFit)
+  
+  if (sum(organism@chromosome$genes) == 30)
   {
-    if (maximizing)
-    {
-      if (max(popFit[[1]]) >= (goal - epsilon)) 
-      {
-        consecutiveMax <<- consecutiveMax + 1
-      }
-      else
-      {
-        consecutiveMax <<- 0
-      }
-    }
-    else
-    {
-      if (min(popFit[[1]]) <= (goal + epsilon))
-      {
-        consecutiveMax <<- consecutiveMax + 1
-      }
-      else
-      {
-        consecutiveMax <<- 0
-      }
-    }
-
-    if (consecutiveMax == 5) return(TRUE) else return(FALSE)
+    fitness = 31
   }
+  
+  return(fitness)
 }
 
 abc.fit <-function(organism)
@@ -146,8 +120,6 @@ DeJong.F1.fitness <- function(organism, ...)
 
   total
 }
-
-#TODO - create goal function
 
 #dejongGA.F1=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=DeJong.F1.fitness, goal = 0),selection.args=new.selection.args(maximizing = FALSE))
 
