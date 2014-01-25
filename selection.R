@@ -162,7 +162,7 @@ setup.fitnessProportional.withFitScaling <- function(expRank)
 
     gi[gi < 0] = 0
     pop.cumfit = cumulate.fitness(gi)
-    print(gi)
+
     fitnessProportional.selection(n, pop, select, pop.cumfit, verbose)
   }
 }
@@ -187,28 +187,31 @@ fitnessProportional.selection <- function(n, pop, select=NULL, pop.cumfit = NULL
   findInterval(select, pop.cumfit, rightmost.closed=TRUE) + 1
 }
 
-rank.selection <- function(selection.size, pop = NULL, select=NULL, maximizing = TRUE, pop.size = NULL, rate = 1/70){
-  n <- selection.size;
-  P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, length(pop))
-
-  sortedOrganisms = pop
-  class(sortedOrganisms) <- "organismList"
-  sortedOrganisms = sort(sortedOrganisms, decreasing = maximizing)
+rank.selection.withExp <-function(rate = 1/70)
+{
+  rank.selection <- function(selection.size, pop = NULL, select=NULL, maximizing = TRUE, pop.size = NULL){
+    n <- selection.size;
+    P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, length(pop))
   
-  sortedSelection = ceiling(rexp(selection.size,rate))
-  selection.loc = NULL
-  for(i in 1:selection.size)
-  {
-    #Make sure our selection fell in our pop.size
-    while(sortedSelection[[i]] > pop.size)
+    sortedOrganisms = pop
+    class(sortedOrganisms) <- "organismList"
+    sortedOrganisms = sort(sortedOrganisms, decreasing = maximizing)
+    
+    sortedSelection = ceiling(rexp(selection.size,rate))
+    selection.loc = NULL
+    for(i in 1:selection.size)
     {
-      sortedSelection[[i]] = ceiling(rexp(1,rate))
+      #Make sure our selection fell in our pop.size
+      while(sortedSelection[[i]] > P)
+      {
+        sortedSelection[[i]] = ceiling(rexp(1,rate))
+      }
+  
+      selection.loc[i] = sortedOrganisms[[sortedSelection[i]]]@index
     }
-
-    selection.loc[i] = sortedOrganisms[sortedSelection]@index
+  
+    selection.loc
   }
-
-  selection.loc
 }
 
 rank.selection.linear <- function(expRank, popSize)
