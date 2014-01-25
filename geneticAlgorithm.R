@@ -85,7 +85,7 @@ new.fitness.args <- function(fitness.fn = one.max.fn, fitnessFn.args = NULL, goa
 }
 
 new.xover.args <- function (xover.prob = 0.8, xover.type = "uniform", xover.alpha = 0.3, xover.k = 2, keepSecondaryParent = FALSE)
-{ #TODO - Do we want 'keepSecondaryParent', or should be handled in function?
+{
   xover.prob; xover.type; xover.alpha; keepSecondaryParent
   as.list(environment())
 }
@@ -196,16 +196,23 @@ setup.selection.env <- function(GA.env, selection.args = new.selection.args()){
       select.elite <- select.elite.population.fgen(elite.fn = elite.fn, elite.size = elite.size, maximizing = maximizing)
     else
       select.elite <- NULL
-    
+
     select.fgen <- select.population.fgen
-    select.chr <- switch(selection.type, 
+    
+    if (typeof(selection.type) == "closure")
+    {
+      select.chr = selection.type
+    }
+    else
+    {
+      select.chr <- switch(selection.type, 
                          simple.tournament  = select.fgen(simple.tournament.selection, tourn.size, maximizing),
                          tournament  			= select.fgen(tournament.selection, tourn.size, prob.select.worse, maximizing),
                          fps 						= fitnessProportional.selection,
                          rank 						= rank.selection,  # not yet implemented ... just a stub
-                         ...						= simple.error(paste("select.chr.type must be one of ", 
-                                                       "'simple.tournament', 'tournament', 'fps' or 'rank'. ", 
-                                                       "Instead it is '", select.chr.type, "'", sep = "")))
+                         ...  					= simple.error(paste("select.chr.type must be one of ", "'simple.tournament', 'tournament', 'fps' or 'rank'. ", 
+                                          "Instead it is '", select.chr.type, "'", sep = "")))
+    }
     
     selection.env
   })

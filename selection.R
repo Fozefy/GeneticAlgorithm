@@ -114,7 +114,7 @@ simple.tournament.selection <- function(selection.size, pop = NULL, tourn.size =
 #								verbose = TRUE)
 
 cumulate.fitness <- function(fit){
-  cumsum(fit / sum(fit))
+  cumsum(fit)/ sum(fit)
 }
 
 fitnessProportional.setup <- function(pop){
@@ -130,19 +130,64 @@ fp.selection.vprint <- function(pop.cumfit, select){
   print(select)	
 }
 
+setup.fitnessProportional.withFitScaling <- function(expRank)
+{
+  fitnessProportional.withFitScaling.selection <- function(n, pop, select=NULL, pop.cumfit = NULL, verbose = FALSE){
+    if(is.null(pop.cumfit))
+    {
+      fit=NULL
+      for (i in 1:length(pop))
+      {
+        fit[[i]] = pop[[i]]@fitness$value
+      }
+    }
+
+    sortOrganisms = data.frame(1:length(pop),fit)
+    sortOrganisms = sortOrganisms[order(sortOrganisms[2], decreasing = FALSE),]
+
+    fi = 0
+    fitSum = sum(fit)
+    for (i in 1:length(pop))
+    {
+      fi = fi + (i*sortOrganisms[i,2])/fitSum
+    }
+    b = (mean(fit) * (expRank - fi))/((length(pop) + 1)/2 - expRank)
+    
+    gi = NULL
+
+    for (i in 1:length(pop))
+    {
+      gi[[i]] = pop[[i]]@fitness$value + b
+    }    
+
+    gi[gi < 0] = 0
+    pop.cumfit = cumulate.fitness(gi)
+    print(gi)
+    fitnessProportional.selection(n, pop, select, pop.cumfit, verbose)
+  }
+}
+
 fitnessProportional.selection <- function(n, pop, select=NULL, pop.cumfit = NULL, verbose = FALSE){
   if(is.null(pop.cumfit))
-    pop.cumfit <- cumulative.fitness(pop)
+  {
+    fit=NULL
+    for (i in 1:length(pop))
+    {
+      fit[[i]] = pop[[i]]@fitness$value
+    }
+
+    pop.cumfit <- cumulate.fitness(fit)
+  }
+  
   if(is.null(select))
     select <- runif(n)
   if(verbose) 
     fp.selection.vprint(pop.cumfit, select)
+
   findInterval(select, pop.cumfit, rightmost.closed=TRUE) + 1
 }
 
-# fitnessProportional.selection(6, NULL, pop.cumfit = cumulate.fitness(runif(10), verbose = TRUE))
-
-rank.selection <- function(selection.size, pop = NULL, select=NULL, maximizing = TRUE, pop.size = NULL){
+rank.selection <- function(selection.size, pop = NULL, select=NULL, maximizing = TRUE, pop.size = NULL, rate = 1/70){
   n <- selection.size;
   P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, length(pop))
 
@@ -150,13 +195,14 @@ rank.selection <- function(selection.size, pop = NULL, select=NULL, maximizing =
   class(sortedOrganisms) <- "organismList"
   sortedOrganisms = sort(sortedOrganisms, decreasing = maximizing)
   
-  sortedSelection = ceiling(rexp(selection.size,1/10))
+  sortedSelection = ceiling(rexp(selection.size,rate))
   selection.loc = NULL
   for(i in 1:selection.size)
   {
+    #Make sure our selection fell in our pop.size
     while(sortedSelection[[i]] > pop.size)
     {
-      sortedSelection[[i]] = ceiling(rexp(1,1/10))
+      sortedSelection[[i]] = ceiling(rexp(1,rate))
     }
 
     selection.loc[i] = sortedOrganisms[sortedSelection]@index
@@ -165,6 +211,32 @@ rank.selection <- function(selection.size, pop = NULL, select=NULL, maximizing =
   selection.loc
 }
 
+rank.selection.linear <- function(expRank, popSize)
+{
+  m.prime = (6/(popSize + 1))*(expRank - (popSize+1)/2)
+  rank.selection <- function(selection.size, pop = NULL, select=NULL, maximizing = TRUE, pop.size = NULL)
+  {
+    n <- selection.size
+    P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, length(pop))
+    
+    selected.rand = runif(n)
+    
+    selected.ranks = floor(((m.prime - 1)*n + 1 + sqrt( ((m.prime +1)*n - 1)^2 - 4*m.prime*n*(n-1)*selected.rand))/(2*m.prime))
+    
+    sortedOrganisms = pop
+    class(sortedOrganisms) <- "organismList"
+    sortedOrganisms = sort(sortedOrganisms, decreasing = maximizing)
+    
+    selection.loc = NULL
+    for(i in 1:selection.size)
+    {
+      selection.loc[i] = sortedOrganisms[[selected.ranks[i]]]@index
+    }
+    
+    selection.loc
+    
+  }
+}
 #Selecting a primary parent for each node based on an adj matrix
 #We are selecting primary parent among the nodes and its direct neighbours of the node using the default selection.fn
 spatial.selection <- function(pop, selection.fn, adjMatrix)
