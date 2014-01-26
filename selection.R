@@ -59,7 +59,7 @@ tournament.selection.vprint <- function(tourn.fit, select.worse, tourn.loc, sele
 }
 
 tournament.selection <- function(selection.size, pop = NULL, tourn.size = 2, prob.select.worse = 0, maximizing = TRUE,
-                                 tourn.fit = NULL, tourn.loc = NULL, select.worse = NULL, pop.size = NULL, verbose = FALSE){
+                                 tourn.fit = NULL, tourn.loc = NULL, select.worse = NULL, pop.size = NULL, verbose = FALSE,stats=NULL){
   n <- selection.size; k <- tourn.size 
   P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, length(pop))
   if(maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
@@ -85,7 +85,7 @@ tournament.selection <- function(selection.size, pop = NULL, tourn.size = 2, pro
 }
 
 simple.tournament.selection <- function(selection.size, pop = NULL, tourn.size = 2, maximizing = TRUE,
-                                        tourn.fit = NULL, tourn.loc = NULL, pop.size = NULL, verbose = FALSE){
+                                        tourn.fit = NULL, tourn.loc = NULL, pop.size = NULL, verbose = FALSE,stats=NULL){
   n <- selection.size; k <- tourn.size
   P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, length(pop)) 
   if(maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
@@ -132,7 +132,7 @@ fp.selection.vprint <- function(pop.cumfit, select){
 
 setup.fitnessProportional.withFitScaling <- function(expRank)
 {
-  fitnessProportional.withFitScaling.selection <- function(n, pop, select=NULL, pop.cumfit = NULL, verbose = FALSE){
+  fitnessProportional.withFitScaling.selection <- function(n, pop, select=NULL, pop.cumfit = NULL, verbose = FALSE,stats=NULL){
     if(is.null(pop.cumfit))
     {
       fit=NULL
@@ -163,11 +163,19 @@ setup.fitnessProportional.withFitScaling <- function(expRank)
     gi[gi < 0] = 0
     pop.cumfit = cumulate.fitness(gi)
 
-    fitnessProportional.selection(n, pop, select, pop.cumfit, verbose)
+    selection.loc = fitnessProportional.selection(n, pop, select, pop.cumfit, verbose)
+    
+    if(!is.null(stats))
+    {
+      stats$avgRank = c(stats$avgRank,mean(selected.ranks))
+      stats$varRank = c(stats$varRank,var(stats$avgRankselected.ranks))
+    }
+    
+    selection.loc
   }
 }
 
-fitnessProportional.selection <- function(n, pop, select=NULL, pop.cumfit = NULL, verbose = FALSE){
+fitnessProportional.selection <- function(n, pop, select=NULL, pop.cumfit = NULL, verbose = FALSE, ...){
   if(is.null(pop.cumfit))
   {
     fit=NULL
@@ -187,29 +195,42 @@ fitnessProportional.selection <- function(n, pop, select=NULL, pop.cumfit = NULL
   findInterval(select, pop.cumfit, rightmost.closed=TRUE) + 1
 }
 
-rank.selection.withExp <-function(rate = 1/70)
+rank.selection.withExp <-function(rate = 1/30)
 {
-  rank.selection <- function(selection.size, pop = NULL, select=NULL, maximizing = TRUE, pop.size = NULL){
+  rank.selection <- function(selection.size, pop = NULL, select=NULL, maximizing = TRUE, pop.size = NULL, stats=NULL){
     n <- selection.size;
     P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, length(pop))
   
-    sortedOrganisms = pop
-    class(sortedOrganisms) <- "organismList"
-    sortedOrganisms = sort(sortedOrganisms, decreasing = maximizing)
+    #Gather fitnesses to be sorted
+    fit=NULL
+    for (i in 1:P)
+    {
+      fit[[i]] = pop[[i]]@fitness$value
+    }
     
-    sortedSelection = ceiling(rexp(selection.size,rate))
+    sortOrganisms = data.frame(1:length(pop),fit)
+    sortOrganisms = sortOrganisms[order(sortOrganisms[2], decreasing = TRUE),]
+    
+    selected.ranks = ceiling(rexp(selection.size,rate))
+
     selection.loc = NULL
     for(i in 1:selection.size)
     {
       #Make sure our selection fell in our pop.size
-      while(sortedSelection[[i]] > P)
+      while(selected.ranks[[i]] > P)
       {
-        sortedSelection[[i]] = ceiling(rexp(1,rate))
+        selected.ranks[[i]] = ceiling(rexp(1,rate))
       }
-  
-      selection.loc[i] = sortedOrganisms[[sortedSelection[i]]]@index
+
+      selection.loc[i] = sortOrganisms[selected.ranks[i],1]
     }
-  
+
+    if(!is.null(stats))
+    {
+      stats$avgRank = c(stats$avgRank,mean(selected.ranks))
+      stats$varRank = c(stats$varRank,var(selected.ranks))
+    }
+    
     selection.loc
   }
 }
@@ -217,25 +238,36 @@ rank.selection.withExp <-function(rate = 1/70)
 rank.selection.linear <- function(expRank, popSize)
 {
   m.prime = (6/(popSize + 1))*(expRank - (popSize+1)/2)
-  rank.selection <- function(selection.size, pop = NULL, select=NULL, maximizing = TRUE, pop.size = NULL)
+  rank.selection <- function(selection.size, pop = NULL, select=NULL, maximizing = TRUE, pop.size = NULL, stats=NULL)
   {
-    n <- selection.size
     P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, length(pop))
+
+    selected.rand = runif(selection.size)
     
-    selected.rand = runif(n)
-    
-    selected.ranks = floor(((m.prime - 1)*n + 1 + sqrt( ((m.prime +1)*n - 1)^2 - 4*m.prime*n*(n-1)*selected.rand))/(2*m.prime))
-    
-    sortedOrganisms = pop
-    class(sortedOrganisms) <- "organismList"
-    sortedOrganisms = sort(sortedOrganisms, decreasing = maximizing)
+    selected.ranks = ceiling(((m.prime - 1)*P + 1 + sqrt( ((m.prime +1)*P - 1)^2 - 4*m.prime*P*(P-1)*selected.rand))/(2*m.prime))
+
+    #Gather fitnesses to be sorted
+    fit=NULL
+    for (i in 1:P)
+    {
+      fit[[i]] = pop[[i]]@fitness$value
+    }
+ 
+    sortOrganisms = data.frame(1:length(pop),fit)
+    sortOrganisms = sortOrganisms[order(sortOrganisms[2], decreasing = FALSE),]
     
     selection.loc = NULL
     for(i in 1:selection.size)
     {
-      selection.loc[i] = sortedOrganisms[[selected.ranks[i]]]@index
+      selection.loc[i] = sortOrganisms[selected.ranks[i],1]
     }
     
+    if(!is.null(stats))
+    {
+      stats$avgRank = c(stats$avgRank,mean(selected.ranks))
+      stats$varRank = c(stats$varRank,var(selected.ranks))
+    }
+
     selection.loc
     
   }

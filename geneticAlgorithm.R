@@ -368,12 +368,16 @@ next.generation.standard <- function(GA.env){
     xover.size <- xover.count(P, elite.size, reproduction.env(GA.env)$xover.prob)
     mut.size <- mutate.only.count(P, xover.size, elite.size, reproduction.env(GA.env)$keepSecondaryParent)
   
+    selectionStats = new.env()
+    selectionStats$avgRank = NULL
+    selectionStats$varRank = NULL
+    
     #Find the chromosomes to be crossed
-    p1.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]]@organisms$values)
-    p2.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]]@organisms$values)
-      
+    p1.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]]@organisms$values,stats=selectionStats)
+    p2.loc <- selection.env(GA.env)$select.chr(xover.size, reproduction.env(GA.env)$pop[[i]]@organisms$values,stats=selectionStats)
+
     #Find the nodes to be only mutated
-    rest.loc <- selection.env(GA.env)$select.chr(mut.size, reproduction.env(GA.env)$pop[[i]]@organisms$values)
+    rest.loc <- selection.env(GA.env)$select.chr(mut.size, reproduction.env(GA.env)$pop[[i]]@organisms$values,stats=selectionStats)
 
     if (!is.null(elite)) elite[[i]] = duplicate(elite[[i]])
     p1 <- duplicate(reproduction.env(GA.env)$pop[[i]][p1.loc])
@@ -410,5 +414,5 @@ next.generation.standard <- function(GA.env){
   add.population(reproduction.env(GA.env), new.pop)
     
   #Report on the new population
-  GA.env$reporting.fn(pop = new.pop, mutation = mutation.results, cross = xover.results, elite = elite, GA.env = GA.env)
+  GA.env$reporting.fn(pop = new.pop, mutation = mutation.results, cross = xover.results, elite = elite, GA.env = GA.env, selection = selectionStats)
 }

@@ -1,13 +1,14 @@
-setClass("gen.report", representation(maxFit = "organism", minFit = "organism", fitness = "list", mutation = "list", crossover = "list", elite = "list"))
+setClass("gen.report", representation(maxFit = "organism", minFit = "organism", fitness = "list", mutation = "list", crossover = "list", elite = "list", selection = "environment"))
 setMethod("initialize", 
            signature = "gen.report",
-           definition = function(.Object, maxFit, minFit, fitness, mutation, crossover, elite) {
+           definition = function(.Object, maxFit, minFit, fitness, mutation, crossover, elite, selection=NULL) {
              .Object@maxFit <- maxFit
              .Object@minFit <- minFit
              .Object@fitness <- fitness
              .Object@mutation <- mutation
              .Object@crossover <- crossover
              .Object@elite <- elite
+             .Object@selection <- selection
              .Object
            })
 
@@ -17,7 +18,7 @@ report <- function(gen, currentGen.results, goal.reached){
   new("base.report", gen = gen, currentGen.results = currentGen.results, goal.reached = as.logical(goal.reached))
 }
 
-base.reporting.fn <- function(pop, mutation, cross, elite, ...)
+base.reporting.fn <- function(pop, mutation, cross, elite, selection=NULL, ...)
 {
   fitness.stats = vector("list", length(pop))
   mutation.stats = vector("list", length(pop))
@@ -39,8 +40,8 @@ base.reporting.fn <- function(pop, mutation, cross, elite, ...)
     crossover.stats[[i]] <- create.crossover.stats(cross[[i]])
     if (!is.null(elite)) elite.stats[[i]] <- create.elite.stats(elite[[i]])
   } 
-  
-  new("gen.report", maxFit, minFit, fitness.stats, mutation.stats, crossover.stats, elite.stats)
+  #TODO - selection stats only works for 1 pop
+  new("gen.report", maxFit, minFit, fitness.stats, mutation.stats, crossover.stats, elite.stats,selection)
 }
 
 create.fitness.stats <- function(pop)
