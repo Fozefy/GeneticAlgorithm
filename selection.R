@@ -142,7 +142,7 @@ setup.fitnessProportional.withFitScaling <- function(expRank)
       }
     }
 
-    sortOrganisms = data.frame(1:length(pop),fit)
+    sortOrganisms = data.frame(1:length(pop),fit,0)
     sortOrganisms = sortOrganisms[order(sortOrganisms[2], decreasing = FALSE),]
 
     fi = 0
@@ -167,8 +167,13 @@ setup.fitnessProportional.withFitScaling <- function(expRank)
     
     if(!is.null(stats))
     {
+      sortOrganisms[3] = 1:length(pop) #Add rank index
+      sortOrganisms = sortOrganisms[order(sortOrganisms[1], decreasing = FALSE),]
+
+      selected.ranks = sortOrganisms[selection.loc,3]
+      
       stats$avgRank = c(stats$avgRank,mean(selected.ranks))
-      stats$varRank = c(stats$varRank,var(stats$avgRankselected.ranks))
+      stats$varRank = c(stats$varRank,var(selected.ranks))
     }
     
     selection.loc
@@ -218,17 +223,7 @@ rank.selection.withExp <-function(rate = 1/30)
     
     selected.ranks = rtgeom(selection.size, P, rate)
 
-    selection.loc = NULL
-    for(i in 1:selection.size)
-    {
-      #Make sure our selection fell in our pop.size
-      while(selected.ranks[[i]] > P)
-      {
-        selected.ranks[[i]] = ceiling(rexp(1,rate))
-      }
-
-      selection.loc[i] = sortOrganisms[selected.ranks[i],1]
-    }
+    selection.loc = sortOrganisms[selected.ranks,1]
 
     if(!is.null(stats))
     {
@@ -367,3 +362,22 @@ spatial.child.selection.fitness <- function(pop, p1, p2, elite, maximizing)
   
   return(p1)
 }
+
+# sigmaScaling.formula <- function(n, expectedVal)
+# {
+#   nu = ?
+#   fi = ?
+#   f~ = sigmaScaling.Fi(n,expectedVal,fi)
+#   
+#   a = -1*(nu+1)*(((n^2)*((n+1)^2)/4)*(Frs - fbar)^2)
+#   b = nu^2 * n*(n+1)/2 *(Frs^2 - 1/n * sum fi^2) - (nu^2 + 1) *(n*(n+1)*(Frs - fbar)*f~
+#   c = nu^2 / n * sum
+#     
+#   answerWithPlus = (-b + sqrt(b^2 - 4*a*c))/(2*a)
+#   answerWithNegative = (-b - sqrt(b^2 - 4*a*c))/(2*a)
+# }
+# 
+# sigmaScaling.Fi~ <-function(n, expectedVal, fi)
+# {
+#   
+# }
