@@ -77,6 +77,39 @@ for (i in 1:n)
   rm(ga)
 }
 
+
+#Compare vs Ashlock
+n=10
+graph = gridConstructor(100)
+generationsSpatial.ashlock = c(1)
+maxFitSpatial.ashlock = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=500), fitness.args=new.fitness.args(goal=20), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(selection.type="fps",elitism=FALSE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=20),verbose=FALSE)
+  generational.ga(ga)
+
+  generationsSpatial.ashlock[i] = ga$gen
+  maxFitSpatial.ashlock[i] = ga$currentGen.results@maxFit@fitness$value
+
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+
+graph = complete.graph(100)
+generationsComplete.ashlock = c(1)
+maxFitComplete.ashlock = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=500), fitness.args=new.fitness.args(goal=20), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(selection.type="fps",elitism=FALSE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=20),verbose=FALSE)
+  generational.ga(ga)
+  
+  generationsComplete.ashlock[i] = ga$gen
+  maxFitComplete.ashlock[i] = ga$currentGen.results@maxFit@fitness$value
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+
 #generations3 = c(47,44,46,142,55,47,104,42,82,38,95,69,52,39,73,44,67,30,47,81,65,27,34,36,72,38,57,39,55,309)
 #generations2 = c(127,225,291,145,84,151,65,129,70,64,94,136,176,165,172,248,199,217,150,238,207,110,85,223,83,194,78,118,189,63)
 #generations = c(118,72,81,23,19,64,39,43,36,27,29,31,51,57,81,145,24,34,24,24,36,66,43,33,38,32,32,64,28,59)
