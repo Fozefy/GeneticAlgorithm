@@ -195,6 +195,11 @@ fitnessProportional.selection <- function(n, pop, select=NULL, pop.cumfit = NULL
   findInterval(select, pop.cumfit, rightmost.closed=TRUE) + 1
 }
 
+# truncated geometric (using resampling)
+rtgeom <- function(selection.size,popSize, p = 0.5){
+  ceiling(log(1-runif(selection.size)*(1-(1-p)^popSize))/log(1-p))
+}
+
 rank.selection.withExp <-function(rate = 1/30)
 {
   rank.selection <- function(selection.size, pop = NULL, select=NULL, maximizing = TRUE, pop.size = NULL, stats=NULL){
@@ -211,7 +216,7 @@ rank.selection.withExp <-function(rate = 1/30)
     sortOrganisms = data.frame(1:length(pop),fit)
     sortOrganisms = sortOrganisms[order(sortOrganisms[2], decreasing = TRUE),]
     
-    selected.ranks = ceiling(rexp(selection.size,rate))
+    selected.ranks = rtgeom(selection.size, P, rate)
 
     selection.loc = NULL
     for(i in 1:selection.size)

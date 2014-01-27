@@ -1,7 +1,7 @@
 setClass("gen.report", representation(maxFit = "organism", minFit = "organism", fitness = "list", mutation = "list", crossover = "list", elite = "list", selection = "environment"))
 setMethod("initialize", 
            signature = "gen.report",
-           definition = function(.Object, maxFit, minFit, fitness, mutation, crossover, elite, selection=NULL) {
+           definition = function(.Object, maxFit, minFit, fitness, mutation, crossover, elite, selection=environment()) {
              .Object@maxFit <- maxFit
              .Object@minFit <- minFit
              .Object@fitness <- fitness
@@ -18,7 +18,7 @@ report <- function(gen, currentGen.results, goal.reached){
   new("base.report", gen = gen, currentGen.results = currentGen.results, goal.reached = as.logical(goal.reached))
 }
 
-base.reporting.fn <- function(pop, mutation, cross, elite, selection=NULL, ...)
+base.reporting.fn <- function(pop, mutation, cross, elite, selection=environment(), ...)
 {
   fitness.stats = vector("list", length(pop))
   mutation.stats = vector("list", length(pop))
@@ -147,20 +147,25 @@ create.elite.stats <- function(elite)
       
       elite.fitnesses[i] = elite[[i]]@fitness$value
     }
+    elite.fitnesses = as.vector(elite.fitnesses, mode = "numeric")
+    
+    elitism.env = new.env()
+    elitism.env$maxFit = elite.maxFit
+    elitism.env$max = max(elite.fitnesses)
+    elitism.env$min = min(elite.fitnesses)
+    elitism.env$SD = sd(elite.fitnesses)
+    elitism.env$mean = mean(elite.fitnesses)
+    elitism.env$quantile = quantile(elite.fitnesses)
+    elitism.env$median = elitism.env$quantile[3]
+    elitism.env$skew = skewness(elite.fitnesses)
+    elitism.env$kurtosis = kurtosis(elite.fitnesses)
+    
   }
-  
-  elite.fitnesses = as.vector(elite.fitnesses, mode = "numeric")
-  
-  elitism.env = new.env()
-  elitism.env$maxFit = elite.maxFit
-  elitism.env$max = max(elite.fitnesses)
-  elitism.env$min = min(elite.fitnesses)
-  elitism.env$SD = sd(elite.fitnesses)
-  elitism.env$mean = mean(elite.fitnesses)
-  elitism.env$quantile = quantile(elite.fitnesses)
-  elitism.env$median = elitism.env$quantile[3]
-  elitism.env$skew = skewness(elite.fitnesses)
-  elitism.env$kurtosis = kurtosis(elite.fitnesses)
+  else if (length(elite) == 1)
+  {
+    elitism.env = new.env()
+    elitism.env$maxFit = elite[[1]]
+  }
   
   return(elitism.env)
 }
