@@ -244,8 +244,9 @@ Rastrigin.fitness.fn <- function(organism, ...)
   {
     total = total + xVals[[i]]^2 - A*cos(2*pi*xVals[[i]])
   }
-  total
+  403.5329-total
 }
+
 
 #rastriginGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=Rastrigin.fitness.fn, goal = 0), selection.args=new.selection.args(maximizing = FALSE))
 
