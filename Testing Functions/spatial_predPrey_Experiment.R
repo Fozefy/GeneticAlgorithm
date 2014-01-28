@@ -125,3 +125,7 @@ generations.randomWithLine4.predprey= c(49,49,45,85,37,21,20,153,30,28,36,31,24,
 generations.randomWithLine8.predprey = c(35,68,63,64,43,40,59,69,60,49,45,63,82,26,76,35,42,41,33,45,38,38,35,30,44,100,29,36,57,88,26,37,32,35,52,24,99,39,23,70,20,51,37,62,39,110,32,66,36,114)
 
 median(generations.4graph.predprey);median(generations.8graph.predprey);median(generations.complete.predprey);median(generations.ring4.predprey);median(generations.ring8.predprey);median(generations.random4.predprey);median(generations.random8.predprey);median(generations.randomWithLine4.predprey);median(generations.randomWithLine8.predprey)
+
+var(generations.4graph.predprey);var(generations.random4.predprey);var(generations.randomWithLine4.predprey);var(generations.ring4.predprey)
+var(generations.8graph.predprey);var(generations.random8.predprey);var(generations.randomWithLine8.predprey);var(generations.ring8.predprey)
+var(generations.complete.predprey)

@@ -134,3 +134,7 @@ generations.randomWithLine4 = c(34,31,28,101,61,35,50,76,320,19,500,85,97,30,17,
 generations.randomWithLine8 = c(36,37,78,279,500,23,500,22,26,150,30,26,31,50,44,149,112,40,180,133,159,26,105,103,60,77,46,31,500,46,30,50,33,76,115,111,187,25,73,54,68,98,99,41,378,28,33,142,51,22,37,126,87,68,52,44,37,24,23,116,21,29,29,23,95,500,110,43,36,29,28,24,21,48,42,43,134,41,38,37,53,39,155,36,35,75,30,27,79,34)
 
 median(generations.4graph);median(generations.8graph);median(generations.complete);median(generations.ring4);median(generations.ring8);median(generations.random4);median(generations.random8);median(generations.randomWithLine4);median(generations.randomWithLine8)
+
+var(generations.4graph);var(generations.random4);var(generations.randomWithLine4);var(generations.ring4)
+var(generations.8graph);var(generations.random8);var(generations.randomWithLine8);var(generations.ring8)
+var(generations.complete)
