@@ -1,7 +1,7 @@
 ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=500,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withCoupling(.5), goal=30, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=TRUE)
 
 
-n=30
+n=20
 
 #Coevo Spatial
 graph = ring.graph(100)
@@ -79,7 +79,7 @@ for (i in 1:n)
 
 
 #Compare vs Ashlock
-n=10
+n=40
 graph = gridConstructor(100)
 generationsSpatial.ashlock = c(1)
 maxFitSpatial.ashlock = c(1)

@@ -213,7 +213,54 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
-
+generations.exp75 = c(1)
+fitData.exp75 = data.frame()
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(selection.type=rank.selection.withExp(1/28+.0005995), elitism=TRUE, elite.size=1), verbose=FALSE)
+  generational.ga(ga)
+  
+  generations.exp75[i] = ga$gen
+  fitData.exp75[i,1] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$median
+  fitData.exp75[i,2] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$mean
+  fitData.exp75[i,3] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$SD
+  fitData.exp75[i,4] = ga$currentGen.results@maxFit@fitness$value
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+generations.exp85 = c(1)
+fitData.exp85 = data.frame()
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(selection.type=rank.selection.withExp(1/16+0.0036982), elitism=TRUE, elite.size=1), verbose=FALSE)
+  generational.ga(ga)
+  
+  generations.exp85[i] = ga$gen
+  fitData.exp85[i,1] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$median
+  fitData.exp85[i,2] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$mean
+  fitData.exp85[i,3] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$SD
+  fitData.exp85[i,4] = ga$currentGen.results@maxFit@fitness$value
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+generations.exp95 = c(1)
+fitData.exp95 = data.frame()
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(selection.type=rank.selection.withExp(1/11+0.0090643), elitism=TRUE, elite.size=1), verbose=FALSE)
+  generational.ga(ga)
+  
+  generations.exp95[i] = ga$gen
+  fitData.exp95[i,1] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$median
+  fitData.exp95[i,2] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$mean
+  fitData.exp95[i,3] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$SD
+  fitData.exp95[i,4] = ga$currentGen.results@maxFit@fitness$value
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
 generations.FPS55 = c(1)
 fitData.FPS55 = data.frame()
 for (i in 1:n)
@@ -263,11 +310,62 @@ for (i in 1:n)
   rm(ga)
 }
 
+generations.FPS75 = c(1)
+fitData.FPS75 = data.frame()
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(selection.type=setup.fitnessProportional.withFitScaling(75), elitism=TRUE, elite.size=1), verbose=FALSE)
+  generational.ga(ga)
+  
+  generations.FPS75[i] = ga$gen
+  fitData.FPS75[i,1] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$median
+  fitData.FPS75[i,2] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$mean
+  fitData.FPS75[i,3] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$SD
+  fitData.FPS75[i,4] = ga$currentGen.results@maxFit@fitness$value
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+
+generations.FPS85 = c(1)
+fitData.FPS85 = data.frame()
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(selection.type=setup.fitnessProportional.withFitScaling(85), elitism=TRUE, elite.size=1), verbose=FALSE)
+  generational.ga(ga)
+  
+  generations.FPS85[i] = ga$gen
+  fitData.FPS85[i,1] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$median
+  fitData.FPS85[i,2] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$mean
+  fitData.FPS85[i,3] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$SD
+  fitData.FPS85[i,4] = ga$currentGen.results@maxFit@fitness$value
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+
+generations.FPS95 = c(1)
+fitData.FPS95 = data.frame()
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(selection.type=setup.fitnessProportional.withFitScaling(95), elitism=TRUE, elite.size=1), verbose=FALSE)
+  generational.ga(ga)
+  
+  generations.FPS95[i] = ga$gen
+  fitData.FPS95[i,1] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$median
+  fitData.FPS95[i,2] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$mean
+  fitData.FPS95[i,3] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$SD
+  fitData.FPS95[i,4] = ga$currentGen.results@maxFit@fitness$value
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+
 generations.FPS.standard = c(1)
 fitData.FPS.standard = data.frame()
 for (i in 1:n)
 {
-  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(selection.type="FPS", elitism=TRUE, elite.size=1), verbose=FALSE)
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(selection.type="fps", elitism=TRUE, elite.size=1), verbose=FALSE)
   generational.ga(ga)
   
   generations.FPS.standard[i] = ga$gen
@@ -288,6 +386,16 @@ generations.linear60=c(67,200,71,36,86,100,55,144,29,117,48,140,83,147,67,27,66,
 generations.linear65=c(199,58,125,81,50,200,114,72,83,156,40,48,89,122,100,71,22,53,46,20,32,90,86,65,42,169,65,25,62,54,142,30,63,47,56,33,19,50,36,136,94,69,61,109,67,30,59,65,39,41,22,127,102,70,87,41,53,22,71,140,146,66,107,62,33,67,45,66,20,66,53,119,81,92,25,53,95,94,43,190,41,72,41,52,27,50,52,70,75,88,111,56,55,99,200,70,47,23,101,85)
 
 generations.FPS55=c(79,37,68,200,200,200,124,94,164,64,32,174,99,79,200,151,122,162,48,107,181,32,200,146,53,84,112,200,100,87,109,95,95,81,64,129,91,30,180,200,168,115,126,39,200,92,52,127,82,79,63,156,121,200,59,200,71,102,43,99,200,200,127,67,152,153,192,200,200,129,81,49,122,156,134,200,89,198,122,200,66,101,105,195,192,80,65,118,71,200,74,91,23,101,71,200,179,122,58,104)
+
+generations.FPS60=c(47  78  75  59  97  58  70  95 133  37  39  96  64  70  97  79  72  50  79  80  57  98 131  66  65  56  45  53  29  37  31  93  53 163 116  16  74  79 110  75  75  54  72 128  48 44  44  67  45  41  82  93  53 142  56 112 149  36  59  87  70 159  22  23  29 114  61  53  75  96  57 116 183  45  63  63 120  89  19  65  82  63  56  40  61  18  45  42  49  46 87  48  42  37  74  49  73  70 153 114)
+
+generations.FPS65=c(38  19  55 106  58  57  91  77  30  36  35  90  42  70  89  58  25 149  85  83  49  29 147  32  94 132  25  35  35  35  11  39  87  95  66  61  71  43  37  69  23  53  62  44  40 64  67  54  49  54  54  25  44  42  56  98  39  78  23  14  96  39  75  33 100  18  32  22  54  16  33 127  69  41  27  63  82  24  36  44  43  63  37  31  47 125  39  28  98  44 53  51  22  33  62  21  25 123  64  70)
+
+generations.exp55=c(76 154 200 152  69 112 158  65 158 130  53  53 132 138 116  33 115  32 119  41 130 112  35  50 163  74 108  56  76 134 162  88 192 149  86 110 155 142 200 150 129  48 132 106 133  97 150 77 108 160  60 200 133  84  59 200  95 134  64 144 103 200 177  99  91 157  97  63  79  79 108 171  88 200  85 167 102 127  86 122  60  65 200  86  89  92  29  84  71 200 200 104 173 200 174 200  90  31  38 111)
+
+generations.exp60=c(30  82 128  43  37 200  62  71  68  97  49 137  57  58  89  74 108  99  56  77  77 123  67 110  36  39  83  31  96  57  56  89  62  23  36 113  73  70  20  37 104  59  43  72  29  69 153 46  68 142  46 146  60  29  87 135  95  30  75 105  62  61 106  78  55  59  59 127  76 114  91  46  62  74  47  40  48  95  66  31  24  68  82  44  79  51  82  93  58  58  25 127  40 152 200  43  53  80 114  50)
+
+generations.exp65=c(37  42 129  20  51  35  66  48  36 108  19  15  20  41  28  66  22  61  42  36  41  44  66  49  37  41  47  46 107  39  39  24  42  61 107  73  41  52  22  38  32  83  55 105  28  71  37 129  21  49  60  53  32 136  41  59  60  61  15  77  50  97  63  42  36  56  17  43 113  81  37  49  33  32  29  27  83  91  33  66 150  61  50  26  78  59  27  81  33  25  48  26  30  50 83  53 139 200  65  67)
 
 fitData.linear55
 V1    V2       V3
