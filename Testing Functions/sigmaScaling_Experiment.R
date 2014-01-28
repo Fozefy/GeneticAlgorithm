@@ -1,0 +1,1 @@
+ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(selection.type=rank.selection.linear.sigmascaling(1), elitism=TRUE, elite.size=1), verbose=FALSE)

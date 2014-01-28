@@ -180,6 +180,49 @@ setup.fitnessProportional.withFitScaling <- function(expRank)
   }
 }
 
+setup.fitnessProportional.withSigmaScaling <- function(nu)
+{
+  fitnessProportional.withFitScaling.selection <- function(n, pop, select=NULL, pop.cumfit = NULL, verbose = FALSE,stats=NULL){
+    if(is.null(pop.cumfit))
+    {
+      fit=NULL
+      for (i in 1:length(pop))
+      {
+        fit[[i]] = pop[[i]]@fitness$value
+      }
+    }
+    
+    sortOrganisms = data.frame(1:length(pop),fit,0)
+    sortOrganisms = sortOrganisms[order(sortOrganisms[2], decreasing = FALSE),]
+    
+    b = nu*sd(fit)-mean(fit)
+    
+    gi = NULL
+    for (i in 1:length(pop))
+    {
+      gi[[i]] = pop[[i]]@fitness$value + b
+    }    
+    
+    gi[gi < 0] = 0
+    pop.cumfit = cumulate.fitness(gi)
+    
+    selection.loc = fitnessProportional.selection(n, pop, select, pop.cumfit, verbose)
+    
+    if(!is.null(stats))
+    {
+      sortOrganisms[3] = 1:length(pop) #Add rank index
+      sortOrganisms = sortOrganisms[order(sortOrganisms[1], decreasing = FALSE),]
+      
+      selected.ranks = sortOrganisms[selection.loc,3]
+      
+      stats$avgRank = c(stats$avgRank,mean(selected.ranks))
+      stats$varRank = c(stats$varRank,var(selected.ranks))
+    }
+    
+    selection.loc
+  }
+}
+
 fitnessProportional.selection <- function(n, pop, select=NULL, pop.cumfit = NULL, verbose = FALSE, ...){
   if(is.null(pop.cumfit))
   {
@@ -272,6 +315,91 @@ rank.selection.linear <- function(expRank, popSize)
     
   }
 }
+
+
+sigmaScaling.formula <- function(nu, n, sortedOrganisms)
+{
+  fbar = sum(sortedOrganisms[2])/n
+  fbar.sqr = sum(sortedOrganisms[2]^2)/n
+  frs = 2/(n*(n+1)) * sum(sortedOrganisms[3]*sortedOrganisms[2])
+  frs.sqr = 2/(n*(n+1)) * sum(sortedOrganisms[3]*sortedOrganisms[2]^2)
+
+  print(fbar)
+  print(fbar.sqr)
+  print(frs)
+  print(frs.sqr)
+  
+  a = -1*(nu^2+1)* ((n+1)*(frs - fbar)/(n-1))^2
+  b = (n+1)/(n-1) * (nu^2 * (frs.sqr - fbar.sqr) - 2*(nu^2 + 1)*(frs - fbar)*fbar)
+  c = nu^2 * fbar  - nu^2 * fbar.sqr - fbar.sqr
+  
+  answerWithPlus = (-b + sqrt(b^2 - 4*a*c))/(2*a)
+  answerWithNegative = (-b - sqrt(b^2 - 4*a*c))/(2*a)
+  
+  print(answerWithPlus)
+  print(answerWithNegative)
+  
+  if(answerWithPlus >= 1 && answerWithPlus > 0)
+  {
+    return(answerWithPlus)
+  }
+  else if(answerWithNegative >= 1 && answerWithNegative > 0)
+  {
+    return(answerWithNegative)
+  }
+  else if (answerWithNegative > 1 || answerWithPlus > 1)
+  {
+    print("Sigma Over 1")
+    return(1)
+  }
+  else
+  {
+    print("Both Sigma under/equal 0!")
+    return(0)
+  }
+}
+
+
+rank.selection.linear.sigmascaling <- function(nu)
+{
+  rank.selection <- function(selection.size, pop = NULL, select=NULL, maximizing = TRUE, pop.size = NULL, stats=NULL)
+  {
+    P <- ifelse(is.null(pop) || !is.null(pop.size), pop.size, length(pop))
+    
+    #Gather fitnesses to be sorted
+    fit=NULL
+    for (i in 1:P)
+    {
+      fit[[i]] = pop[[i]]@fitness$value
+    }
+    
+    sortOrganisms = data.frame(1:length(pop),fit)
+    sortOrganisms = sortOrganisms[order(sortOrganisms[2], decreasing = FALSE),]
+    sortOrganisms[3] = 1:length(pop) #Add rank index
+    
+    m.prime = sigmaScaling.formula(nu, P, sortOrganisms)
+        
+    selected.rand = runif(selection.size)
+    
+    selected.ranks = ceiling(((m.prime - 1)*P + 1 + sqrt( ((m.prime +1)*P - 1)^2 - 4*m.prime*P*(P-1)*selected.rand))/(2*m.prime))
+    
+    selection.loc = NULL
+    for(i in 1:selection.size)
+    {
+      selection.loc[i] = sortOrganisms[selected.ranks[i],1]
+    }
+    
+    if(!is.null(stats))
+    {
+      stats$avgRank = c(stats$avgRank,mean(selected.ranks))
+      stats$varRank = c(stats$varRank,var(selected.ranks))
+    }
+    
+    selection.loc
+    
+  }
+}
+
 #Selecting a primary parent for each node based on an adj matrix
 #We are selecting primary parent among the nodes and its direct neighbours of the node using the default selection.fn
 spatial.selection <- function(pop, selection.fn, adjMatrix)
@@ -362,22 +490,3 @@ spatial.child.selection.fitness <- function(pop, p1, p2, elite, maximizing)
   
   return(p1)
 }
-
-# sigmaScaling.formula <- function(n, expectedVal)
-# {
-#   nu = ?
-#   fi = ?
-#   f~ = sigmaScaling.Fi(n,expectedVal,fi)
-#   
-#   a = -1*(nu+1)*(((n^2)*((n+1)^2)/4)*(Frs - fbar)^2)
-#   b = nu^2 * n*(n+1)/2 *(Frs^2 - 1/n * sum fi^2) - (nu^2 + 1) *(n*(n+1)*(Frs - fbar)*f~
-#   c = nu^2 / n * sum
-#     
-#   answerWithPlus = (-b + sqrt(b^2 - 4*a*c))/(2*a)
-#   answerWithNegative = (-b - sqrt(b^2 - 4*a*c))/(2*a)
-# }
-# 
-# sigmaScaling.Fi~ <-function(n, expectedVal, fi)
-# {
-#   
-# }
