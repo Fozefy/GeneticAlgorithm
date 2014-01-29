@@ -231,15 +231,17 @@ fitnessProportional.selection <- function(n, pop, select=NULL, pop.cumfit = NULL
     {
       fit[[i]] = pop[[i]]@fitness$value
     }
-
-    pop.cumfit <- cumulate.fitness(fit)
+    sortOrganisms = data.frame(1:length(pop),fit,0)
+    sortOrganisms = sortOrganisms[order(sortOrganisms[2], decreasing = FALSE),]
+    
+    pop.cumfit <- cumulate.fitness(sortOrganisms[i,2])
   }
   
   if(is.null(select))
     select <- runif(n)
   if(verbose) 
     fp.selection.vprint(pop.cumfit, select)
-
+ 
   findInterval(select, pop.cumfit, rightmost.closed=TRUE) + 1
 }
 
