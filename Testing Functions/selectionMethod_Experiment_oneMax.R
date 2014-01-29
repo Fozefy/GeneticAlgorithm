@@ -377,3 +377,4 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(fitData.FPS.standard,file="fitData.FPS.standard")

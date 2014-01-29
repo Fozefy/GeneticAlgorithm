@@ -131,3 +131,5 @@ var(generations.8graph.predprey);var(generations.random8.predprey);var(generatio
 var(generations.complete.predprey)
 
 boxplot(generations.4graph.predprey,generations.8graph.predprey,generations.complete.predprey,ylab="Generations", names=c("4 Grid", "8 Grid", "Complete"))
+
+boxplot(generations.4graph.predprey,generations.ring4.predprey,generations.8graph.predprey,generations.ring8.predprey,generations.complete.predprey,ylab="Generations", names=c("4 Grid","4 Ring","8 Ring", "8 Grid", "Complete"))

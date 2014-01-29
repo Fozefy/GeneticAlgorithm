@@ -86,11 +86,29 @@ for (i in 1:n)
   rm(ga)
 }
 
+generations.exp50.rast = c(1)
+fitData.exp50.rast = data.frame()
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200),xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=Rastrigin.fitness.fn, goal = 403.5329), selection.args=new.selection.args(selection.type=rank.selection.withExp(1/1666.9), elitism=TRUE, elite.size=1), verbose=FALSE)
+  generational.ga(ga)
+  
+  generations.exp50.rast[i] = ga$gen
+  fitData.exp50.rast[i,1] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$median
+  fitData.exp50.rast[i,2] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$mean
+  fitData.exp50.rast[i,3] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$SD
+  fitData.exp50.rast[i,4] = ga$currentGen.results@maxFit@fitness$value
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(fitData.exp50.rast,file="fitData.exp50.rast")
+
 generations.exp51.rast = c(1)
 fitData.exp51.rast = data.frame()
 for (i in 1:n)
 {
-  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200),xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=Rastrigin.fitness.fn, goal = 403.5329), selection.args=new.selection.args(selection.type=rank.selection.withExp(), elitism=TRUE, elite.size=1), verbose=FALSE)
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200),xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=Rastrigin.fitness.fn, goal = 403.5329), selection.args=new.selection.args(selection.type=rank.selection.withExp(1/555.7), elitism=TRUE, elite.size=1), verbose=FALSE)
   generational.ga(ga)
   
   generations.exp51.rast[i] = ga$gen
@@ -108,7 +126,7 @@ generations.exp53.rast = c(1)
 fitData.exp53.rast = data.frame()
 for (i in 1:n)
 {
-  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200),xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=Rastrigin.fitness.fn, goal = 403.5329), selection.args=new.selection.args(selection.type=rank.selection.withExp(), elitism=TRUE, elite.size=1), verbose=FALSE)
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200),xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=Rastrigin.fitness.fn, goal = 403.5329), selection.args=new.selection.args(selection.type=rank.selection.withExp(1/237.9 + .00000052), elitism=TRUE, elite.size=1), verbose=FALSE)
   generational.ga(ga)
   
   generations.exp53.rast[i] = ga$gen
@@ -248,15 +266,16 @@ for (i in 1:n)
   ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200),xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=Rastrigin.fitness.fn, goal = 403.5329), selection.args=new.selection.args(selection.type=setup.fitnessProportional.withFitScaling(53), elitism=TRUE, elite.size=1), verbose=FALSE)
   generational.ga(ga)
   
-  generations.FPS55.rast[i] = ga$gen
-  fitData.FPS55.rast[i,1] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$median
-  fitData.FPS55.rast[i,2] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$mean
-  fitData.FPS55.rast[i,3] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$SD
-  fitData.FPS55.rast[i,4] = ga$currentGen.results@maxFit@fitness$value
+  generations.FPS53.rast[i] = ga$gen
+  fitData.FPS53.rast[i,1] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$median
+  fitData.FPS53.rast[i,2] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$mean
+  fitData.FPS53.rast[i,3] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$SD
+  fitData.FPS53.rast[i,4] = ga$currentGen.results@maxFit@fitness$value
   
   print(paste(i,"Complete"))
   rm(ga)
 }
+fitData.FPS53.rast=fitData.FPS55.rast
 save(fitData.FPS53.rast,file="fitData.FPS53.rast")
 
 generations.FPS55.rast = c(1)
@@ -371,7 +390,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
-
+save(fitData.FPS.standard.rast,file="fitData.FPS.standard.rast")
 #Test data for selection types
 linear 55-60-65 - all 200s
 

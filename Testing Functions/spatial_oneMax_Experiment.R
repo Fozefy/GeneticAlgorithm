@@ -140,3 +140,5 @@ var(generations.8graph);var(generations.random8);var(generations.randomWithLine8
 var(generations.complete)
 
 boxplot(generations.4graph,generations.8graph,generations.complete,ylab="Generations", names=c("4 Grid", "8 Grid", "Complete"))
+
+boxplot(generations.4graph,generations.ring4,generations.8graph,generations.ring8,generations.complete,ylab="Generations", names=c("4 Grid","4 Ring","8 Ring", "8 Grid", "Complete"))
