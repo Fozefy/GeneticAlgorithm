@@ -138,3 +138,5 @@ median(generations.4graph);median(generations.8graph);median(generations.complet
 var(generations.4graph);var(generations.random4);var(generations.randomWithLine4);var(generations.ring4)
 var(generations.8graph);var(generations.random8);var(generations.randomWithLine8);var(generations.ring8)
 var(generations.complete)
+
+boxplot(generations.4graph,generations.8graph,generations.complete,ylab="Generations", names=c("4 Grid", "8 Grid", "Complete"))
