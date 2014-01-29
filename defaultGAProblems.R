@@ -355,9 +355,22 @@ F8F2.fitness.fn <- function(organism, ...)
   }
   total = total + Simple.F8.Fitness(Simple.F2.fitness(c(genes[((n-1)*12):chromosomeLength],genes[1:12])))
 
-  total
+  783.8844-total
 }
 
+# f8f2tester <- function(x,y)
+# {
+#   value = 100*(x^2 - y^2)^2 + (1-x)^2
+#   1 + value^2/4000 - cos(value)
+# }
+# test = NULL
+# for (i in 90:100)
+# {
+#   for (j in 1:100)
+#   {
+#     test[(i-90)*100+j] = f8f2tester(i*2.048/100,j*2.048/100)
+#   }
+# }
 #F8F2GA=new.GA.env(encoding.args=new.encoding.args(chr.length=240, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=F8F2.fitness.fn, goal = 0), selection.args=new.selection.args(maximizing = FALSE))
 
 
