@@ -1,7 +1,7 @@
 ## Selection
 
 select.population.fgen <- function(selection.fn, ...){
-  function(selection.size, pop=NULL)
+  function(selection.size, pop=NULL, stats=NULL)
     selection.fn(selection.size = selection.size, pop = pop, ...)
 }
 
