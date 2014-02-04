@@ -214,6 +214,8 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(fitData.exp75.F8F2,file="fitData.exp75.F8F2")
+
 generations.exp85.F8F2 = c(1)
 fitData.exp85.F8F2 = data.frame()
 for (i in 1:n)
@@ -231,6 +233,8 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(fitData.exp85.F8F2,file="fitData.exp85.F8F2")
+
 generations.exp95.F8F2 = c(1)
 fitData.exp95.F8F2 = data.frame()
 for (i in 1:n)
@@ -248,6 +252,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(fitData.exp95.F8F2,file="fitData.exp95.F8F2")
 
 generations.FPS55.F8F2 = c(1)
 fitData.FPS55.F8F2 = data.frame()
@@ -319,6 +324,8 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(fitData.FPS75.F8F2,file="fitData.FPS75.F8F2")
+
 generations.FPS85.F8F2 = c(1)
 fitData.FPS85.F8F2 = data.frame()
 for (i in 1:n)
@@ -335,6 +342,8 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(fitData.FPS85.F8F2,file="fitData.FPS85.F8F2")
+
 generations.FPS95.F8F2 = c(1)
 fitData.FPS95.F8F2 = data.frame()
 for (i in 1:n)
@@ -351,6 +360,8 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(fitData.FPS95.F8F2,file="fitData.FPS95.F8F2")
+
 generations.FPS.standard.F8F2 = c(1)
 fitData.FPS.standard.F8F2 = data.frame()
 for (i in 1:n)
