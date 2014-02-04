@@ -138,7 +138,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
-save(fitData.exp53.rast,file="fitData.exp53.rast")
+save(fitData.exp53.rast,file="fitData.exp53.rast.extra")
 
 generations.exp55.rast = c(1)
 fitData.exp55.rast = data.frame()
