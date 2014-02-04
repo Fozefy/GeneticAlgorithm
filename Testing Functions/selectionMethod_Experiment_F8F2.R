@@ -254,6 +254,42 @@ for (i in 1:n)
 }
 save(fitData.exp95.F8F2,file="fitData.exp95.F8F2")
 
+generations.FPS51.F8F2 = c(1)
+fitData.FPS51.F8F2 = data.frame()
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200),xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=240, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=F8F2.fitness.fn, goal = 783.8844), selection.args=new.selection.args(selection.type=setup.fitnessProportional.withFitScaling(51), elitism=TRUE, elite.size=1,maximizing = TRUE), verbose=FALSE)
+  generational.ga(ga)
+  
+  generations.FPS51.F8F2[i] = ga$gen
+  fitData.FPS51.F8F2[i,1] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$median
+  fitData.FPS51.F8F2[i,2] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$mean
+  fitData.FPS51.F8F2[i,3] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$SD
+  fitData.FPS51.F8F2[i,4] = ga$currentGen.results@maxFit@fitness$value
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(fitData.FPS55.F8F2,file="fitData.FPS55.F8F2")
+
+generations.FPS53F8F2 = c(1)
+fitData.FPS53.F8F2 = data.frame()
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=200),xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=240, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=F8F2.fitness.fn, goal = 783.8844), selection.args=new.selection.args(selection.type=setup.fitnessProportional.withFitScaling(53), elitism=TRUE, elite.size=1,maximizing = TRUE), verbose=FALSE)
+  generational.ga(ga)
+  
+  generations.FPS53F8F2[i] = ga$gen
+  fitData.FPS53.F8F2[i,1] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$median
+  fitData.FPS53.F8F2[i,2] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$mean
+  fitData.FPS53.F8F2[i,3] = ga$reported.data[[length(ga$reported.data)]]@currentGen.results@fitness[[1]]$SD
+  fitData.FPS53.F8F2[i,4] = ga$currentGen.results@maxFit@fitness$value
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(fitData.FPS53.F8F2,file="fitData.FPS53.F8F2")
+
 generations.FPS55.F8F2 = c(1)
 fitData.FPS55.F8F2 = data.frame()
 for (i in 1:n)
