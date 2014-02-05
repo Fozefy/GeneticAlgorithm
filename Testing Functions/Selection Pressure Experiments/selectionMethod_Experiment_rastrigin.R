@@ -206,6 +206,8 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(fitData.exp75.rast,file="fitData.exp75.rast")
+
 generations.exp85.rast = c(1)
 fitData.exp85.rast = data.frame()
 for (i in 1:n)
@@ -223,6 +225,8 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(fitData.exp85.rast,file="fitData.exp85.rast")
+
 generations.exp95.rast = c(1)
 fitData.exp95.rast = data.frame()
 for (i in 1:n)
@@ -240,6 +244,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(fitData.exp95.rast,file="fitData.exp95.rast")
 
 generations.FPS51.rast = c(1)
 fitData.FPS51.rast = data.frame()

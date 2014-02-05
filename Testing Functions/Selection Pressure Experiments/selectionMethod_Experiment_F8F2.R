@@ -103,7 +103,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
-save(fitData.exp50.F8F2,file="fitData.exp53.F8F2")
+save(fitData.exp50.F8F2,file="fitData.exp50.F8F2")
 
 generations.exp51.F8F2 = c(1)
 fitData.exp51.F8F2 = data.frame()
@@ -270,7 +270,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
-save(fitData.FPS55.F8F2,file="fitData.FPS51.F8F2")
+save(fitData.FPS51.F8F2,file="fitData.FPS51.F8F2")
 
 generations.FPS53F8F2 = c(1)
 fitData.FPS53.F8F2 = data.frame()
