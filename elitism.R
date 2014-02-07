@@ -39,7 +39,7 @@ elite.selection <- function(pop, elite.size = 1, maximizing = TRUE, pop.fit = NU
       }      
       
       if (elitesFilled == elite.size) break
-      else if (i == length(sortedOrganisms)) cat("Too many duplicates in population to generate",elite.size, "elites, Returning: ",elitesFilled)
+      else if (i == length(sortedOrganisms)) print(cat("Too many duplicates in population to generate",elite.size, "elites, Returning: ",elitesFilled))
     }
   }
 
