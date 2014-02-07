@@ -3,7 +3,11 @@ xover.count <- function(P, elite.count, xover.prob, xover=NULL){
   xover.count <- (P - elite.count) %/% 2
   if(is.null(xover))
     xover <- (runif(xover.count) < xover.prob)
-  sum(xover)
+  total = sum(xover)
+  
+  if (total < 1) return(1)
+  
+  return(total)
 }
 
 chr.xover <- function(chr1, chr2, swapMask.fn = xover.mask.2point, swapMask=NULL, ...){
