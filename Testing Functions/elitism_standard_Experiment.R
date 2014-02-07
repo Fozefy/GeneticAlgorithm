@@ -65,6 +65,20 @@ for (i in 1:n)
 }
 save(std.elite.ten,file="std.elite.ten")
 
+
+std.elite.full = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=100), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE)
+  generational.ga(ga)
+  
+  std.elite.full[i] = ga$gen
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(std.elite.full,file="std.elite.full")
+
 #Big Pop
 std.elite.one.BigPop = c(1)
 

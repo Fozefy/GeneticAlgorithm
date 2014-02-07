@@ -70,6 +70,20 @@ for (i in 1:n)
 }
 save(stdSpatial.elite.ten,file="stdSpatial.elite.ten")
 
+graph = gridConstructor(100)
+stdSpatial.elite.full = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=100,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE)
+  generational.ga(ga)
+  
+  stdSpatial.elite.full[i] = ga$gen
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(stdSpatial.elite.full,file="stdSpatial.elite.full")
+
 #Larger Grid
 graph = gridConstructor.withDiag(100)
 stdSpatial.elite.one.LargeGrid = c(1)
