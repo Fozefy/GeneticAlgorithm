@@ -1,6 +1,6 @@
 #Determine the number of chromosomes to be crossed
-xover.count <- function(P, elite.count, xover.prob, xover=NULL){
-  xover.count <- (P - elite.count) %/% 2
+xover.count <- function(P, xover.prob, xover=NULL){
+  xover.count <- P %/% 2
   if(is.null(xover))
     xover <- (runif(xover.count) < xover.prob)
   total = sum(xover)

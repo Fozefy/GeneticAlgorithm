@@ -294,7 +294,7 @@ next.generation.spatial <- function(GA.env){
     
     #Get number of each reproduction group
     elite.size <- if (!is.null(elite)) length(elite[[i]]) else 0
-    xover.size <- xover.count(P, elite.size, reproduction.env(GA.env)$xover.prob)
+    xover.size <- xover.count(P, reproduction.env(GA.env)$xover.prob)
     
     #Find the chromosomes to be crossed
     p1.loc <- spatial.selection(reproduction.env(GA.env)$pop[[i]]@organisms$values, selection.env(GA.env)$select.chr, selection.env(GA.env)$adjMatrix)
@@ -331,14 +331,13 @@ next.generation.spatial <- function(GA.env){
       this.pop.elite = elite[[i]]
     }
       
-    #TODO - This fitness.set are all possible nodes, not just ones that will be in pop, makes stats somewhat incorrect
     GA.env$fitness.env$fitness.set[[i]] = evaluateOrganismList(c(p1,p2[nodes.for.xover],this.pop.elite), fitness.env(GA.env)$fitness.fn, i, otherPops, fitness.env(GA.env)$externalConnectionsMatrix)
     
-    new.pop[[i]] = new.population(organisms = selection.env(GA.env)$spatial.selection.fn(reproduction.env(GA.env)$pop[[i]], p1, p2, this.pop.elite, selection.env(GA.env)$maximizing))
+    new.pop[[i]] = new.population(organisms = selection.env(GA.env)$spatial.selection.fn(reproduction.env(GA.env)$pop[[i]], p1, p2, this.pop.elite, selection.env(GA.env)$maximizing, GA.env$fitness.env))
     
     new.pop[[i]]@popNum = i
   }
-  
+
   #Set the current population to the new population
   add.population(reproduction.env(GA.env), new.pop)
   
@@ -365,7 +364,7 @@ next.generation.standard <- function(GA.env){
       
     #Get number of each reproduction group
     elite.size <- if (!is.null(elite)) length(elite[[i]]) else 0
-    xover.size <- xover.count(P, elite.size, reproduction.env(GA.env)$xover.prob)
+    xover.size <- xover.count(P, reproduction.env(GA.env)$xover.prob)
     mut.size <- mutate.only.count(P, xover.size, elite.size, reproduction.env(GA.env)$keepSecondaryParent)
   
     selectionStats = new.env()

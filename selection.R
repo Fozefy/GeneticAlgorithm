@@ -407,6 +407,7 @@ rank.selection.linear.sigmascaling <- function(nu)
 spatial.selection <- function(pop, selection.fn, adjMatrix)
 {
   selection.loc = NULL
+  
   for (i in 1:length(pop))
   {
     if(is.null(adjMatrix))
@@ -418,11 +419,16 @@ spatial.selection <- function(pop, selection.fn, adjMatrix)
       selection.loc[[i]] = selection.fn(1, pop[adjMatrix[i,]])
     }
   }
+
   selection.loc
 }
 
-spatial.child.selection.random <- function(pop, p1, p2, elite, maximizing)
+#Select the child chosen for the spatial slot at random, elite takes slot only if better
+spatial.child.selection.random <- function(pop, p1, p2, elite, maximizing, fitness.env)
 {
+  #Fitness of chosen organisms
+  fitness.set = c(1)
+  
   #P1 will hold the set of organisms to be used
   
   #We will choose which child to use based on which has the better fitness
@@ -437,6 +443,8 @@ spatial.child.selection.random <- function(pop, p1, p2, elite, maximizing)
         p1[[i]] = p2[[i]]
       }
     }
+    
+    fitness.set[[i]] = p1[[i]]@fitness$value
   }
   
   #Now we can add elites, we knock out other nodes if elite has better fitness
@@ -449,16 +457,22 @@ spatial.child.selection.random <- function(pop, p1, p2, elite, maximizing)
       if (elite[[j]]@fitness$value %>% p1[[elite[[j]]@index]]@fitness$value)
       {
         p1[[elite[[j]]@index]] = elite[[j]]
+        fitness.set[[elite[[j]]@index]] = elite[[j]]@fitness$value
       }
     }
   }
   
+  fitness.env$fitness.set[[pop@popNum]] = fitness.set
+  
   return(p1)
 }
 
-#select child at random and keep elite regardless of fitness at slot
-spatial.child.selection.random.hardElite <- function(pop, p1, p2, elite, maximizing)
+#Select child at random and keep elite regardless of fitness at slot
+spatial.child.selection.random.hardElite <- function(pop, p1, p2, elite, maximizing, fitness.env)
 {
+  #Fitness of chosen organisms
+  fitness.set = c(1)
+  
   #P1 will hold the set of organisms to be used
   
   #We will choose which child to use based on which has the better fitness
@@ -473,6 +487,8 @@ spatial.child.selection.random.hardElite <- function(pop, p1, p2, elite, maximiz
         p1[[i]] = p2[[i]]
       }
     }
+    
+    fitness.set[[i]] = p1[[i]]@fitness$value
   }
   
   #Now we can add elites, we knock out other nodes if elite has better fitness
@@ -483,16 +499,22 @@ spatial.child.selection.random.hardElite <- function(pop, p1, p2, elite, maximiz
     {    
       #Always maintain elites
       p1[[elite[[j]]@index]] = elite[[j]]
+      fitness.set[[elite[[j]]@index]] = elite[[j]]@fitness$value
     }
   }
+  
+  fitness.env$fitness.set[[pop@popNum]] = fitness.set
   
   return(p1)
 }
 
 #Choose node based on child with better fitness
-spatial.child.selection.fitness <- function(pop, p1, p2, elite, maximizing)
+spatial.child.selection.fitness <- function(pop, p1, p2, elite, maximizing, fitness.env)
 {
   if(maximizing) {`%>%` <- `>`} else {`%>%` <- `<`}
+  
+  #Fitness of chosen organisms
+  fitness.set = c(1)
   
   #P1 will hold the set of organisms to be used
 
@@ -508,6 +530,8 @@ spatial.child.selection.fitness <- function(pop, p1, p2, elite, maximizing)
         p1[[i]] = p2[[i]]
       }
     }
+    
+    fitness.set[[i]] = p1[[i]]@fitness$value
   }
   
   #Now we can add elites, we knock out other nodes if elite has better fitness
@@ -519,9 +543,12 @@ spatial.child.selection.fitness <- function(pop, p1, p2, elite, maximizing)
       if (elite[[j]]@fitness$value %>% p1[[elite[[j]]@index]]@fitness$value)
       {
         p1[[elite[[j]]@index]] = elite[[j]]
+        fitness.set[[elite[[j]]@index]] = elite[[j]]@fitness$value
       }
     }
   }
+  
+  fitness.env$fitness.set[[pop@popNum]] = fitness.set
   
   return(p1)
 }
