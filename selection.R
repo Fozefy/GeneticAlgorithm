@@ -417,6 +417,7 @@ spatial.selection <- function(pop, selection.fn, adjMatrix)
     else
     {
       selection.loc[[i]] = selection.fn(1, pop[adjMatrix[i,]])
+      selection.loc[[i]] = adjMatrix[i,selection.loc[[i]]]
     }
   }
 

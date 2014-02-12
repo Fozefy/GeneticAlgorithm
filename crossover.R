@@ -31,16 +31,13 @@ setMethod("chr.xover",
           signature = c("list", "list", "function", "ANY"),
           definition = function(chr1, chr2, swapMask.fn, swapMask=NULL, xover.list = NULL){
             
-            if (is.null(xover.list))
+            n <- length(chr1)
+
+            if (!is.null(xover.list))
             {
-              n <- length(chr1)
-            }
-            else
-            {
-              n <- length(xover.list)
               chr2[-xover.list] = 0              
             }
-            
+
             return.values <- vector("list", n)
             for(i in 1:n)
             {
@@ -49,8 +46,8 @@ setMethod("chr.xover",
                   return.values[[i]] <- chr.xover(chr1[[i]], chr2[[i]], swapMask.fn, swapMask[[i]])
                   chr2[[i]]@index = i
               }
-              
-              chr1[[i]]@index = i
+
+              chr1[[i]]@index = i              
             }
             
             new("returnList", return.values)
