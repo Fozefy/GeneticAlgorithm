@@ -159,7 +159,21 @@ for (i in 1:n)
 }
 save(elite.ten.BigGrid,file="elite.ten.BigGrid")
 
-#boxplot(elite.one.BigGrid,elite.two.BigGrid,elite.three.BigGrid,elite.five.BigGrid,elite.ten.BigGrid,names=c("One","Two","Three","Five","Ten"), main="Elites on Coevo - 8 Grid")
+graph = gridConstructor.withDiag(100)
+elite.full.BigGrid = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withCoupling(.5), goal=30, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elite.size=100,elitism=TRUE,adjMatrix=graph), verbose=FALSE)
+  generational.ga(ga)
+  
+  elite.full.BigGrid[i] = ga$gen
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(elite.full.BigGrid,file="elite.full.BigGrid")
+
+#boxplot(elite.one.BigGrid,elite.two.BigGrid,elite.three.BigGrid,elite.five.BigGrid,elite.ten.BigGrid,elite.full.BigGrid,names=c("One","Two","Three","Five","Ten","100"), main="Elites on Coevo - 8 Grid")
 
 #Big Pop
 graph = gridConstructor(1024)
