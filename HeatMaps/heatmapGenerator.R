@@ -1,0 +1,1 @@
+heatmap(matrix(ga$reported.data[[166]]@currentGen.results@fitness[[1]]$test,nrow=10,byrow=TRUE),Rowv=NA,Colv=NA,symm=TRUE)
