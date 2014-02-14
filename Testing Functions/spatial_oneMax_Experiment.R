@@ -1,5 +1,3 @@
-source("Testing Functions/spatialConstructors.R")
-
 #Testing Spatial Effects
 n=20
 
@@ -50,6 +48,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(generations.ring4,"coevo.ring4.2elite")
 
 graph = ring.graph.extra(100) #ring graph more connection
 generations.ring8 = c(1)
@@ -62,6 +61,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(generations.ring8,"coevo.ring8.2elite")
 
 #random graph - 4 connections
 generations.random4 = c(1)
@@ -75,6 +75,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(generations.random4,"coevo.rand4.2elite")
 
 #random graph - 8 connections
 generations.random8 = c(1)
@@ -89,6 +90,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(generations.random8,"coevo.rand8.2elite")
 
 #random graph with line - 4 connections
 generations.randomWithLine4 = c(1)

@@ -83,30 +83,33 @@ generationsSpatial.ashlock = c(1)
 maxFitSpatial.ashlock = c(1)
 for (i in 1:n)
 {
-  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=500), fitness.args=new.fitness.args(goal=20), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(selection.type="fps",elitism=FALSE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=20),verbose=FALSE)
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=20), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(selection.type="fps",elitism=FALSE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=20),verbose=FALSE)
   generational.ga(ga)
 
   generationsSpatial.ashlock[i] = ga$gen
-  maxFitSpatial.ashlock[i] = ga$currentGen.results@maxFit@fitness$value
+  #maxFitSpatial.ashlock[i] = ga$currentGen.results@maxFit@fitness$value
 
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(generationsSpatial.ashlock, "stdSpatial_NoElite")
 
 graph = complete.graph(100)
 generationsComplete.ashlock = c(1)
 maxFitComplete.ashlock = c(1)
 for (i in 1:n)
 {
-  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=500), fitness.args=new.fitness.args(goal=20), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(selection.type="fps",elitism=FALSE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=20),verbose=FALSE)
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=20), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(selection.type="fps",elitism=FALSE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=20),verbose=FALSE)
   generational.ga(ga)
   
   generationsComplete.ashlock[i] = ga$gen
-  maxFitComplete.ashlock[i] = ga$currentGen.results@maxFit@fitness$value
+  #maxFitComplete.ashlock[i] = ga$currentGen.results@maxFit@fitness$value
   
   print(paste(i,"Complete"))
   rm(ga)
 }
+save(generationsComplete.ashlock, "Standard_NoElite")
+
 generationsComplete.ashlock=c(82,162,341,500,448,500,296,500,500,500,409,500,371,500,500,230,437,500,500,234,28,404,113,500,500,17,340,500,500,500,365,500,265,500,59,500,249,500,184,344,500,500,439,500,201,500,218,500,500,148)
 generationsSpatial.ashlock= c(500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,450,500,500,196,500)
 #generations3.1 = c(55,69,58,82,80,57,103,60,94,66,103,70,65,91,60,50,35,44,52,72,92,65,69,56,110,79,47,66,66,53)

@@ -83,3 +83,17 @@ for (i in 1:n)
   rm(ga)
 }
 save(elite.full.CoevoComp,file="elite.full.CoevoComp")
+
+graph = complete.graph(100)
+elite.none.CoevoComp = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withCoupling(.5), goal=30, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=FALSE,adjMatrix=graph), verbose=FALSE)
+  generational.ga(ga)
+  
+  elite.none.CoevoComp[i] = ga$gen
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(elite.none.CoevoComp,file="elite.none.CoevoComp")
