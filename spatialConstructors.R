@@ -519,7 +519,147 @@ randomConstructor <- function(avgConnections, popSize)
   graph
 }
 
+randomConstructor.NoDuplicate <- function(avgConnections, popSize)
+{
+  graph = matrix(0,nrow=popSize,ncol=1)
+  
+  for (i in 1:(popSize*avgConnections/2 - 1))
+  {
+    if (i <= popSize)
+    {
+      #Make sure ever node is selected at least once
+      firstNode = i
+    }
+    else
+    {
+      valid = FALSE
+      while(valid == FALSE)
+      {
+        firstNode = sample(1:(popSize-1),1)
+        
+        if (length(graph[firstNode,]) < popSize - 1)
+        {
+          valid = TRUE
+        }  
+        else if (graph[firstNode,(popSize-1)] == 0)
+        {
+          valid = TRUE
+        }
+        else
+        {
+          #This node is already connected to every other node
+          valid = FALSE
 
+        }
+      }
+    }
+
+    placed = FALSE #True once we've selected a new node
+    while(placed == FALSE)
+    {
+      secondNode = sample(1:(popSize-1),1)
+      if (secondNode == firstNode) secondNode = popSize #We don't want a self connection
+      
+      for(j in 1:length(graph[secondNode,]))
+      {
+        if (graph[secondNode,j] == firstNode)
+        {
+          #This node is already connected, we need to choose a new node
+          break
+        }
+        else if (graph[secondNode,j] == 0)
+        {
+          graph[secondNode,j] = firstNode
+          placed = TRUE
+          break
+        }
+        else if (j == length(graph[secondNode,]))
+        {
+          #Need to add another column
+          graph = cbind(graph,0)
+          graph[secondNode,(j+1)] = firstNode
+          placed = TRUE
+          break
+        }
+      }
+    }
+    
+    for(j in 1:length(graph[firstNode,]))
+    {
+      if (graph[firstNode,j] == 0)
+      {
+        graph[firstNode,j] = secondNode
+        break
+      }
+      else if (j == length(graph[firstNode,]))
+      {
+        #Need to add another column
+        graph = cbind(graph,0)
+        graph[firstNode,(j+1)] = secondNode
+      }
+    }
+  }
+  graph
+}
+
+randomConstructor.withSeperatePop<-function(avgConnections,totalPopSize,numPop)
+{
+  pops = NULL
+  maxCol = 0
+  for (i in 1:numPop)
+  {
+    pops[[i]] = randomConstructor(avgConnections,totalPopSize/numPop)
+    
+    maxCol = max(ncol(pops[[i]]), maxCol)
+  }
+
+  for (i in 1:numPop)
+  {
+    while(ncol(pops[[i]]) < maxCol)
+    {
+      pops[[i]] = cbind(pops[[i]],0)
+    }
+    
+    if (i != 1)
+    {
+      temp = pops[[i]]
+      temp[temp!=0] = temp[temp!=0]+ (i-1)*totalPopSize/numPop
+      pops[[i]] = temp
+      pops[[1]] = rbind(pops[[1]],pops[[i]])
+    }
+  }
+  
+  pops[[1]]
+}
+randomConstructor.withSeperatePop.noDuplicate<-function(avgConnections,totalPopSize,numPop)
+{
+  pops = NULL
+  maxCol = 0
+  for (i in 1:numPop)
+  {
+    pops[[i]] = randomConstructor.NoDuplicate(avgConnections,totalPopSize/numPop)
+    
+    maxCol = max(ncol(pops[[i]]), maxCol)
+  }
+  
+  for (i in 1:numPop)
+  {
+    while(ncol(pops[[i]]) < maxCol)
+    {
+      pops[[i]] = cbind(pops[[i]],0)
+    }
+    
+    if (i != 1)
+    {
+      temp = pops[[i]]
+      temp[temp!=0] = temp[temp!=0]+ (i-1)*totalPopSize/numPop
+      pops[[i]] = temp
+      pops[[1]] = rbind(pops[[1]],pops[[i]])
+    }
+  }
+  
+  pops[[1]]
+}
 
 #graph = gridConstructor(100)
 
