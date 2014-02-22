@@ -29,7 +29,7 @@ create.random.organisms <- function(GA.env){
   organisms <- vector("list", P)
   for(i in 1:P){
     organisms[[i]] <- new.organism(GA.env)
-    organisms[[i]]@index = i
+    organisms[[i]]@index$value = i
   }
   organisms
 }

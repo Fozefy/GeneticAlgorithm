@@ -299,7 +299,7 @@ next.generation.spatial <- function(GA.env){
     #Find the chromosomes to be crossed
     p1.loc <- spatial.selection(reproduction.env(GA.env)$pop[[i]]@organisms$values, selection.env(GA.env)$select.chr, selection.env(GA.env)$adjMatrix)
     p2.loc <- spatial.selection(reproduction.env(GA.env)$pop[[i]]@organisms$values, selection.env(GA.env)$select.chr, selection.env(GA.env)$adjMatrix)
-        
+
     if (!is.null(elite)) elite[[i]] = duplicate(elite[[i]])
     p1 <- duplicate(reproduction.env(GA.env)$pop[[i]][p1.loc])
     p2 <- duplicate(reproduction.env(GA.env)$pop[[i]][p2.loc])
@@ -311,11 +311,11 @@ next.generation.spatial <- function(GA.env){
     p2Results = reproduction.env(GA.env)$mutate(p2)
     #Store Mutation results
     mutation.results[[i]] <- c(p1Results, p2Results)
-    
+
     #CrossOver
     nodes.for.xover = uniform.selection(xover.size, size(reproduction.env(GA.env)$pop[[i]]))
-    xover.results[[i]] <- chr.xover(p1, p2, reproduction.env(GA.env)$xover.swapMask, nodes.for.xover)
-    
+    xover.results[[i]] <- chr.xover(p1, p2, reproduction.env(GA.env)$xover.swapMask, xover.list=nodes.for.xover)
+
     #Evaluate the new chromosomes
     
     #Get the other pops

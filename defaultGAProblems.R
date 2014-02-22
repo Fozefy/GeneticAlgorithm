@@ -11,7 +11,7 @@ finite.min.fn <- function(genes, gene.max){
 twoPop.one.max.withCoupling <- function(coupling)
 {
   twoPop.one.max <- function(organism, popNum, otherPops, externalConnectionsMatrix){
-    otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index, popNum]]]@chromosome$genes
+    otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
     sum(organism@chromosome$genes)*coupling + sum(otherGenes)*(1 - coupling)
   }
 }
@@ -22,7 +22,7 @@ twoPop.one.max.seperate <- function(organism, pop, otherPops, externalConnection
 
 twoPop.one.max.predPrey <- function(organism, popNum, otherPops, externalConnectionsMatrix)
 {
-  otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index, popNum]]]@chromosome$genes
+  otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
   
   if(popNum == 1)
   {

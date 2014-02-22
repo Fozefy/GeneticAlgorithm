@@ -1,6 +1,6 @@
 ### Organism Class
 
-setClass("organism", representation(chromosome = "environment", fitness = "environment", index = "numeric"))
+setClass("organism", representation(chromosome = "environment", fitness = "environment", index = "environment"))
 setMethod("initialize", 
           signature = "organism",
           definition = function(.Object, chr.length, 
@@ -18,6 +18,11 @@ setMethod("initialize",
             fitness.env <- new.env()
             fitness.env$value <- fitness.fn(.Object)
             .Object@fitness <- fitness.env
+            
+            index.env <- new.env()
+            index.env$value <- -1
+            
+            .Object@index <- index.env
             
             .Object
           }

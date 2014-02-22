@@ -41,13 +41,13 @@ setMethod("chr.xover",
             return.values <- vector("list", n)
             for(i in 1:n)
             {
-              if (class(chr2[[i]]) == "numeric")
+              if (class(chr2[[i]]) != "numeric")
               {
                   return.values[[i]] <- chr.xover(chr1[[i]], chr2[[i]], swapMask.fn, swapMask[[i]])
-                  chr2[[i]]@index = i
+                  chr2[[i]]@index$value = i
               }
 
-              chr1[[i]]@index = i              
+              chr1[[i]]@index$value = i              
             }
             
             new("returnList", return.values)

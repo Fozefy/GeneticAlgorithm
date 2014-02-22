@@ -429,7 +429,7 @@ spatial.child.selection.random <- function(pop, p1, p2, elite, maximizing, fitne
 {
   #Fitness of chosen organisms
   fitness.set = c(1)
-  
+
   #P1 will hold the set of organisms to be used
   
   #We will choose which child to use based on which has the better fitness
@@ -455,10 +455,10 @@ spatial.child.selection.random <- function(pop, p1, p2, elite, maximizing, fitne
     for(j in 1:length(elite))
     {    
       #Do a hard tournament, replace the node in elite's spot if elite is still better
-      if (elite[[j]]@fitness$value %>% p1[[elite[[j]]@index]]@fitness$value)
+      if (elite[[j]]@fitness$value %>% p1[[elite[[j]]@index$value]]@fitness$value)
       {
-        p1[[elite[[j]]@index]] = elite[[j]]
-        fitness.set[[elite[[j]]@index]] = elite[[j]]@fitness$value
+        p1[[elite[[j]]@index$value]] = elite[[j]]
+        fitness.set[[elite[[j]]@index$value]] = elite[[j]]@fitness$value
       }
     }
   }
@@ -499,8 +499,8 @@ spatial.child.selection.random.hardElite <- function(pop, p1, p2, elite, maximiz
     for(j in 1:length(elite))
     {    
       #Always maintain elites
-      p1[[elite[[j]]@index]] = elite[[j]]
-      fitness.set[[elite[[j]]@index]] = elite[[j]]@fitness$value
+      p1[[elite[[j]]@index$value]] = elite[[j]]
+      fitness.set[[elite[[j]]@index$value]] = elite[[j]]@fitness$value
     }
   }
   
@@ -541,10 +541,10 @@ spatial.child.selection.fitness <- function(pop, p1, p2, elite, maximizing, fitn
     for(j in 1:length(elite))
     {    
       #Do a hard tournament, replace the node in elite's spot if elite is still better
-      if (elite[[j]]@fitness$value %>% p1[[elite[[j]]@index]]@fitness$value)
+      if (elite[[j]]@fitness$value %>% p1[[elite[[j]]@index$value]]@fitness$value)
       {
-        p1[[elite[[j]]@index]] = elite[[j]]
-        fitness.set[[elite[[j]]@index]] = elite[[j]]@fitness$value
+        p1[[elite[[j]]@index$value]] = elite[[j]]
+        fitness.set[[elite[[j]]@index$value]] = elite[[j]]@fitness$value
       }
     }
   }
