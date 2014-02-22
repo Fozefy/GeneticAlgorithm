@@ -92,7 +92,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
-save(generationsSpatial.ashlock, "stdSpatial_NoElite")
+save(generationsSpatial.ashlock, file="stdSpatial_NoElite")
 
 graph = complete.graph(100)
 generationsComplete.ashlock = c(1)
@@ -108,7 +108,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
-save(generationsComplete.ashlock, "Standard_NoElite")
+save(generationsComplete.ashlock, file="Standard_NoElite")
 
 generationsComplete.ashlock=c(82,162,341,500,448,500,296,500,500,500,409,500,371,500,500,230,437,500,500,234,28,404,113,500,500,17,340,500,500,500,365,500,265,500,59,500,249,500,184,344,500,500,439,500,201,500,218,500,500,148)
 generationsSpatial.ashlock= c(500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,500,450,500,500,196,500)
