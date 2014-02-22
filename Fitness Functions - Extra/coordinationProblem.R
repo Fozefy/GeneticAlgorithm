@@ -1,5 +1,5 @@
 coordinationProblem <- function(organism, popNum, otherPops, externalConnectionsMatrix){
-  otherNodes = externalConnectionsMatrix[organism@index, popNum]  
+  otherNodes = externalConnectionsMatrix[organism@index$value, popNum]  
   otherGenes = otherPops[[1]]@organisms$values[[otherNodes]]@chromosome$genes
   
   coordinated = sum(otherGenes == organism@chromosome$genes)

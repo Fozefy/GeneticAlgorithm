@@ -1,6 +1,6 @@
 numbersGame <- function(organism, popNum, otherPops, externalConnectionsMatrix){
 
-  otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index, popNum]]]@chromosome$genes
+  otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
   
   numLength = length(organism@chromosome$genes)
   firstNum1 = organism@chromosome$genes[1:(numLength/2)]

@@ -199,7 +199,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
-save(elite.one.BigGrid,file="elite.none.BigGrid")
+save(elite.none.BigGrid,file="elite.none.BigGrid")
 
 #boxplot(elite.one.BigGrid,elite.two.BigGrid,elite.three.BigGrid,elite.five.BigGrid,elite.ten.BigGrid,elite.full.BigGrid,names=c("One","Two","Three","Five","Ten","100"), main="Elites on Coevo - 8 Grid")
 
