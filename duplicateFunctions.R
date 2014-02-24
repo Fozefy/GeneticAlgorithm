@@ -39,6 +39,7 @@ setMethod("duplicate",
           definition = function(obj, ...){
             obj@chromosome <- duplicate(obj@chromosome)
             obj@fitness <- duplicate(obj@fitness)
+            obj@index <- duplicate(obj@index)
             obj
           }
 )
