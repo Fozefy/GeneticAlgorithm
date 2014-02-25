@@ -187,6 +187,12 @@ reportAll.reporting.fn <- function(pop, mutation, cross, elite,...)
     
   results
 }
+
+#No Report - Saves memory for large runs
+reportNone.report.fn <- function(pop, mutation, cross, elite,...)
+{
+  NULL
+}
          
 print.report <- function(GA.env)
 {
