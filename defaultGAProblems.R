@@ -8,7 +8,7 @@ finite.min.fn <- function(genes, gene.max){
 }
 
 #Variant of one.max with two pops, takes a gene of the same id in the other pop and adds at half value to fitness
-twoPop.one.max.withCoupling <- function(coupling)
+twoPop.one.max.withCoupling <- function(coupling=.5)
 {
   twoPop.one.max <- function(organism, popNum, otherPops, externalConnectionsMatrix){
     otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
@@ -18,6 +18,36 @@ twoPop.one.max.withCoupling <- function(coupling)
 
 twoPop.one.max.seperate <- function(organism, pop, otherPops, externalConnectionsMatrix){
   sum(organism@chromosome$genes)*3
+}
+
+onePop.one.max.withMatching <- function(primary=1,secondary=1, matching=1)
+{
+  onePop.one.max.matching <- function(organism,...)
+  {
+    geneLength = length(organism@chromosome$genes)
+    genes = organism@chromosome$genes[1:(geneLength/2)]
+    otherGenes = organism@chromosome$genes[(geneLength/2 + 1):geneLength]
+    sum(genes)*primary + sum(otherGenes)*secondary + sum(genes == otherGenes)*matching
+  }
+}
+
+
+twoPop.one.max.withMatching <- function(primary=1,secondary=1, matching=1)
+{
+  twoPop.one.max.matching <- function(organism, popNum, otherPops, externalConnectionsMatrix)
+  {
+    otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
+    sum(organism@chromosome$genes)*primary + sum(otherGenes)*(secondary) + sum(organism@chromosome$genes == otherGenes)*matching
+  }
+}
+
+twoPop.one.max.withAntiMatching <- function(coupling=.5, matching=1)
+{
+  twoPop.one.max.matching <- function(organism, popNum, otherPops, externalConnectionsMatrix)
+  {
+    otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
+    sum(organism@chromosome$genes)*coupling + sum(otherGenes)*(1 - coupling) + sum(organism@chromosome$genes != otherGenes)*matching
+  }
 }
 
 twoPop.one.max.predPrey <- function(organism, popNum, otherPops, externalConnectionsMatrix)
