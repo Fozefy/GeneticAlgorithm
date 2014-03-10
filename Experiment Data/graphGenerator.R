@@ -85,3 +85,14 @@ boxplot(generations.ring4,generations.random4,elite.two,generations.ring8,genera
 
 boxplot(generations.ring4,generations.random4,elite.two,generations.ring8,generations.random8,elite.two.BigGrid,generations.rand.10pop.4conn,generations.rand.10pop.8conn,names=c("Ring 4", "Rand 4","Graph 4","Ring 8","Rand 8", "Graph 8","rand 4-10 pop","rand 8 - 10 pop"), main="Comparisons of Spatial Types - 2 Elite",outline=FALSE)
 
+load("coevo.matching")
+load("stdSpatial.matching")
+load("std.matching")
+load("coevoSpt.matching")
+boxplot(std.matching,stdSpatial.matching,coevo.matching,coevoSpt.matching, ylab="Generations", names=c("Standard","Std Spt","Coevo","Coevo Spt"), main="GA Types - Matching",outline=FALSE)
+
+load("coevo.extraMatching")
+load("stdSpatial.extraMatching")
+load("std.extraMatching")
+load("coevoSpt.extraMatching")
+boxplot(std.extraMatching, stdSpatial.extraMatching, coevo.extraMatching, coevoSpt.extraMatching, ylab="Generations", names=c("Standard","Std Spt","Coevo","Coevo Spt"), main="GA Types - Extra Matching",outline=TRUE)
