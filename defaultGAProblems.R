@@ -30,7 +30,16 @@ onePop.one.max.withMatching <- function(primary=1,secondary=1, matching=1)
     sum(genes)*primary + sum(otherGenes)*secondary + sum(genes == otherGenes)*matching
   }
 }
-
+onePop.one.max.withAntiMatching <- function(primary=1,secondary=1, matching=1)
+{
+  onePop.one.max.matching <- function(organism,...)
+  {
+    geneLength = length(organism@chromosome$genes)
+    genes = organism@chromosome$genes[1:(geneLength/2)]
+    otherGenes = organism@chromosome$genes[(geneLength/2 + 1):geneLength]
+    sum(genes)*primary + sum(otherGenes)*secondary + sum(genes != otherGenes)*matching
+  }
+}
 
 twoPop.one.max.withMatching <- function(primary=1,secondary=1, matching=1)
 {
@@ -41,12 +50,42 @@ twoPop.one.max.withMatching <- function(primary=1,secondary=1, matching=1)
   }
 }
 
+onePop.one.max.withInnerMatching <- function(primary=1,secondary=1, matching=1)
+{
+  onePop.one.max.matching <- function(organism,...)
+  {
+    geneLength = length(organism@chromosome$genes)
+    genes = organism@chromosome$genes[1:(geneLength/4)]
+    otherGenes = organism@chromosome$genes[(geneLength/4 + 1):geneLength/2]
+    genes2 = organism@chromosome$genes[geneLength/2 + 1:(geneLength * 3/4)]
+    otherGenes2 = organism@chromosome$genes[(geneLength*3/4 + 1):geneLength]
+    sum(genes)*primary + sum(otherGenes)*secondary + sum(genes == otherGenes)*matching+sum(genes2 == otherGenes2)*matching
+  }
+}
+
+
+twoPop.one.max.withInnerMatching <- function(primary=1,secondary=1, matching=1)
+{
+  twoPop.one.max.matching <- function(organism, popNum, otherPops, externalConnectionsMatrix)
+  {
+    geneLength = length(organism@chromosome$genes)
+    genes = organism@chromosome$genes[1:(geneLength/2)]
+    otherGenes = organism@chromosome$genes[(geneLength/2 + 1):geneLength]
+    
+    otherPopGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
+    otherPopGenesSplit = otherPopGenes[1:(geneLength/2)]
+    otherPopGenesSplitSecond = otherPopGenes[(geneLength/2 + 1):geneLength]
+    
+    sum(organism@chromosome$genes)*primary + sum(otherGenes)*(secondary) + sum(genes == otherGenes)*matching+ sum(otherPopGenesSplit == otherPopGenesSplitSecond)*matching
+  }
+}
+
 twoPop.one.max.withAntiMatching <- function(coupling=.5, matching=1)
 {
   twoPop.one.max.matching <- function(organism, popNum, otherPops, externalConnectionsMatrix)
   {
     otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
-    sum(organism@chromosome$genes)*coupling + sum(otherGenes)*(1 - coupling) + sum(organism@chromosome$genes != otherGenes)*matching
+    sum(organism@chromosome$genes)*primary + sum(otherGenes)*(secondary) + sum(organism@chromosome$genes != otherGenes)*matching
   }
 }
 

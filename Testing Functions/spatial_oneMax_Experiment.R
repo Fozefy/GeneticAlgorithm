@@ -54,7 +54,7 @@ graph = ring.graph.extra(100) #ring graph more connection
 generations.ring8 = c(1)
 for (i in 1:n)
 {
-  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=500,numPop=2), fitness.args=new.fitness.args(twoPop.one.max.withCoupling(.5), goal=30, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE)
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=500,numPop=2), fitness.args=new.fitness.args(twoPop.one.max.withMatching(), goal=30, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE)
   generational.ga(ga)
 
   generations.ring8[i] = ga$gen
@@ -67,8 +67,8 @@ save(generations.ring8,file="coevo.ring8.2elite")
 generations.random4 = c(1)
 for (i in 1:n)
 {
-  graph =randomConstructor(4,100)
-  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=500,numPop=2), fitness.args=new.fitness.args(twoPop.one.max.withCoupling(.5), goal=30, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE)
+  graph =randomConstructor.NoDuplicate(4,100)
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(twoPop.one.max.withCoupling(.5), goal=30, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE)
   generational.ga(ga)
   
   generations.random4[i] = ga$gen
@@ -81,8 +81,8 @@ save(generations.random4,file="coevo.rand4.2elite")
 generations.random8 = c(1)
 for (i in 1:n)
 {
-  graph =randomConstructor(8,100)
-  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=500,numPop=2), fitness.args=new.fitness.args(twoPop.one.max.withCoupling(.5), goal=30, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE)
+  graph =randomConstructor.NoDuplicate(8,100)
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(twoPop.one.max.withCoupling(.5), goal=30, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE)
   generational.ga(ga)
 
   generations.random8[i] = ga$gen
@@ -120,7 +120,7 @@ for (i in 1:n)
 generations.rand.2pop.4conn = c(1)
 for (i in 1:n)
 {
-  graph =randomConstructor(8,100)
+  graph =randomConstructor.withSeperatePop.noDuplicate(4,100,2)
   ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(twoPop.one.max.withCoupling(.5), goal=30, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE)
   generational.ga(ga)
   
@@ -135,7 +135,7 @@ save(generations.rand.2pop.4conn,file="rand.2pop.4conn")
 generations.rand.2pop.8conn = c(1)
 for (i in 1:n)
 {
-  graph =randomConstructor.withSeperatePop(8,100,2)
+  graph =randomConstructor.withSeperatePop.noDuplicate(8,100,2)
   ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(twoPop.one.max.withCoupling(.5), goal=30, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE)
   generational.ga(ga)
   
@@ -150,7 +150,7 @@ save(generations.rand.2pop.8conn,file="rand.2pop.8conn")
 generations.rand.4pop.4conn = c(1)
 for (i in 1:n)
 {
-  graph =randomConstructor.withSeperatePop(4,100,4)
+  graph =randomConstructor.withSeperatePop.noDuplicate(4,100,4)
   ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(twoPop.one.max.withCoupling(.5), goal=30, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE)
   generational.ga(ga)
   
@@ -174,7 +174,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
-save(generations.rand.4pop.8conn,file="rand.4pop.8conn.noDup")
+save(generations.rand.4pop.8conn,file="rand.4pop.8conn")
 
 #random graph 10 seperate pop - 4 connections
 generations.rand.10pop.4conn = c(1)
@@ -189,7 +189,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
-save(generations.rand.10pop.4conn,file="rand.10pop.4conn.noDup")
+save(generations.rand.10pop.4conn,file="rand.10pop.4conn")
 
 #random graph 10 seperate pop - 8 connections
 generations.rand.10pop.8conn = c(1)
@@ -204,7 +204,7 @@ for (i in 1:n)
   print(paste(i,"Complete"))
   rm(ga)
 }
-save(generations.rand.10pop.8conn,file="rand.10pop.8conn.noDup")
+save(generations.rand.10pop.8conn,file="rand.10pop.8conn")
 
 #Experiment Data
 generations.4graph = c(27,129,20,30,25,52,26,73,73,25,39,63,21,88,53,65,28,21,73,39,22,98,25,57,20,42,124,42,111,38,74,19,43,21,19,64,23,124,26,24,36,27,87,26,27,34,64,28,23,51,30,23,18,24,20,61,21,130,18,32,38,33,105,44,33,131,37,30,20,123,45,32,44,29,31,51,47,60,34,88,60,31,53,22,64,30,45,107,100,22,23,31,30,29,24,18,42,23,52,43)
