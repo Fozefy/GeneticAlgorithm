@@ -30,7 +30,7 @@ onePop.one.max.withMatching <- function(primary=1,secondary=1, matching=1)
     sum(genes)*primary + sum(otherGenes)*secondary + sum(genes == otherGenes)*matching
   }
 }
-onePop.one.max.withAntiMatching <- function(primary=1,secondary=1, matching=1)
+onePop.one.max.withAntiMatching <- function(primary=1,secondary=1, matching=.999)
 {
   onePop.one.max.matching <- function(organism,...)
   {
@@ -56,13 +56,15 @@ onePop.one.max.withInnerMatching <- function(primary=1,secondary=1, matching=1)
   {
     geneLength = length(organism@chromosome$genes)
     genes = organism@chromosome$genes[1:(geneLength/4)]
-    otherGenes = organism@chromosome$genes[(geneLength/4 + 1):geneLength/2]
-    genes2 = organism@chromosome$genes[geneLength/2 + 1:(geneLength * 3/4)]
+    otherGenes = organism@chromosome$genes[(geneLength/4 + 1):(geneLength/2)]
+    genes2 = organism@chromosome$genes[(geneLength/2 + 1):(geneLength * 3/4)]
     otherGenes2 = organism@chromosome$genes[(geneLength*3/4 + 1):geneLength]
-    sum(genes)*primary + sum(otherGenes)*secondary + sum(genes == otherGenes)*matching+sum(genes2 == otherGenes2)*matching
+    
+    extraMod = geneLength %%4
+    
+    sum(organism@chromosome$genes)*primary + sum(genes == otherGenes)*matching+sum(genes2 == otherGenes2)*matching + extraMod*matching/2
   }
 }
-
 
 twoPop.one.max.withInnerMatching <- function(primary=1,secondary=1, matching=1)
 {
@@ -76,17 +78,117 @@ twoPop.one.max.withInnerMatching <- function(primary=1,secondary=1, matching=1)
     otherPopGenesSplit = otherPopGenes[1:(geneLength/2)]
     otherPopGenesSplitSecond = otherPopGenes[(geneLength/2 + 1):geneLength]
     
-    sum(organism@chromosome$genes)*primary + sum(otherGenes)*(secondary) + sum(genes == otherGenes)*matching+ sum(otherPopGenesSplit == otherPopGenesSplitSecond)*matching
+    extraMod = geneLength %%2
+    
+    sum(organism@chromosome$genes)*primary + sum(otherPopGenes)*(secondary) + sum(genes == otherGenes)*matching+ sum(otherPopGenesSplit == otherPopGenesSplitSecond)*matching + extraMod*matching
   }
 }
 
-twoPop.one.max.withAntiMatching <- function(coupling=.5, matching=1)
+twoPop.one.max.withAntiMatching <- function(primary=1,secondary=1, matching=.999)
 {
   twoPop.one.max.matching <- function(organism, popNum, otherPops, externalConnectionsMatrix)
   {
     otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
     sum(organism@chromosome$genes)*primary + sum(otherGenes)*(secondary) + sum(organism@chromosome$genes != otherGenes)*matching
   }
+}
+
+twoPop.one.max.PureRoyalRoad <- function(organism, popNum, otherPops, externalConnectionsMatrix)
+{
+  otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
+  geneLength = length(organism@chromosome$genes)
+  sectionLength = 8
+  sections = geneLength/sectionLength
+  
+  total = 0
+  
+  for (i in 1:sections)
+  {
+    if (sum(organism@chromosome$genes[((i-1)*sectionLength + 1) : (i*sectionLength)] == 0) == 0)
+    {
+      total = total + sectionLength
+    }
+  }
+  
+  for (i in 1:sections)
+  {
+    if (sum(otherGenes[((i-1)*sectionLength + 1) : (i*sectionLength)] == 0) == 0)
+    {
+      total = total + sectionLength
+    }
+  }
+  
+  total
+}
+
+
+onePop.one.max.PureRoyalRoad <- function(organism,...)
+{
+  geneLength = length(organism@chromosome$genes)
+  sectionLength = 8
+  sections = geneLength/sectionLength
+  
+  total = 0
+  
+  for (i in 1:sections)
+  {
+    if (sum(organism@chromosome$genes[((i-1)*sectionLength + 1) : (i*sectionLength)] == 0) == 0)
+    {
+      total = total + sectionLength
+    }
+  }
+  
+  total
+}
+
+twoPop.one.max.BonusRoyalRoad <- function(organism, popNum, otherPops, externalConnectionsMatrix)
+{
+  otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
+  geneLength = length(organism@chromosome$genes)
+  sectionLength = 8
+  sections = geneLength/sectionLength
+  
+  total = 0
+  
+  for (i in 1:sections)
+  {
+    if (sum(organism@chromosome$genes[((i-1)*sectionLength + 1) : (i*sectionLength)] == 0) == 0)
+    {
+      total = total + sectionLength
+    }
+  }
+  
+  for (i in 1:sections)
+  {
+    if (sum(otherGenes[((i-1)*sectionLength + 1) : (i*sectionLength)] == 0) == 0)
+    {
+      total = total + sectionLength
+    }
+  }
+  total = total + sum(organism@chromosome$genes) + sum(otherGenes)
+  
+  total
+}
+
+
+onePop.one.max.BonusRoyalRoad <- function(organism,...)
+{
+  geneLength = length(organism@chromosome$genes)
+  sectionLength = 8
+  sections = geneLength/sectionLength
+  
+  total = 0
+  
+  for (i in 1:sections)
+  {
+    if (sum(organism@chromosome$genes[((i-1)*sectionLength + 1) : (i*sectionLength)] == 0) == 0)
+    {
+      total = total + sectionLength
+    }
+  }
+  total = total +  sum(organism@chromosome$genes)
+  
+  total
 }
 
 twoPop.one.max.predPrey <- function(organism, popNum, otherPops, externalConnectionsMatrix)
@@ -186,7 +288,7 @@ DeJong.F1.fitness <- function(organism, ...)
   {
     total = total + xVals[[i]]^2
   }
-
+  
   total
 }
 
@@ -273,7 +375,7 @@ DeJong.F5.fitness.generator <- function()
     {
       xVals[i] = (Binary.to.Decimal(genes[((i - 1)*(geneSize) + 1):(i*geneSize)])*65.536*2/range) - 65.536 
     }
-
+    
     total = 0.002
     for (j in 1:n)
     {
@@ -284,7 +386,7 @@ DeJong.F5.fitness.generator <- function()
       }
       total = total + sumOfI
     }
-
+    
     total
   }
 }
@@ -423,7 +525,7 @@ F8F2.fitness.fn <- function(organism, ...)
     total = total + Simple.F8.Fitness(Simple.F2.fitness(genes[((i-1)*12 + 1):((i+1)*12)]))
   }
   total = total + Simple.F8.Fitness(Simple.F2.fitness(c(genes[((n-1)*12):chromosomeLength],genes[1:12])))
-
+  
   783.8844-total
 }
 
