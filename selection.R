@@ -432,7 +432,7 @@ spatial.child.selection.random <- function(pop, p1, p2, elite, maximizing, fitne
 
   #P1 will hold the set of organisms to be used
   
-  #We will choose which child to use based on which has the better fitness
+  #We will choose which child to use at random
   for (i in 1:length(p1))
   {
     #p2 will equal 0 if this was a mutation only node, no choice to make
@@ -476,7 +476,7 @@ spatial.child.selection.random.hardElite <- function(pop, p1, p2, elite, maximiz
   
   #P1 will hold the set of organisms to be used
   
-  #We will choose which child to use based on which has the better fitness
+  #We will choose which child to use at random
   for (i in 1:length(p1))
   {
     #p2 will equal 0 if this was a mutation only node, no choice to make
@@ -523,7 +523,7 @@ spatial.child.selection.fitness <- function(pop, p1, p2, elite, maximizing, fitn
   for (i in 1:length(p1))
   {
     #p2 will equal 0 if this was a mutation only node, no choice to make
-    if (p2[[i]] != 0)
+    if (class(p2[[i]]) == "numeric")
     {
       if (p2[[i]]@fitness$value %>% p1[[i]]@fitness$value)
       {
