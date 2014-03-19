@@ -32,7 +32,7 @@ graph = gridConstructor(100)
 stdSpatial.elite.three = c(1)
 for (i in 1:n)
 {
-  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=3,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE)
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=3,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE,reporting.fn=reportNone.report.fn)
   generational.ga(ga)
   
   stdSpatial.elite.three[i] = ga$gen
@@ -242,3 +242,60 @@ for (i in 1:n)
   rm(ga)
 }
 save(stdSpatial.elite.ten.BigPop,file="stdSpatial.elite.ten.BigPop")
+
+graph = ring.graph(100)
+std.Ring4.2elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(pop.size=100,GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=2,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE)
+  generational.ga(ga)
+  
+  std.Ring4.2elite[i] = ga$gen
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(std.Ring4.2elite,file="std.Ring4.2elite")
+
+
+graph = ring.graph.extra(100)
+std.Ring8.2elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(pop.size=100,GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=2,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE)
+  generational.ga(ga)
+  
+  std.Ring8.2elite[i] = ga$gen
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(std.Ring8.2elite,file="std.Ring8.2elite")
+
+std.Rand4.2elite = c(1)
+for (i in 1:n)
+{
+  graph = randomConstructor.NoDuplicate(avgConnections=4,popSize=100)
+  ga = new.GA.env(pop.size=100,GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=2,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE)
+  generational.ga(ga)
+  
+  std.Rand4.2elite[i] = ga$gen
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(std.Rand4.2elite,file="std.Rand4.2elite")
+
+std.Rand8.2elite = c(1)
+for (i in 1:n)
+{
+  randomConstructor.NoDuplicate(avgConnections=8,popSize=100)
+  ga = new.GA.env(pop.size=100,GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=2,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE)
+  generational.ga(ga)
+  
+  std.Rand8.2elite[i] = ga$gen
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(std.Rand8.2elite,file="std.Rand8.2elite")
