@@ -30,14 +30,21 @@ onePop.one.max.withMatching <- function(primary=1,secondary=1, matching=1)
     sum(genes)*primary + sum(otherGenes)*secondary + sum(genes == otherGenes)*matching
   }
 }
-onePop.one.max.withAntiMatching <- function(primary=1,secondary=1, matching=.999)
+onePop.one.max.withAntiMatching <- function(primary=1,secondary=1, matching=1)
 {
   onePop.one.max.matching <- function(organism,...)
   {
     geneLength = length(organism@chromosome$genes)
     genes = organism@chromosome$genes[1:(geneLength/2)]
     otherGenes = organism@chromosome$genes[(geneLength/2 + 1):geneLength]
-    sum(genes)*primary + sum(otherGenes)*secondary + sum(genes != otherGenes)*matching
+    fitness = sum(genes)*primary + sum(otherGenes)*secondary + sum(genes != otherGenes)*matching
+    
+    if (length(organism@chromosome$genes) == sum(organism@chromosome$genes))
+    {
+      fitness = sum(genes)*primary + sum(otherGenes)*(secondary) + 1
+    }
+    
+    return(fitness)
   }
 }
 
@@ -84,12 +91,19 @@ twoPop.one.max.withInnerMatching <- function(primary=1,secondary=1, matching=1)
   }
 }
 
-twoPop.one.max.withAntiMatching <- function(primary=1,secondary=1, matching=.999)
+twoPop.one.max.withAntiMatching <- function(primary=1,secondary=1, matching=1)
 {
   twoPop.one.max.matching <- function(organism, popNum, otherPops, externalConnectionsMatrix)
   {
     otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
-    sum(organism@chromosome$genes)*primary + sum(otherGenes)*(secondary) + sum(organism@chromosome$genes != otherGenes)*matching
+    fitness = sum(organism@chromosome$genes)*primary + sum(otherGenes)*(secondary) + sum(organism@chromosome$genes != otherGenes)*matching
+    
+    if (length(organism@chromosome$genes) == sum(organism@chromosome$genes) && length(otherGenes) == sum(otherGenes))
+    {
+      fitness = sum(organism@chromosome$genes)*primary + sum(otherGenes)*(secondary) + 1
+    }
+    
+    return(fitness)
   }
 }
 
@@ -200,6 +214,11 @@ twoPop.one.max.predPrey <- function(organism, popNum, otherPops, externalConnect
     #We are the primary Population (predator)
     #Fitness = geneLength - each 0 where prey has 1
     fitness = length(organism@chromosome$genes) - sum(organism@chromosome$genes == 0 & otherGenes == 1)
+    
+    if (sum(organism@chromosome$genes) == length(organism@chromosome$genes))
+    {
+      fitness = length(organism@chromosome$genes) + 1
+    }
   }
   else
   {
@@ -208,9 +227,71 @@ twoPop.one.max.predPrey <- function(organism, popNum, otherPops, externalConnect
     fitness = sum(organism@chromosome$genes == 1 & otherGenes == 0)    
   }
   
-  if (sum(organism@chromosome$genes) == 30)
+  return(fitness)
+}
+
+twoPop.one.max.predPrey.withGrid <- function(organism, popNum, otherPops, externalConnectionsMatrix)
+{
+  otherOrganisms = otherPops[[1]]@organisms$values[externalConnectionsMatrix[[organism@index$value, popNum]]]
+  fitness=0
+  for(i in 1:length(otherOrganisms))
   {
-    fitness = 31
+    otherGenes=otherOrganisms[[i]]@chromosome$genes
+    
+    if(popNum == 1)
+    {
+      #We are the primary Population (predator)
+      #Fitness = geneLength - each 0 where prey has 1
+      fitness[i] = length(organism@chromosome$genes) - sum(organism@chromosome$genes == 0 & otherGenes == 1)
+      
+
+    }
+    else
+    {
+      #We are the secondary Population (prey)
+      #Fitness = for each 1 where predator has 0
+      fitness[i] = sum(organism@chromosome$genes == 1 & otherGenes == 0)    
+    }
+  }
+
+  if (popNum == 1 && sum(organism@chromosome$genes) == length(organism@chromosome$genes))
+  {
+    fitness = length(organism@chromosome$genes) + 1
+  }
+  else
+  {
+    fitness = mean(fitness)
+  }
+  
+  return(fitness)
+}
+
+twoPop.one.max.predPrey.InnerMatch <- function(organism, popNum, otherPops, externalConnectionsMatrix)
+{
+  otherGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
+  
+  if(popNum == 1)
+  {
+    
+    geneLength = length(organism@chromosome$genes)
+    genes1 = organism@chromosome$genes[1:(geneLength/2)]
+    genes2 = organism@chromosome$genes[(geneLength/2 + 1):geneLength]
+    
+    #We are the primary Population (predator)
+    #Fitness = geneLength - each 0 where prey has 1
+    fitness = length(organism@chromosome$genes) - sum(organism@chromosome$genes == 0 & otherGenes == 1) + sum(genes1 == genes2)
+    
+    if (sum(organism@chromosome$genes) == length(organism@chromosome$genes))
+    {
+      #Add a bonus point for having full solution
+      fitness = length(organism@chromosome$genes) + sum(genes1 == genes2) + 1
+    }
+  }
+  else
+  {
+    #We are the secondary Population (prey)
+    #Fitness = for each 1 where predator has 0
+    fitness = sum(organism@chromosome$genes == 1 & otherGenes == 0)    
   }
   
   return(fitness)
