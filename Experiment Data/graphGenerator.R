@@ -23,8 +23,8 @@ load("elite.five")
 load("elite.five.CoevoComp")
 load("std.elite.five")
 load("stdSpatial.elite.five")
-boxplot(std.elite.five,elite.five.CoevoComp,elite.five, ylab="Generations", 
-        names=c("Standard",  "Coev", "Coev Sp"), main="Comparisons of GA Types - 5 Elite")
+boxplot(std.elite.five,stdSpatial.elite.five,elite.five.CoevoComp,elite.five, ylab="Generations", 
+        names=c("Standard", "Std Sp", "Coev", "Coev Sp"), main="Comparisons of GA Types - 5 Elite")
 
 load("elite.ten")
 load("elite.ten.CoevoComp")
@@ -68,7 +68,7 @@ boxplot(elite.one,elite.two,elite.three,elite.five,elite.ten,elite.full, ylab="G
 boxplot(std.elite.one,std.elite.two,std.elite.three,std.elite.five,std.elite.ten,std.elite.full, ylab="Generations", 
         names=c("1", "2", "3", "5","10","full"), main="Elitism on Standard GA")
 
-boxplot(stdSpatial.elite.one,stdSpatial.elite.two,stdSpatial.elite.three,stdSpatial.elite.five,stdSpatial.elite.ten,stdSpatial.elite.ten,stdSpatial.elite.full, ylab="Generations", 
+boxplot(stdSpatial.elite.one,stdSpatial.elite.two,stdSpatial.elite.three,stdSpatial.elite.five,stdSpatial.elite.ten,stdSpatial.elite.full, ylab="Generations", 
         names=c("1", "2", "3", "5","10","full"), main="Elitism on Standard GA with 4 Grid")
 
 #Spatial effects on coevolution one-max
@@ -108,6 +108,24 @@ load("PredPrey/rand4.predprey")
 load("PredPrey/rand8.predprey")
 boxplot(generations.4graph.predprey,generations.8graph.predprey,generations.complete.predprey,generations.ring4.predprey,generations.ring8.predprey,generations.random4.predprey,generations.random8.predprey, ylab="Generations", 
         names=c("4 Graph","8 Graph","Complete","4 Ring","8 Ring","Rand 4","Rand 8"), main="Predator Prey Spatial Effects")
+
+load("PredPrey/graph4.GridFitness.predprey")
+load("PredPrey/graph8.GridFitness.predprey")
+load("PredPrey/complete.GridFitness.predprey")
+boxplot(graph4.GridFitness.predprey,graph8.GridFitness.predprey,complete.GridFitness.predprey, ylab="Generations", 
+        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey - Fitness on Grid")
+
+load("PredPrey/complete.predprey.NoElite")
+load("PredPrey/graph4.predprey.NoElite")
+load("PredPrey/graph8.predprey.NoElite")
+boxplot(graph4.predprey.NoElite,graph8.predprey.NoElite,complete.predprey.NoElite, ylab="Generations", 
+        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey - No Elite")
+
+load("PredPrey/complete.predprey.InnerMatch")
+load("PredPrey/graph4.predprey.InnerMatch")
+load("PredPrey/graph8.predprey.InnerMatch")
+boxplot(graph4.predprey.InnerMatch,graph8.predprey.InnerMatch,complete.predprey.InnerMatch, ylab="Generations", 
+        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey - Inner Match")
 
 load("coevo.rand4.2elite")
 load("coevo.rand8.2elite")
@@ -228,3 +246,7 @@ load("Hard Elite/hard.stdSpatial.elite.ten")
 boxplot(hard.stdSpatial.elite.one,hard.stdSpatial.elite.two,hard.stdSpatial.elite.ten, ylab="Generations",xlab="Elite",
         names=c("1","2","10"), main="Standard Spatial - Hard Elite")
 
+load("Hard Elite/hard.stdSpatial.elite.two.LargeGrid")
+load("Hard Elite/hard.stdSpatial.elite.full.LargeGrid")
+boxplot(hard.stdSpatial.elite.one,hard.stdSpatial.elite.two,hard.stdSpatial.elite.ten, ylab="Generations",xlab="Elite",
+        names=c("1","2","10"), main="Standard Large Spatial - Hard Elite")
