@@ -127,6 +127,10 @@ load("PredPrey/complete.GridFitness8.predprey")
 boxplot(graph4.GridFitness.predprey,graph4.GridFitness8.predprey,graph4.GridFitnessComp.predprey,graph8.GridFitness4.predprey,graph8.GridFitness.predprey,graph8.GridFitnessComp.predprey,complete.GridFitness4.predprey,complete.GridFitness8.predprey,complete.GridFitness.predprey, ylab="Generations", 
         names=c("4 Graph","4 Repo, 8 Fit", "4 Repo, Comp Fit", "8 Graph 4 Fit","8 Graph","8 Repo, Comp Fit","Comp Repo, 4 Fit","Comp Repo, 8 Fit","Complete"), main="Predator Prey\nFitness on Grid w/ Split Reproduction")
 
+boxplot(graph4.GridFitness.predprey,graph4.GridFitness8.predprey,graph8.GridFitness4.predprey,graph8.GridFitness.predprey,complete.GridFitness4.predprey,complete.GridFitness8.predprey, ylab="Generations", 
+        names=c("4 Graph","4 Repo, 8 Fit", "8 Graph 4 Fit","8 Graph","Comp Repo, 4 Fit","Comp Repo, 8 Fit"), main="Predator Prey\nFitness on Grid w/ Split Reproduction (No Comp)")
+
+
 load("PredPrey/complete.predprey.NoElite")
 load("PredPrey/graph4.predprey.NoElite")
 load("PredPrey/graph8.predprey.NoElite")
