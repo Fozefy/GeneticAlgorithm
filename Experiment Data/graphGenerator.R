@@ -109,17 +109,29 @@ load("PredPrey/rand8.predprey")
 boxplot(generations.4graph.predprey,generations.8graph.predprey,generations.complete.predprey,generations.ring4.predprey,generations.ring8.predprey,generations.random4.predprey,generations.random8.predprey, ylab="Generations", 
         names=c("4 Graph","8 Graph","Complete","4 Ring","8 Ring","Rand 4","Rand 8"), main="Predator Prey Spatial Effects")
 
+boxplot(generations.4graph.predprey,generations.8graph.predprey,generations.complete.predprey, ylab="Generations", 
+        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey\n2 Elite")
+
 load("PredPrey/graph4.GridFitness.predprey")
 load("PredPrey/graph8.GridFitness.predprey")
 load("PredPrey/complete.GridFitness.predprey")
 boxplot(graph4.GridFitness.predprey,graph8.GridFitness.predprey,complete.GridFitness.predprey, ylab="Generations", 
         names=c("4 Graph","8 Graph","Complete"), main="Predator Prey - Fitness on Grid")
 
+load("PredPrey/graph4.GridFitnessComp.predprey")
+load("PredPrey/graph8.GridFitnessComp.predprey")
+load("PredPrey/graph4.GridFitness8.predprey")
+load("PredPrey/graph8.GridFitness4.predprey")
+load("PredPrey/complete.GridFitness4.predprey")
+load("PredPrey/complete.GridFitness8.predprey")
+boxplot(graph4.GridFitness.predprey,graph4.GridFitness8.predprey,graph4.GridFitnessComp.predprey,graph8.GridFitness4.predprey,graph8.GridFitness.predprey,graph8.GridFitnessComp.predprey,complete.GridFitness4.predprey,complete.GridFitness8.predprey,complete.GridFitness.predprey, ylab="Generations", 
+        names=c("4 Graph","4 Repo, 8 Fit", "4 Repo, Comp Fit", "8 Graph 4 Fit","8 Graph","8 Repo, Comp Fit","Comp Repo, 4 Fit","Comp Repo, 8 Fit","Complete"), main="Predator Prey\nFitness on Grid w/ Split Reproduction")
+
 load("PredPrey/complete.predprey.NoElite")
 load("PredPrey/graph4.predprey.NoElite")
 load("PredPrey/graph8.predprey.NoElite")
 boxplot(graph4.predprey.NoElite,graph8.predprey.NoElite,complete.predprey.NoElite, ylab="Generations", 
-        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey - No Elite")
+        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey\nNo Elite")
 
 load("PredPrey/complete.predprey.InnerMatch")
 load("PredPrey/graph4.predprey.InnerMatch")
@@ -142,7 +154,7 @@ boxplot(generations.rand.2pop.4conn,generations.rand.2pop.8conn,generations.rand
 
 load("coevo.ring4.2elite")
 load("coevo.ring8.2elite")
-boxplot(generations.ring4,generations.random4,elite.two,generations.ring8,generations.random8,elite.two.BigGrid, elite.two,
+boxplot(generations.ring4,generations.random4,elite.two,generations.ring8,generations.random8,elite.two.BigGrid, elite.two.CoevoComp,
         names=c("Ring 4", "Rand 4","Graph 4","Ring 8","Rand 8", "Graph 8", "Complete"), main="Coevo Comparisons of Spatial Types \n2 Elite")
 
 load("std.Ring4.2elite")
