@@ -1,3 +1,5 @@
+p.adjust(c(wilcox.test(graph4.GridFitness.predprey,graph8.GridFitness.predprey)$p.value,c(wilcox.test(graph4.GridFitness.predprey,complete.GridFitness.predprey)$p.value,wilcox.test(graph8.GridFitness.predprey,complete.GridFitness.predprey)$p.value))
+
 load("elite.one")
 load("elite.one.CoevoComp")
 load("std.elite.one")
@@ -10,7 +12,7 @@ load("elite.two.CoevoComp")
 load("std.elite.two")
 load("stdSpatial.elite.two")
 boxplot(std.elite.two,stdSpatial.elite.two,elite.two.CoevoComp,elite.two, ylab="Generations", 
-        names=c("Standard", "Std Sp", "Coev", "Coev Sp"), main="Comparisons of GA Types - 2 Elite")
+        names=c("Standard", "Std Spt", "Coev", "Coev Spt"), main="Comparisons of GA Types - 2 Elite")
 
 load("elite.three")
 load("elite.three.CoevoComp")
@@ -110,13 +112,13 @@ boxplot(generations.4graph.predprey,generations.8graph.predprey,generations.comp
         names=c("4 Graph","8 Graph","Complete","4 Ring","8 Ring","Rand 4","Rand 8"), main="Predator Prey Spatial Effects")
 
 boxplot(generations.4graph.predprey,generations.8graph.predprey,generations.complete.predprey, ylab="Generations", 
-        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey\n2 Elite")
+        names=c("4 Graph","8 Graph","Complete"), main="Competitive One-Max\nHost/Parasite")
 
 load("PredPrey/graph4.GridFitness.predprey")
 load("PredPrey/graph8.GridFitness.predprey")
 load("PredPrey/complete.GridFitness.predprey")
-boxplot(graph4.GridFitness.predprey,graph8.GridFitness.predprey,complete.GridFitness.predprey, ylab="Generations", 
-        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey - Fitness on Grid")
+boxplot(graph4.GridFitness8.predprey,graph8.GridFitness.predprey,complete.GridFitness.predprey, ylab="Generations", 
+        names=c("4 Graph","8 Graph","Complete"), main="Competitive One-Max\nFitness on a Grid")
 
 load("PredPrey/graph4.GridFitnessComp.predprey")
 load("PredPrey/graph8.GridFitnessComp.predprey")
@@ -173,7 +175,7 @@ load("Matching Data/stdSpatial.matching")
 load("Matching Data/std.matching")
 load("Matching Data/coevoSpt.matching")
 boxplot(std.matching,stdSpatial.matching,coevo.matching,coevoSpt.matching, ylab="Generations",
-        names=c("Standard","Std Spt","Coevo","Coevo Spt"), main="GA Types - Matching")
+        names=c("Standard","Standard Spatial","Co-evolution","Co-evolution Spatial"), main="One-Max Matching")
 
 load("Matching Data/coevo.extraMatching")
 load("Matching Data/stdSpatial.extraMatching")
@@ -187,7 +189,7 @@ load("Matching Data/stdSpatial.InnerMatchingMix")
 load("Matching Data/std.InnerMatchingMix")
 load("Matching Data/coevoSpt.InnerMatchingMix")
 boxplot(std.InnerMatchingMix, stdSpatial.InnerMatchingMix, coevo.InnerMatchingMix, coevoSpt.InnerMatchingMix, ylab="Generations",
-        names=c("Standard","Std Spt","Coevo","Coevo Spt"), main="GA Types - Inner Matching")
+        names=c("Standard","Standard Spatial","Co-evolution","Co-evolution Spatial"), main="One-Max Inner Matching")
 
 load("Matching Data/coevo.PureInnerMatching")
 load("Matching Data/stdSpatial.PureInnerMatching")
@@ -229,7 +231,7 @@ load("RoyalRoad/stdSpatial.RoyalRoad")
 load("RoyalRoad/std.RoyalRoad")
 load("RoyalRoad/coevoSpt.RoyalRoad")
 boxplot(std.RoyalRoad,stdSpatial.RoyalRoad,coevo.RoyalRoad, coevoSpt.RoyalRoad, ylab="Generations",
-        names=c("Standard","Std Spt","Coevo","Coevo Spt"), main="GA Types - RoyalRoad")
+        names=c("Standard","Standard Spatial","Co-evolution","Co-evolution Spatial"), main="Cooperative Royal Road")
 
 load("RoyalRoad/coevo.BonusRoyalRoad")
 load("RoyalRoad/stdSpatial.BonusRoyalRoad")
