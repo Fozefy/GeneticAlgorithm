@@ -70,6 +70,35 @@ ring.graph <- function(popSize)
   graph
 }
 
+small.ring.graph <- function(popSize)
+{
+  graph = matrix(nrow=popSize,ncol=2)
+  for (i in 1:popSize)
+  {
+    #Less
+    if (i == 1)
+    {
+      graph[i,1] = popSize
+    }
+    else
+    {
+      graph[i,1] = i - 1
+    }
+    
+    #More
+    if (i == popSize)
+    {
+      graph[i,2] = 1
+    }
+    else
+    {
+      graph[i,2] = i + 1
+    }
+  }
+  
+  graph
+}
+
 ring.graph.extra <- function(popSize)
 {
   graph = matrix(nrow=popSize,ncol=8)

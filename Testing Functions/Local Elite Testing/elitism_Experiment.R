@@ -274,3 +274,19 @@ for (i in 1:n)
   rm(ga)
 }
 save(elite.ten.BigPop,file="elite.ten.BigPop")
+
+#Ring
+graph = small.ring.graph(100)
+coevo.ring2 = c(1)
+
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withCoupling(.5), goal=30, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elite.size=2,elitism=TRUE,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  
+  coevo.ring2[i] = ga$gen
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(coevo.ring2,file="coevo.ring2")
