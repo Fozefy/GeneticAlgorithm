@@ -139,6 +139,13 @@ load("PredPrey/graph8.predprey.NoElite")
 boxplot(graph4.predprey.NoElite,graph8.predprey.NoElite,complete.predprey.NoElite, ylab="Generations", 
         names=c("4 Graph","8 Graph","Complete"), main="Predator Prey\nNo Elite")
 
+load("PredPrey/complete.GridFitness.NoElite.predprey")
+load("PredPrey/graph4.GridFitness.NoElite.predprey")
+load("PredPrey/graph8.GridFitness.NoElite.predprey")
+boxplot(graph4.GridFitness.NoElite.predprey,graph8.GridFitness.NoElite.predprey,complete.GridFitness.NoElite.predprey, ylab="Generations", 
+        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey - Grid Fitness\nNo Elite")
+
+
 load("PredPrey/complete.predprey.InnerMatch")
 load("PredPrey/graph4.predprey.InnerMatch")
 load("PredPrey/graph8.predprey.InnerMatch")
@@ -158,10 +165,11 @@ boxplot(generations.random4,generations.random8,generations.rand.2pop.4conn,gene
 boxplot(generations.rand.2pop.4conn,generations.rand.2pop.8conn,generations.rand.4pop.4conn,generations.rand.4pop.8conn,generations.rand.10pop.4conn,generations.rand.10pop.8conn,elite.two.CoevoComp,elite.two,elite.two.BigGrid,ylab="Generations",
         names=c("2P 4C","2P 8C","4P 4C","4P 8C","10P 4C","10P 8C","Complete","4Graph","8Graph"), main="Random Split Pop")
 
+load("coevo.ring2")
 load("coevo.ring4.2elite")
 load("coevo.ring8.2elite")
-boxplot(generations.ring4,generations.random4,elite.two,generations.ring8,generations.random8,elite.two.BigGrid, elite.two.CoevoComp,
-        names=c("Ring 4", "Rand 4","Graph 4","Ring 8","Rand 8", "Graph 8", "Complete"), main="Coevo Comparisons of Spatial Types \n2 Elite")
+boxplot(coevo.ring2,generations.ring4,generations.random4,elite.two,generations.ring8,generations.random8,elite.two.BigGrid, elite.two.CoevoComp,
+        names=c("Ring 2","Ring 4", "Rand 4","Graph 4","Ring 8","Rand 8", "Graph 8", "Complete"), main="Coevo Comparisons of Spatial Types \n2 Elite")
 
 load("std.Ring4.2elite")
 load("std.Ring8.2elite")
@@ -243,14 +251,14 @@ boxplot(std.BonusRoyalRoad,stdSpatial.BonusRoyalRoad,coevo.BonusRoyalRoad, coevo
 load("Hard Elite/hard.elite.one")
 load("Hard Elite/hard.elite.two")
 load("Hard Elite/hard.elite.ten")
-boxplot(hard.elite.one,hard.elite.two, ylab="Generations", xlab="Elite",
-        names=c("1","2"), main="Coevo Spatial - Hard Elite")
+boxplot(hard.elite.one,hard.elite.two,hard.elite.ten, ylab="Generations", xlab="Elite",
+        names=c("1","2","10"), main="Coevo Spatial - Hard Elite")
 
 load("Hard Elite/hard.elite.one.CoevoComp")
 load("Hard Elite/hard.elite.two.CoevoComp")
 load("Hard Elite/hard.elite.ten.CoevoComp")
-boxplot(hard.elite.one.CoevoComp,ylab="Generations", xlab="Elite",
-        names=c("1"), main="Coevo - Hard Elite")
+boxplot(hard.elite.one.CoevoComp,hard.elite.two.CoevoComp,ylab="Generations", xlab="Elite",
+        names=c("1","2"), main="Coevo - Hard Elite")
 
 load("Hard Elite/hard.std.elite.one")
 load("Hard Elite/hard.std.elite.two")
