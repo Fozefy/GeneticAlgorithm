@@ -121,9 +121,7 @@ onePop.one.max.withInnerMatching <- function(primary=1,secondary=1, matching=1)
     genes2 = organism@chromosome$genes[(geneLength/2 + 1):(geneLength * 3/4)]
     otherGenes2 = organism@chromosome$genes[(geneLength*3/4 + 1):geneLength]
     
-    extraMod = geneLength %%4
-    
-    sum(organism@chromosome$genes)*primary + sum(genes == otherGenes)*matching+sum(genes2 == otherGenes2)*matching + extraMod*matching/2
+    sum(organism@chromosome$genes)*primary + sum(genes == otherGenes)*matching+sum(genes2 == otherGenes2)*matching
   }
 }
 
@@ -139,9 +137,7 @@ twoPop.one.max.withInnerMatching <- function(primary=1,secondary=1, matching=1)
     otherPopGenesSplit = otherPopGenes[1:(geneLength/2)]
     otherPopGenesSplitSecond = otherPopGenes[(geneLength/2 + 1):geneLength]
     
-    extraMod = geneLength %%2
-    
-    sum(organism@chromosome$genes)*primary + sum(otherPopGenes)*(secondary) + sum(genes == otherGenes)*matching+ sum(otherPopGenesSplit == otherPopGenesSplitSecond)*matching + extraMod*matching
+    sum(organism@chromosome$genes)*primary + sum(otherPopGenes)*(secondary) + sum(genes == otherGenes)*matching+ sum(otherPopGenesSplit == otherPopGenesSplitSecond)*matching
   }
 }
 
