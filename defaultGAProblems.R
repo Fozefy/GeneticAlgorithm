@@ -16,6 +16,38 @@ twoPop.one.max.withCoupling <- function(coupling=.5)
   }
 }
 
+twoPop.one.max.bestOnGrid <- function(organism, popNum, otherPops, externalConnectionsMatrix){
+  otherOrganisms = otherPops[[1]]@organisms$values[externalConnectionsMatrix[[organism@index$value, popNum]]]
+  fitness=0
+  for(i in 1:length(otherOrganisms))
+  {
+    otherGenes=otherOrganisms[[i]]@chromosome$genes
+    
+    fitness[i] = sum(otherGenes)
+  }
+  
+  fitness = max(fitness)
+  fitness = fitness + sum(organism@chromosome$genes)
+  
+  return(fitness)
+}
+
+twoPop.one.max.onGrid <- function(organism, popNum, otherPops, externalConnectionsMatrix){
+  otherOrganisms = otherPops[[1]]@organisms$values[externalConnectionsMatrix[[organism@index$value, popNum]]]
+  fitness=0
+  for(i in 1:length(otherOrganisms))
+  {
+    otherGenes=otherOrganisms[[i]]@chromosome$genes
+    
+    fitness = fitness + sum(otherGenes)
+  }
+  
+  fitness = sum(fitness)/length(otherOrganisms)
+  fitness = fitness + sum(organism@chromosome$genes)
+  
+  return(fitness)
+}
+
 twoPop.one.max.seperate <- function(organism, pop, otherPops, externalConnectionsMatrix){
   sum(organism@chromosome$genes)*3
 }
@@ -39,6 +71,28 @@ onePop.one.max.withAntiMatching <- function(primary=1,secondary=1, matching=1)
     otherGenes = organism@chromosome$genes[(geneLength/2 + 1):geneLength]
     fitness = sum(genes)*primary + sum(otherGenes)*secondary + sum(genes != otherGenes)*matching
     
+    if (length(organism@chromosome$genes) == sum(organism@chromosome$genes))
+    {
+      fitness = sum(genes)*primary + sum(otherGenes)*(secondary) + 1
+    }
+    
+    return(fitness)
+  }
+}
+onePop.one.max.withInnerAntiMatching <- function(primary=1,secondary=1, matching=1)
+{
+  onePop.one.max.matching <- function(organism,...)
+  {
+    geneLength = length(organism@chromosome$genes)
+    genes = organism@chromosome$genes[1:(geneLength/4)]
+    otherGenes = organism@chromosome$genes[(geneLength/4 + 1):(geneLength/2)]
+    genes2 = organism@chromosome$genes[(geneLength/2 + 1):(geneLength * 3/4)]
+    otherGenes2 = organism@chromosome$genes[(geneLength*3/4 + 1):geneLength]
+    
+    extraMod = geneLength %%4
+    
+    fitness = sum(organism@chromosome$genes)*primary + sum(genes != otherGenes)*matching+sum(genes2 != otherGenes2)*matching + extraMod*matching/2
+        
     if (length(organism@chromosome$genes) == sum(organism@chromosome$genes))
     {
       fitness = sum(genes)*primary + sum(otherGenes)*(secondary) + 1
@@ -106,6 +160,33 @@ twoPop.one.max.withAntiMatching <- function(primary=1,secondary=1, matching=1)
     return(fitness)
   }
 }
+
+twoPop.one.max.withInnerAntiMatching <- function(primary=1,secondary=1, matching=1)
+{
+  twoPop.one.max.matching <- function(organism, popNum, otherPops, externalConnectionsMatrix)
+  {
+    geneLength = length(organism@chromosome$genes)
+    genes = organism@chromosome$genes[1:(geneLength/2)]
+    otherGenes = organism@chromosome$genes[(geneLength/2 + 1):geneLength]
+    
+    otherPopGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
+    otherPopGenesSplit = otherPopGenes[1:(geneLength/2)]
+    otherPopGenesSplitSecond = otherPopGenes[(geneLength/2 + 1):geneLength]
+    
+    extraMod = geneLength %%2
+    
+    fitness = sum(organism@chromosome$genes)*primary + sum(otherPopGenes)*(secondary) + sum(genes != otherGenes)*matching+ sum(otherPopGenesSplit != otherPopGenesSplitSecond)*matching + extraMod*matching
+    
+    if (length(organism@chromosome$genes) == sum(organism@chromosome$genes) && length(otherGenes) == sum(otherGenes))
+    {
+      fitness = sum(organism@chromosome$genes)*primary + sum(otherGenes)*(secondary) + 1
+    }
+    
+    
+    return(fitness)
+  }
+}
+
 
 twoPop.one.max.PureRoyalRoad <- function(organism, popNum, otherPops, externalConnectionsMatrix)
 {
@@ -263,6 +344,48 @@ twoPop.one.max.predPrey.withGrid <- function(organism, popNum, otherPops, extern
     fitness = mean(fitness)
   }
   
+  return(fitness)
+}
+
+#This has been hardcoded for length 16 parasites/hosts
+twoPop.one.max.predPrey.AvgGrid <- function(organism, popNum, otherPops, externalConnectionsMatrix)
+{
+  otherOrganisms = otherPops[[1]]@organisms$values[externalConnectionsMatrix[[organism@index$value, popNum]]]
+  fitness=0
+  
+  for(i in 1:length(otherOrganisms))
+  {
+    if(popNum == 1)
+    {
+      parasite = otherOrganisms[[i]]@chromosome$genes
+      host = organism@chromosome$genes
+    }
+    else
+    {
+      host = otherOrganisms[[i]]@chromosome$genes
+      parasite = organism@chromosome$genes
+    }
+    
+    for(i in 1:4)
+    {
+      geneToTest = GrayCode.to.Decimal(parasite[(((i-1)*4) + 1):(i*4)]) + 1
+
+      if(popNum == 1)
+      {
+        fitness = fitness + host[[geneToTest]]
+      }
+      else
+      {
+        fitness = fitness + 1 - host[[geneToTest]]
+      }
+    }
+  }
+  
+  if (popNum == 1 && sum(organism@chromosome$genes) == length(organism@chromosome$genes))
+  {
+    fitness = 100
+  }
+
   return(fitness)
 }
 

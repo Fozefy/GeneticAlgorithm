@@ -384,6 +384,116 @@ for (i in 1:n)
 }
 save(stdSpatial.AntiMatching,file="stdSpatial.AntiMatching")
 
+#Inner AntiMatching
+graph = gridConstructor(100) #4 connections
+coevoSpt.InnerAntiMatching = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withInnerAntiMatching(), goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph),encoding.args=new.encoding.args(chr.length=16), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  coevoSpt.InnerAntiMatching[i] = ga$gen
+  print(paste(i,"Complete -", ga$gen))
+  rm(ga)
+}
+save(coevoSpt.InnerAntiMatching,file="coevoSpt.InnerAntiMatching")
+
+graph = complete.graph(100) #complete connections
+coevo.InnerAntiMatching = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withInnerAntiMatching(), goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=16),verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  
+  coevo.InnerAntiMatching[i] = ga$gen
+  
+  print(paste(i,"Complete -", ga$gen))
+  rm(ga)
+}
+save(coevo.InnerAntiMatching,file="coevo.InnerAntiMatching")
+
+graph = complete.graph(100)
+std.InnerAntiMatching = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(fitness.fn=onePop.one.max.withInnerAntiMatching(), goal=33), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=32),verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  
+  std.InnerAntiMatching[i] = ga$gen
+  
+  print(paste(i,"Complete -", ga$gen))
+  rm(ga)
+}
+save(std.InnerAntiMatching,file="std.InnerAntiMatching")
+
+graph = gridConstructor(100)
+stdSpatial.InnerAntiMatching = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(fitness.fn=onePop.one.max.withInnerAntiMatching(), goal=33), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=32),verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  
+  stdSpatial.InnerAntiMatching[i] = ga$gen
+  
+  print(paste(i,"Complete -", ga$gen))
+  rm(ga)
+}
+save(stdSpatial.InnerAntiMatching,file="stdSpatial.InnerAntiMatching")
+
+#Inner Anti Matching /no Elite
+graph = gridConstructor(100) #4 connections
+coevoSpt.InnerAntiMatching.NoElite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withInnerAntiMatching(), goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=FALSE,adjMatrix=graph),encoding.args=new.encoding.args(chr.length=16), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  coevoSpt.InnerAntiMatching.NoElite[i] = ga$gen
+  print(paste(i,"Complete -", ga$gen))
+  rm(ga)
+}
+save(coevoSpt.InnerAntiMatching.NoElite,file="coevoSpt.InnerAntiMatching.NoElite")
+
+graph = complete.graph(100) #complete connections
+coevo.InnerAntiMatching.NoElite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withInnerAntiMatching(), goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=FALSE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=16),verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  
+  coevo.InnerAntiMatching.NoElite[i] = ga$gen
+  
+  print(paste(i,"Complete -", ga$gen))
+  rm(ga)
+}
+save(coevo.InnerAntiMatching.NoElite,file="coevo.InnerAntiMatching.NoElite")
+
+graph = complete.graph(100)
+std.InnerAntiMatching.NoElite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(fitness.fn=onePop.one.max.withInnerAntiMatching(), goal=33), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=FALSE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=32),verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  
+  std.InnerAntiMatching.NoElite[i] = ga$gen
+  
+  print(paste(i,"Complete -", ga$gen))
+  rm(ga)
+}
+save(std.InnerAntiMatching.NoElite,file="std.InnerAntiMatching.NoElite")
+
+graph = gridConstructor(100)
+stdSpatial.InnerAntiMatching.NoElite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(fitness.fn=onePop.one.max.withInnerAntiMatching(), goal=33), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=FALSE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=32),verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  
+  stdSpatial.InnerAntiMatching.NoElite[i] = ga$gen
+  
+  print(paste(i,"Complete -", ga$gen))
+  rm(ga)
+}
+save(stdSpatial.InnerAntiMatching.NoElite,file="stdSpatial.InnerAntiMatching.NoElite")
+
 #Pure Anti Matching
 graph = gridConstructor(100) #4 connections
 coevoSpt.PureAntiMatching = c(1)
