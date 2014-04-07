@@ -114,18 +114,18 @@ boxplot(generations.4graph.predprey,generations.8graph.predprey,generations.comp
 boxplot(generations.4graph.predprey,generations.8graph.predprey,generations.complete.predprey, ylab="Generations", 
         names=c("4 Graph","8 Graph","Complete"), main="Competitive One-Max\nHost/Parasite")
 
-load("PredPrey/graph4.GridFitness.predprey")
-load("PredPrey/graph8.GridFitness.predprey")
-load("PredPrey/complete.GridFitness.predprey")
-boxplot(graph4.GridFitness8.predprey,graph8.GridFitness.predprey,complete.GridFitness.predprey, ylab="Generations", 
+load("PredPrey/GridFitness/graph4.GridFitness.predprey")
+load("PredPrey/GridFitness/graph8.GridFitness.predprey")
+load("PredPrey/GridFitness/complete.GridFitness.predprey")
+boxplot(graph4.GridFitness.predprey,graph8.GridFitness.predprey,complete.GridFitness.predprey, ylab="Generations", 
         names=c("4 Graph","8 Graph","Complete"), main="Competitive One-Max\nFitness on a Grid")
 
-load("PredPrey/graph4.GridFitnessComp.predprey")
-load("PredPrey/graph8.GridFitnessComp.predprey")
-load("PredPrey/graph4.GridFitness8.predprey")
-load("PredPrey/graph8.GridFitness4.predprey")
-load("PredPrey/complete.GridFitness4.predprey")
-load("PredPrey/complete.GridFitness8.predprey")
+load("PredPrey/GridFitness/graph4.GridFitnessComp.predprey")
+load("PredPrey/GridFitness/graph8.GridFitnessComp.predprey")
+load("PredPrey/GridFitness/graph4.GridFitness8.predprey")
+load("PredPrey/GridFitness/graph8.GridFitness4.predprey")
+load("PredPrey/GridFitness/complete.GridFitness4.predprey")
+load("PredPrey/GridFitness/complete.GridFitness8.predprey")
 boxplot(graph4.GridFitness.predprey,graph4.GridFitness8.predprey,graph4.GridFitnessComp.predprey,graph8.GridFitness4.predprey,graph8.GridFitness.predprey,graph8.GridFitnessComp.predprey,complete.GridFitness4.predprey,complete.GridFitness8.predprey,complete.GridFitness.predprey, ylab="Generations", 
         names=c("4 Graph","4 Repo, 8 Fit", "4 Repo, Comp Fit", "8 Graph 4 Fit","8 Graph","8 Repo, Comp Fit","Comp Repo, 4 Fit","Comp Repo, 8 Fit","Complete"), main="Predator Prey\nFitness on Grid w/ Split Reproduction")
 
@@ -138,6 +138,33 @@ load("PredPrey/graph4.predprey.NoElite")
 load("PredPrey/graph8.predprey.NoElite")
 boxplot(graph4.predprey.NoElite,graph8.predprey.NoElite,complete.predprey.NoElite, ylab="Generations", 
         names=c("4 Graph","8 Graph","Complete"), main="Predator Prey\nNo Elite")
+
+load("PredPrey/complete.predprey.10Elite")
+load("PredPrey/graph4.predprey.10Elite")
+load("PredPrey/graph8.predprey.10Elite")
+boxplot(graph4.predprey.10Elite,graph8.predprey.10Elite,complete.predprey.10Elite, ylab="Generations",
+        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey\n10 Elite")
+
+load("PredPrey/complete.predprey.FullElite")
+load("PredPrey/graph4.predprey.FullElite")
+load("PredPrey/graph8.predprey.FullElite")
+boxplot(graph4.predprey.FullElite,graph8.predprey.FullElite,complete.predprey.FullElite, ylab="Generations",
+        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey\nFull Elite")
+
+load("PredPrey/complete.predprey")
+load("PredPrey/graph4.predprey")
+load("PredPrey/graph8.predprey")
+boxplot(generations.4graph.predprey,generations.8graph.predprey,generations.complete.predprey, ylab="Generations",
+        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey\n2 Elite")
+
+boxplot(graph4.predprey.NoElite,generations.4graph.predprey,graph4.predprey.10Elite,graph4.predprey.FullElite, ylab="Generations", xlab="Elite",
+        names=c("0","2","10","Full"), main="Predator Prey\n4 Graph")
+
+boxplot(graph8.predprey.NoElite,generations.8graph.predprey,graph8.predprey.10Elite,graph4.predprey.FullElite, ylab="Generations", xlab="Elite",
+        names=c("0","2","10","Full"), main="Predator Prey\n8 Graph")
+
+boxplot(complete.predprey.NoElite,generations.complete.predprey,complete.predprey.10Elite,complete.predprey.FullElite, ylab="Generations", xlab="Elite",
+        names=c("0","2","10","Full"), main="Predator Prey\nComplete")
 
 load("PredPrey/complete.GridFitness.NoElite.predprey")
 load("PredPrey/graph4.GridFitness.NoElite.predprey")
@@ -169,14 +196,15 @@ load("coevo.ring2")
 load("coevo.ring4.2elite")
 load("coevo.ring8.2elite")
 boxplot(coevo.ring2,generations.ring4,generations.random4,elite.two,generations.ring8,generations.random8,elite.two.BigGrid, elite.two.CoevoComp,
-        names=c("Ring 2","Ring 4", "Rand 4","Graph 4","Ring 8","Rand 8", "Graph 8", "Complete"), main="Coevo Comparisons of Spatial Types \n2 Elite")
+        names=c("Ring 2","Ring 4", "Rand 4","Grid 4","Ring 8","Rand 8", "Grid 8", "Complete"), main="Comparisons of Spatial Types\nCoevolutionary GA ")
 
+load("std.ring2")
 load("std.Ring4.2elite")
 load("std.Ring8.2elite")
 load("std.Rand4.2elite")
 load("std.Rand8.2elite")
-boxplot(std.Ring4.2elite,std.Rand4.2elite,stdSpatial.elite.two,std.Ring8.2elite,std.Rand4.2elite,stdSpatial.elite.two.LargeGrid,std.elite.two,
-        names=c("Ring 4","Rand 4","Graph 4","Ring 8","Rand 8","Graph 8","Complete"), main="Standard Comparisons of Spatial Types \n2 Elite")
+boxplot(std.ring2,std.Ring4.2elite,std.Rand4.2elite,stdSpatial.elite.two,std.Ring8.2elite,std.Rand4.2elite,stdSpatial.elite.two.LargeGrid,std.elite.two,
+        names=c("Ring 2","Ring 4","Rand 4","Grid 4","Ring 8","Rand 8","Grid 8","Complete"), main="Comparisons of Spatial Types\nStandard GA")
 
 load("Matching Data/coevo.matching")
 load("Matching Data/stdSpatial.matching")
@@ -220,6 +248,45 @@ load("Matching Data/coevoSpt.ExtraInnerMatching")
 boxplot(std.ExtraInnerMatching,stdSpatial.ExtraInnerMatching,coevo.ExtraInnerMatching, coevoSpt.ExtraInnerMatching, ylab="Generations",
         names=c("Standard","Std Spt","Coevo","Coevo Spt"), main="GA Types - Extra Inner Matching")
 
+load("InnerMatching Elitism/coevo.ExtraInnerMatching.FullElite")
+load("InnerMatching Elitism/stdSpatial.ExtraInnerMatching.FullElite")
+load("InnerMatching Elitism/std.ExtraInnerMatching.FullElite")
+load("InnerMatching Elitism/coevoSpt.ExtraInnerMatching.FullElite")
+boxplot(std.ExtraInnerMatching.FullElite,stdSpatial.ExtraInnerMatching.FullElite,coevo.ExtraInnerMatching.FullElite, coevoSpt.ExtraInnerMatching.FullElite, ylab="Generations",
+        names=c("Standard","Std Spt","Coevo","Coevo Spt"), main="Inner Matching\n100 Elite")
+
+load("InnerMatching Elitism/coevo.ExtraInnerMatching.50Elite")
+load("InnerMatching Elitism/stdSpatial.ExtraInnerMatching.50Elite")
+load("InnerMatching Elitism/std.ExtraInnerMatching.50Elite")
+load("InnerMatching Elitism/coevoSpt.ExtraInnerMatching.50Elite")
+boxplot(std.ExtraInnerMatching.50Elite,stdSpatial.ExtraInnerMatching.50Elite,coevo.ExtraInnerMatching.50Elite, coevoSpt.ExtraInnerMatching.50Elite, ylab="Generations",
+        names=c("Standard","Std Spt","Coevo","Coevo Spt"), main="Inner Matching\n50 Elite")
+
+load("InnerMatching Elitism/coevo.ExtraInnerMatching.10Elite")
+load("InnerMatching Elitism/stdSpatial.ExtraInnerMatching.10Elite")
+load("InnerMatching Elitism/std.ExtraInnerMatching.10Elite")
+load("InnerMatching Elitism/coevoSpt.ExtraInnerMatching.10Elite")
+boxplot(std.ExtraInnerMatching.10Elite,stdSpatial.ExtraInnerMatching.10Elite,coevo.ExtraInnerMatching.10Elite, coevoSpt.ExtraInnerMatching.10Elite, ylab="Generations",
+        names=c("Standard","Std Spt","Coevo","Coevo Spt"), main="Inner Matching\n10 Elite")
+
+load("InnerMatching Elitism/coevo.ExtraInnerMatching.2Elite")
+load("InnerMatching Elitism/stdSpatial.ExtraInnerMatching.2Elite")
+load("InnerMatching Elitism/std.ExtraInnerMatching.2Elite")
+load("InnerMatching Elitism/coevoSpt.ExtraInnerMatching.2Elite")
+boxplot(std.ExtraInnerMatching.2Elite,stdSpatial.ExtraInnerMatching.2Elite,coevo.ExtraInnerMatching.2Elite, coevoSpt.ExtraInnerMatching.2Elite, ylab="Generations",
+        names=c("Standard","Std Spt","Coevo","Coevo Spt"), main="Inner Matching\n2 Elite")
+
+boxplot(std.ExtraInnerMatching.2Elite,std.ExtraInnerMatching.10Elite,std.ExtraInnerMatching.50Elite, std.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Elites",
+        names=c("2","10","50","100"), main="Inner Matching\nStandard GA")
+boxplot(stdSpatial.ExtraInnerMatching.2Elite,stdSpatial.ExtraInnerMatching.10Elite,stdSpatial.ExtraInnerMatching.50Elite, stdSpatial.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Elites",
+        names=c("2","10","50","100"), main="Inner Matching\nStandard Spatial GA")
+boxplot(coevo.ExtraInnerMatching.2Elite,coevo.ExtraInnerMatching.10Elite,coevo.ExtraInnerMatching.50Elite, coevo.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Elites",
+        names=c("2","10","50","100"), main="Inner Matching\nCoevolutionary Non-Spatial GA")
+boxplot(coevoSpt.ExtraInnerMatching.2Elite,coevoSpt.ExtraInnerMatching.10Elite,coevoSpt.ExtraInnerMatching.50Elite, coevoSpt.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Elites",
+        names=c("2","10","50","100"), main="Inner Matching\nCoevolutionary Spatial GA")
+
+
+
 load("Matching Data/AntiMatching/coevo.AntiMatching")
 load("Matching Data/AntiMatching/stdSpatial.AntiMatching")
 load("Matching Data/AntiMatching/std.AntiMatching")
@@ -256,9 +323,10 @@ boxplot(hard.elite.one,hard.elite.two,hard.elite.ten, ylab="Generations", xlab="
 
 load("Hard Elite/hard.elite.one.CoevoComp")
 load("Hard Elite/hard.elite.two.CoevoComp")
-load("Hard Elite/hard.elite.ten.CoevoComp")
-boxplot(hard.elite.one.CoevoComp,hard.elite.two.CoevoComp,ylab="Generations", xlab="Elite",
-        names=c("1","2"), main="Coevo - Hard Elite")
+load("Hard Elite/hard.elite.three.CoevoComp")
+load("Hard Elite/hard.elite.ten.CoevoComp") #Missing this value
+boxplot(hard.elite.one.CoevoComp,hard.elite.two.CoevoComp,hard.elite.three.CoevoComp,ylab="Generations", xlab="Elite",
+        names=c("1","2","3"), main="Coevo - Hard Elite")
 
 load("Hard Elite/hard.std.elite.one")
 load("Hard Elite/hard.std.elite.two")
@@ -276,3 +344,5 @@ load("Hard Elite/hard.stdSpatial.elite.two.LargeGrid")
 load("Hard Elite/hard.stdSpatial.elite.full.LargeGrid")
 boxplot(hard.stdSpatial.elite.one,hard.stdSpatial.elite.two,hard.stdSpatial.elite.ten, ylab="Generations",xlab="Elite",
         names=c("1","2","10"), main="Standard Large Spatial - Hard Elite")
+
+load("
