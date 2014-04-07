@@ -351,3 +351,50 @@ for (i in 1:n)
   rm(ga)
 }
 save(complete.GridFitness.NoElite.predprey, file="complete.GridFitness.NoElite.predprey")
+
+graph4.GridFitness.10Elite.predprey = c(1)
+graph = gridConstructor(100)
+coevoGrid=gridConstructor(100)
+coevoGrid <- cbind(coevoGrid,1:100)
+coevoGrid=split(coevoGrid,row(coevoGrid))
+coevoGrid = matrix(c(coevoGrid, coevoGrid), nrow=100, ncol=2)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey.withGrid, goal=33, externalConnectionsMatrix=coevoGrid), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=10,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  graph4.GridFitness.10Elite.predprey[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(graph4.GridFitness.10Elite.predprey, file="graph4.GridFitness.10Elite.predprey")
+
+graph8.GridFitness.10Elite.predprey = c(1)
+graph = gridConstructor.withDiag(100)
+coevoGrid=gridConstructor.withDiag(100)
+coevoGrid <- cbind(coevoGrid,1:100)
+coevoGrid=split(coevoGrid,row(coevoGrid))
+coevoGrid = matrix(c(coevoGrid, coevoGrid), nrow=100, ncol=2)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey.withGrid, goal=33, externalConnectionsMatrix=coevoGrid), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=10,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  graph8.GridFitness.10Elite.predprey[i] = ga$gen
+  print(paste(i,"Complete -",ga$gen))
+  rm(ga)
+}
+save(graph8.GridFitness.10Elite.predprey, file="graph8.GridFitness.10Elite.predprey")
+
+complete.GridFitness.10Elite.predprey = c(1)
+graph = complete.graph(100)
+coevoGrid=complete.graph(100)
+coevoGrid=split(coevoGrid,row(coevoGrid))
+coevoGrid = matrix(c(coevoGrid, coevoGrid), nrow=100, ncol=2)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey.withGrid, goal=33, externalConnectionsMatrix=coevoGrid), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=10,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  complete.GridFitness.10Elite.predprey[i] = ga$gen
+  print(paste(i,"Complete -",ga$gen))
+  rm(ga)
+}
+save(complete.GridFitness.10Elite.predprey, file="complete.GridFitness.10Elite.predprey")
