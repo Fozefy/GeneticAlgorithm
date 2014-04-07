@@ -67,3 +67,23 @@ for (i in 1:n)
   rm(ga)
 }
 save(elite.locations.five,file="elite.locations.five")
+
+elite.locations.ten = NULL
+graph = gridConstructor(100)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=10,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE, reporting.fn=track.elite)
+  generational.ga(ga)
+  
+  elite.locations = NULL
+  for(j in 2:length(ga$reported.data))
+  {
+    elite.locations[[j-1]] = ga$reported.data[[j]]@currentGen.results
+  }
+  
+  elite.locations.ten[[i]] = elite.locations
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(elite.locations.ten,file="elite.locations.ten")

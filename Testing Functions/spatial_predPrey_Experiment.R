@@ -125,7 +125,44 @@ for (i in 1:n)
   rm(ga)
 }
 save(complete.predprey.NoElite, file="complete.predprey.NoElite")
+#Full Elite
+graph = gridConstructor(100)
+graph4.predprey.FullElite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=100,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  graph4.predprey.FullElite[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(graph4.predprey.FullElite, file="graph4.predprey.FullElite")
 
+graph = gridConstructor(100)
+graph8.predprey.FullElite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=100,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  graph8.predprey.FullElite[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(graph8.predprey.FullElite, file="graph8.predprey.FullElite")
+
+graph = complete.graph(100)
+complete.predprey.FullElite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=100,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  complete.predprey.FullElite[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(complete.predprey.FullElite, file="complete.predprey.FullElite")
+
+#Inner Matching
 graph = gridConstructor(100)
 graph4.predprey.InnerMatch = c(1)
 for (i in 1:n)

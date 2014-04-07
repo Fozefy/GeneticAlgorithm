@@ -1,60 +1,60 @@
 n=50
 
 graph = gridConstructor(100)
-stdSpatial.elite.one = c(1)
+hard.stdSpatial.elite.one = c(1)
 for (i in 1:n)
 {
   ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=1,spatial.selection.fn=spatial.child.selection.random.hardElite,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE,reporting.fn=reportNone.report.fn)
   generational.ga(ga)
   
-  stdSpatial.elite.one[i] = ga$gen
+  hard.stdSpatial.elite.one[i] = ga$gen
   
-  print(paste(i,"Complete"))
+  print(paste(i,"Complete -", ga$gen))
   rm(ga)
 }
-save(stdSpatial.elite.one,file="hard.stdSpatial.elite.one")
+save(hard.stdSpatial.elite.one,file="hard.stdSpatial.elite.one")
 
 graph = gridConstructor(100)
-stdSpatial.elite.two = c(1)
+hard.stdSpatial.elite.two = c(1)
 for (i in 1:n)
 {
   ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=2,spatial.selection.fn=spatial.child.selection.random.hardElite,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE,reporting.fn = reportNone.report.fn)
   generational.ga(ga)
   
-  stdSpatial.elite.two[i] = ga$gen
+  hard.stdSpatial.elite.two[i] = ga$gen
   
-  print(paste(i,"Complete"))
+  print(paste(i,"Complete -", ga$gen))
   rm(ga)
 }
-save(stdSpatial.elite.two,file="hard.stdSpatial.elite.two")
+save(hard.stdSpatial.elite.two,file="hard.stdSpatial.elite.two")
 
 graph = gridConstructor(100)
-stdSpatial.elite.three = c(1)
+hard.stdSpatial.elite.three = c(1)
 for (i in 1:n)
 {
   ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=3,spatial.selection.fn=spatial.child.selection.random.hardElite,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE)
   generational.ga(ga)
   
-  stdSpatial.elite.three[i] = ga$gen
+  hard.stdSpatial.elite.three[i] = ga$gen
   
-  print(paste(i,"Complete"))
+  print(paste(i,"Complete -", ga$gen))
   rm(ga)
 }
-save(stdSpatial.elite.three,file="hard.stdSpatial.elite.three")
+save(hard.stdSpatial.elite.three,file="hard.stdSpatial.elite.three")
 
 graph = gridConstructor(100)
-stdSpatial.elite.five = c(1)
+hard.stdSpatial.elite.five = c(1)
 for (i in 1:n)
 {
   ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=5,spatial.selection.fn=spatial.child.selection.random.hardElite,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE)
   generational.ga(ga)
   
-  stdSpatial.elite.five[i] = ga$gen
+  hard.stdSpatial.elite.five[i] = ga$gen
   
-  print(paste(i,"Complete"))
+  print(paste(i,"Complete -", ga$gen))
   rm(ga)
 }
-save(stdSpatial.elite.five,file="hard.stdSpatial.elite.five")
+save(hard.stdSpatial.elite.five,file="hard.stdSpatial.elite.five")
 
 graph = gridConstructor(100)
 stdSpatial.elite.ten = c(1)
@@ -65,7 +65,7 @@ for (i in 1:n)
   
   stdSpatial.elite.ten[i] = ga$gen
   
-  print(paste(i,"Complete"))
+  print(paste(i,"Complete -", ga$gen))
   rm(ga)
 }
 save(stdSpatial.elite.ten,file="hard.stdSpatial.elite.ten")
@@ -79,7 +79,7 @@ for (i in 1:n)
   
   stdSpatial.elite.full[i] = ga$gen
   
-  print(paste(i,"Complete"))
+  print(paste(i,"Complete -", ga$gen))
   rm(ga)
 }
 save(stdSpatial.elite.full,file="hard.stdSpatial.elite.full")
