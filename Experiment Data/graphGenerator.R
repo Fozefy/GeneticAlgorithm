@@ -282,13 +282,13 @@ load("InnerMatching Elitism/std.ExtraInnerMatching.NoElite")
 load("InnerMatching Elitism/coevoSpt.ExtraInnerMatching.NoElite")
 
 boxplot(std.ExtraInnerMatching.NoElite,std.ExtraInnerMatching.2Elite,std.ExtraInnerMatching.10Elite,std.ExtraInnerMatching.50Elite, std.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Number of Elites",
-        names=c("0","2","10","50","100"), main="Elitism on Standard GA\nInner Matching")
+        names=c("0","2","10","50","100"), main="Elitism on Standard GA\nOne-Max-Matching")
 boxplot(stdSpatial.ExtraInnerMatching.NoElite,stdSpatial.ExtraInnerMatching.2Elite,stdSpatial.ExtraInnerMatching.10Elite,stdSpatial.ExtraInnerMatching.50Elite, stdSpatial.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Number of Elites",
-        names=c("0","2","10","50","100"), main="Elitism on Spatial Standard GA\nInner Matching")
+        names=c("0","2","10","50","100"), main="Elitism on Spatial Standard GA\nOne-Max-Matching")
 boxplot(coevo.ExtraInnerMatching.NoElite,coevo.ExtraInnerMatching.2Elite,coevo.ExtraInnerMatching.10Elite,coevo.ExtraInnerMatching.50Elite, coevo.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Number of Elites",
-        names=c("0","2","10","50","100"), main="Elitism on Coevolutionary GA\nInner Matching")
+        names=c("0","2","10","50","100"), main="Elitism on Coevolutionary GA\nOne-Max-Matching")
 boxplot(coevoSpt.ExtraInnerMatching.NoElite,coevoSpt.ExtraInnerMatching.2Elite,coevoSpt.ExtraInnerMatching.10Elite,coevoSpt.ExtraInnerMatching.50Elite, coevoSpt.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Number of Elites",
-        names=c("0","2","10","50","100"), main="Spatial Coevolutionary GA\nInner Matching")
+        names=c("0","2","10","50","100"), main="Elitism on Spatial Coevo GA\nOne-Max-Matching")
 
 
 
