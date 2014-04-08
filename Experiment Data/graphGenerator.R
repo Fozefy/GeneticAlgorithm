@@ -59,19 +59,19 @@ load("stdSpatial.elite.five.LargeGrid")
 load("stdSpatial.elite.ten.LargeGrid")
 load("stdSpatial.elite.full.LargeGrid")
 boxplot(stdSpatial.elite.one.LargeGrid,stdSpatial.elite.two.LargeGrid,stdSpatial.elite.three.LargeGrid,stdSpatial.elite.five.LargeGrid,stdSpatial.elite.ten.LargeGrid,elite.full.BigGrid, ylab="Generations",
-        names=c("1", "2", "3", "5","10","full"), main="Elitism on Standard GA with 8 Grid",outline=FALSE)
+        names=c("1", "2", "3", "5","10","full"), main="Elitism on Standard GA with 8 Grid")
 
-boxplot(elite.one.CoevoComp,elite.two.CoevoComp,elite.three.CoevoComp,elite.five.CoevoComp,elite.ten.CoevoComp,elite.full.CoevoComp, ylab="Generations", 
-        names=c("1", "2", "3", "5","10","full"), main="Elitism on Coevolution",outline=FALSE)
+boxplot(elite.one.CoevoComp,elite.two.CoevoComp,elite.three.CoevoComp,elite.five.CoevoComp,elite.ten.CoevoComp,elite.full.CoevoComp, ylab="Generations", xlab="Number of Elites",
+        names=c("1", "2", "3", "5","10","full"), main="Elitism on Coevolutionary GA")
 
-boxplot(elite.one,elite.two,elite.three,elite.five,elite.ten,elite.full, ylab="Generations", 
-        names=c("1", "2", "3", "5","10","full"), main="Elitism on Coevo with 4 Grid",outline=FALSE)
+boxplot(elite.one,elite.two,elite.three,elite.five,elite.ten,elite.full, ylab="Generations", xlab="Number of Elites",
+        names=c("1", "2", "3", "5","10","full"), main="Elitism on Spatial Coevolutonary GA")
 
-boxplot(std.elite.one,std.elite.two,std.elite.three,std.elite.five,std.elite.ten,std.elite.full, ylab="Generations", 
+boxplot(std.elite.one,std.elite.two,std.elite.three,std.elite.five,std.elite.ten,std.elite.full, ylab="Generations", xlab="Number of Elites",
         names=c("1", "2", "3", "5","10","full"), main="Elitism on Standard GA")
 
-boxplot(stdSpatial.elite.one,stdSpatial.elite.two,stdSpatial.elite.three,stdSpatial.elite.five,stdSpatial.elite.ten,stdSpatial.elite.full, ylab="Generations", 
-        names=c("1", "2", "3", "5","10","full"), main="Elitism on Standard GA with 4 Grid")
+boxplot(stdSpatial.elite.one,stdSpatial.elite.two,stdSpatial.elite.three,stdSpatial.elite.five,stdSpatial.elite.ten,stdSpatial.elite.full, ylab="Generations", xlab="Number of Elites",
+        names=c("1", "2", "3", "5","10","full"), main="Elitism on Spatial Standard GA")
 
 #Spatial effects on coevolution one-max
 boxplot(elite.one,elite.one.BigGrid,elite.one.CoevoComp,ylab="Generations", 
@@ -137,34 +137,34 @@ load("PredPrey/complete.predprey.NoElite")
 load("PredPrey/graph4.predprey.NoElite")
 load("PredPrey/graph8.predprey.NoElite")
 boxplot(graph4.predprey.NoElite,graph8.predprey.NoElite,complete.predprey.NoElite, ylab="Generations", 
-        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey\nNo Elite")
+        names=c("4 Graph","8 Graph","Complete"), main="Host Parasite\nNo Elite")
 
 load("PredPrey/complete.predprey.10Elite")
 load("PredPrey/graph4.predprey.10Elite")
 load("PredPrey/graph8.predprey.10Elite")
 boxplot(graph4.predprey.10Elite,graph8.predprey.10Elite,complete.predprey.10Elite, ylab="Generations",
-        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey\n10 Elite")
+        names=c("4 Graph","8 Graph","Complete"), main="Host Parasite\n10 Elite")
 
 load("PredPrey/complete.predprey.FullElite")
 load("PredPrey/graph4.predprey.FullElite")
 load("PredPrey/graph8.predprey.FullElite")
 boxplot(graph4.predprey.FullElite,graph8.predprey.FullElite,complete.predprey.FullElite, ylab="Generations",
-        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey\nFull Elite")
+        names=c("4 Graph","8 Graph","Complete"), main="Host Parasite\nFull Elite")
 
 load("PredPrey/complete.predprey")
 load("PredPrey/graph4.predprey")
 load("PredPrey/graph8.predprey")
 boxplot(generations.4graph.predprey,generations.8graph.predprey,generations.complete.predprey, ylab="Generations",
-        names=c("4 Graph","8 Graph","Complete"), main="Predator Prey\n2 Elite")
+        names=c("4 Graph","8 Graph","Complete"), main="Host Parasite\n2 Elite")
 
 boxplot(graph4.predprey.NoElite,generations.4graph.predprey,graph4.predprey.10Elite,graph4.predprey.FullElite, ylab="Generations", xlab="Elite",
-        names=c("0","2","10","Full"), main="Predator Prey\n4 Graph")
+        names=c("0","2","10","Full"), main="Host Parasite\n4 Graph")
 
 boxplot(graph8.predprey.NoElite,generations.8graph.predprey,graph8.predprey.10Elite,graph4.predprey.FullElite, ylab="Generations", xlab="Elite",
-        names=c("0","2","10","Full"), main="Predator Prey\n8 Graph")
+        names=c("0","2","10","Full"), main="Host Parasite\n8 Graph")
 
 boxplot(complete.predprey.NoElite,generations.complete.predprey,complete.predprey.10Elite,complete.predprey.FullElite, ylab="Generations", xlab="Elite",
-        names=c("0","2","10","Full"), main="Predator Prey\nComplete")
+        names=c("0","2","10","Full"), main="Host Parasite\nComplete")
 
 load("PredPrey/complete.GridFitness.NoElite.predprey")
 load("PredPrey/graph4.GridFitness.NoElite.predprey")
@@ -276,14 +276,19 @@ load("InnerMatching Elitism/coevoSpt.ExtraInnerMatching.2Elite")
 boxplot(std.ExtraInnerMatching.2Elite,stdSpatial.ExtraInnerMatching.2Elite,coevo.ExtraInnerMatching.2Elite, coevoSpt.ExtraInnerMatching.2Elite, ylab="Generations",
         names=c("Standard","Std Spt","Coevo","Coevo Spt"), main="Inner Matching\n2 Elite")
 
-boxplot(std.ExtraInnerMatching.2Elite,std.ExtraInnerMatching.10Elite,std.ExtraInnerMatching.50Elite, std.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Elites",
-        names=c("2","10","50","100"), main="Inner Matching\nStandard GA")
-boxplot(stdSpatial.ExtraInnerMatching.2Elite,stdSpatial.ExtraInnerMatching.10Elite,stdSpatial.ExtraInnerMatching.50Elite, stdSpatial.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Elites",
-        names=c("2","10","50","100"), main="Inner Matching\nStandard Spatial GA")
-boxplot(coevo.ExtraInnerMatching.2Elite,coevo.ExtraInnerMatching.10Elite,coevo.ExtraInnerMatching.50Elite, coevo.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Elites",
-        names=c("2","10","50","100"), main="Inner Matching\nCoevolutionary Non-Spatial GA")
-boxplot(coevoSpt.ExtraInnerMatching.2Elite,coevoSpt.ExtraInnerMatching.10Elite,coevoSpt.ExtraInnerMatching.50Elite, coevoSpt.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Elites",
-        names=c("2","10","50","100"), main="Inner Matching\nCoevolutionary Spatial GA")
+load("InnerMatching Elitism/coevo.ExtraInnerMatching.NoElite")
+load("InnerMatching Elitism/stdSpatial.ExtraInnerMatching.NoElite")
+load("InnerMatching Elitism/std.ExtraInnerMatching.NoElite")
+load("InnerMatching Elitism/coevoSpt.ExtraInnerMatching.NoElite")
+
+boxplot(std.ExtraInnerMatching.NoElite,std.ExtraInnerMatching.2Elite,std.ExtraInnerMatching.10Elite,std.ExtraInnerMatching.50Elite, std.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Number of Elites",
+        names=c("0","2","10","50","100"), main="Elitism on Standard GA\nInner Matching")
+boxplot(stdSpatial.ExtraInnerMatching.NoElite,stdSpatial.ExtraInnerMatching.2Elite,stdSpatial.ExtraInnerMatching.10Elite,stdSpatial.ExtraInnerMatching.50Elite, stdSpatial.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Number of Elites",
+        names=c("0","2","10","50","100"), main="Elitism on Spatial Standard GA\nInner Matching")
+boxplot(coevo.ExtraInnerMatching.NoElite,coevo.ExtraInnerMatching.2Elite,coevo.ExtraInnerMatching.10Elite,coevo.ExtraInnerMatching.50Elite, coevo.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Number of Elites",
+        names=c("0","2","10","50","100"), main="Elitism on Coevolutionary GA\nInner Matching")
+boxplot(coevoSpt.ExtraInnerMatching.NoElite,coevoSpt.ExtraInnerMatching.2Elite,coevoSpt.ExtraInnerMatching.10Elite,coevoSpt.ExtraInnerMatching.50Elite, coevoSpt.ExtraInnerMatching.FullElite, ylab="Generations", xlab="Number of Elites",
+        names=c("0","2","10","50","100"), main="Spatial Coevolutionary GA\nInner Matching")
 
 
 
