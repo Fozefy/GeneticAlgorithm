@@ -70,6 +70,20 @@ for (i in 1:n)
 save(hard.elite.ten.CoevoComp,file="hard.elite.ten.CoevoComp")
 
 graph = complete.graph(100)
+hard.elite.fifty.CoevoComp = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withCoupling(.5), goal=30, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elite.size=50,elitism=TRUE,spatial.selection.fn=spatial.child.selection.random.hardElite,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  
+  hard.elite.fifty.CoevoComp[i] = ga$gen
+  
+  print(paste(i,"Complete" -),ga$gen)
+  rm(ga)
+}
+save(hard.elite.fifty.CoevoComp,file="hard.elite.fifty.CoevoComp")
+
+graph = complete.graph(100)
 hard.elite.full.CoevoComp = c(1)
 for (i in 1:n)
 {

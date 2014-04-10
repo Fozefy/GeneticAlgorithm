@@ -71,6 +71,20 @@ for (i in 1:n)
 save(std.elite.ten,file="std.elite.ten")
 
 graph = complete.graph(100)
+std.elite.fifty = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=50,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE)
+  generational.ga(ga)
+  
+  std.elite.fifty[i] = ga$gen
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(std.elite.fifty,file="std.elite.fifty")
+
+graph = complete.graph(100)
 std.elite.full = c(1)
 for (i in 1:n)
 {
@@ -83,6 +97,20 @@ for (i in 1:n)
   rm(ga)
 }
 save(std.elite.full,file="std.elite.full")
+
+graph = complete.graph(100)
+std.elite.none = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=FALSE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE)
+  generational.ga(ga)
+  
+  std.elite.none[i] = ga$gen
+  
+  print(paste(i,"Complete -",ga$gen))
+  rm(ga)
+}
+save(std.elite.none,file="std.elite.none")
 
 #Big Pop
 std.elite.one.BigPop = c(1)

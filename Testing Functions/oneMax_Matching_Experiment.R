@@ -493,6 +493,62 @@ print(paste(i,"Complete -", ga$gen))
 }
 save(stdSpatial.ExtraInnerMatching.NoElite,file="stdSpatial.ExtraInnerMatching.NoElite")
 
+#Extra Inner Matching - 5 Elite
+graph = gridConstructor(100) #4 connections
+coevoSpt.ExtraInnerMatching.5Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withInnerMatching(matching=4), goal=96, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=5,adjMatrix=graph),encoding.args=new.encoding.args(chr.length=16), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  coevoSpt.ExtraInnerMatching.5Elite[i] = ga$gen
+  print(paste(i,"Complete -", ga$gen))
+  rm(ga)
+}
+save(coevoSpt.ExtraInnerMatching.5Elite,file="coevoSpt.ExtraInnerMatching.5Elite")
+
+graph = complete.graph(100) #complete connections
+coevo.ExtraInnerMatching.5Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withInnerMatching(matching=4), goal=96, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=5,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=16),verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  
+  coevo.ExtraInnerMatching.5Elite[i] = ga$gen
+  
+  print(paste(i,"Complete -", ga$gen))
+  rm(ga)
+}
+save(coevo.ExtraInnerMatching.5Elite,file="coevo.ExtraInnerMatching.5Elite")
+
+graph = complete.graph(100)
+std.ExtraInnerMatching.5Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(fitness.fn=onePop.one.max.withInnerMatching(matching=4), goal=96), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=5,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=32),verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  
+  std.ExtraInnerMatching.5Elite[i] = ga$gen
+  
+  print(paste(i,"Complete -", ga$gen))
+  rm(ga)
+}
+save(std.ExtraInnerMatching.5Elite,file="std.ExtraInnerMatching.5Elite")
+
+graph = gridConstructor(100)
+stdSpatial.ExtraInnerMatching.5Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(fitness.fn=onePop.one.max.withInnerMatching(matching=4), goal=96), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=5,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=32),verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  
+  stdSpatial.ExtraInnerMatching.5Elite[i] = ga$gen
+  
+  print(paste(i,"Complete -", ga$gen))
+  rm(ga)
+}
+save(stdSpatial.ExtraInnerMatching.5Elite,file="stdSpatial.ExtraInnerMatching.5Elite")
+
+
 #Inner Matching Mix
 graph = gridConstructor(100) #4 connections
 coevoSpt.InnerMatchingMix = c(1)

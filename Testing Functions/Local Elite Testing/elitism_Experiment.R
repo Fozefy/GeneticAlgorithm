@@ -71,6 +71,20 @@ for (i in 1:n)
 save(elite.ten,file="elite.ten")
 
 graph = gridConstructor(100)
+elite.fifty = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withCoupling(.5), goal=30, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elite.size=50,elitism=TRUE,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  
+  elite.fifty[i] = ga$gen
+  
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(elite.fifty,file="elite.fifty")
+
+graph = gridConstructor(100)
 elite.full = c(1)
 for (i in 1:n)
 {
@@ -93,7 +107,7 @@ for (i in 1:n)
   
   elite.none[i] = ga$gen
   
-  print(paste(i,"Complete"))
+  print(paste(i,"Complete -",ga$gen))
   rm(ga)
 }
 save(elite.none,file="elite.none")
