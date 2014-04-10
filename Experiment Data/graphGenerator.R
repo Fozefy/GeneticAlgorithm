@@ -179,6 +179,15 @@ load("PredPrey/graph8.predprey.InnerMatch")
 boxplot(graph4.predprey.InnerMatch,graph8.predprey.InnerMatch,complete.predprey.InnerMatch, ylab="Generations", 
         names=c("4 Graph","8 Graph","Complete"), main="Predator Prey - Inner Match")
 
+load("PredPrey/GP Style/graph4.GP.predprey")
+load("PredPrey/GP Style/graph8.GP.predprey")
+load("PredPrey/GP Style/complete.GP.predprey")
+boxplot(graph4.GP.predprey,graph8.GP.predprey,complete.GP.predprey, ylab="Generations", 
+        names=c("4 Graph","8 Graph","Complete"), main="GP Host Parasite")
+
+
+
+
 load("coevo.rand4.2elite")
 load("coevo.rand8.2elite")
 load("rand.2pop.4conn")
