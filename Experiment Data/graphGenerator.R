@@ -1,5 +1,5 @@
-p.adjust(c(wilcox.test(graph4.GridFitness.predprey,graph8.GridFitness.predprey)$p.value,c(wilcox.test(graph4.GridFitness.predprey,complete.GridFitness.predprey)$p.value,wilcox.test(graph8.GridFitness.predprey,complete.GridFitness.predprey)$p.value))
-
+p.adjust(c(wilcox.test(coevo.PureAntiMatching,coevo.pureMatching)$p.value,wilcox.test(coevoSpt.PureAntiMatching,std.PureAntiMatching)$p.value,wilcox.test(coevoSpt.PureAntiMatching,stdSpatial.PureAntiMatching)$p.value,wilcox.test(stdSpatial.PureAntiMatching,std.PureAntiMatching)$p.value,wilcox.test(coevo.PureAntiMatching,std.PureAntiMatching)$p.value,wilcox.test(coevo.PureAntiMatching,stdSpatial.PureAntiMatching)$p.value))
+p.adjust(c(wilcox.test(elite.two,elite.two.CoevoComp)$p.value,wilcox.test(elite.two,std.elite.two)$p.value,wilcox.test(elite.two,stdSpatial.elite.two)$p.value,wilcox.test(elite.two.CoevoComp,std.elite.two)$p.value,wilcox.test(elite.two.CoevoComp,stdSpatial.elite.two)$p.value,wilcox.test(std.elite.two,stdSpatial.elite.two)$p.value))
 load("elite.one")
 load("elite.one.CoevoComp")
 load("std.elite.one")
@@ -119,6 +119,12 @@ load("PredPrey/GridFitness/graph8.GridFitness.predprey")
 load("PredPrey/GridFitness/complete.GridFitness.predprey")
 boxplot(graph4.GridFitness.predprey,graph8.GridFitness.predprey,complete.GridFitness.predprey, ylab="Generations", 
         names=c("4 Graph","8 Graph","Complete"), main="Competitive One-Max\nFitness on a Grid")
+
+load("PredPrey/GridFitness/graph4.GP.predprey")
+load("PredPrey/GridFitness/graph8.GP.predprey")
+load("PredPrey/GridFitness/complete.GP.predprey")
+boxplot(graph4.GP.predprey,graph8.GP.predprey,complete.GP.predprey, ylab="Generations", 
+        names=c("4 Graph","8 Graph","Complete"), main="Competitive One-Max\nPurely Competitive")
 
 load("PredPrey/GridFitness/graph4.GridFitnessComp.predprey")
 load("PredPrey/GridFitness/graph8.GridFitnessComp.predprey")

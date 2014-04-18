@@ -57,18 +57,18 @@ for (i in 1:n)
 save(hard.stdSpatial.elite.five,file="hard.stdSpatial.elite.five")
 
 graph = gridConstructor(100)
-stdSpatial.elite.ten = c(1)
+hard.stdSpatial.elite.ten = c(1)
 for (i in 1:n)
 {
   ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=10,spatial.selection.fn=spatial.child.selection.random.hardElite,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE,reporting.fn=reportNone.report.fn)
   generational.ga(ga)
   
-  stdSpatial.elite.ten[i] = ga$gen
+  hard.stdSpatial.elite.ten[i] = ga$gen
   
   print(paste(i,"Complete -", ga$gen))
   rm(ga)
 }
-save(stdSpatial.elite.ten,file="hard.stdSpatial.elite.ten")
+save(hard.stdSpatial.elite.ten,file="hard.stdSpatial.elite.ten")
 
 graph = gridConstructor(100)
 stdSpatial.elite.full = c(1)

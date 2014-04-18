@@ -1,4 +1,3 @@
-#NEED TO EDIT, HASN'T BEEN CREATED
 graph = gridConstructor(100)
 graph4.GP.predprey = c(1)
 coevoGrid=gridConstructor.withDiag(100)
@@ -7,7 +6,7 @@ coevoGrid = split(coevoGrid,row(coevoGrid))
 coevoGrid = matrix(c(coevoGrid, coevoGrid), nrow=100, ncol=2)
 for (i in 1:n)
 {
-  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey.AvgGrid, goal=100, externalConnectionsMatrix=coevoGrid), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey.AvgGrid, goal=100, externalConnectionsMatrix=coevoGrid), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph),encoding.args=new.encoding.args(chr.length=16), verbose=FALSE,reporting.fn=reportNone.report.fn)
   generational.ga(ga)
   graph4.GP.predprey[i] = ga$gen
   print(paste(i,"Complete -",ga$gen))
@@ -23,7 +22,7 @@ coevoGrid = split(coevoGrid,row(coevoGrid))
 coevoGrid = matrix(c(coevoGrid, coevoGrid), nrow=100, ncol=2)
 for (i in 1:n)
 {
-  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey.AvgGrid, goal=100, externalConnectionsMatrix=coevoGrid), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey.AvgGrid, goal=100, externalConnectionsMatrix=coevoGrid), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=16),verbose=FALSE,reporting.fn=reportNone.report.fn)
   generational.ga(ga)
   complete.GP.predprey[i] = ga$gen
   print(paste(i,"Complete -",ga$gen))
@@ -39,7 +38,7 @@ coevoGrid = split(coevoGrid,row(coevoGrid))
 coevoGrid = matrix(c(coevoGrid, coevoGrid), nrow=100, ncol=2)
 for (i in 1:n)
 {
-  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey.AvgGrid, goal=100, externalConnectionsMatrix=coevoGrid), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey.AvgGrid, goal=100, externalConnectionsMatrix=coevoGrid), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph),encoding.args=new.encoding.args(chr.length=16), verbose=FALSE,reporting.fn=reportNone.report.fn)
   generational.ga(ga)
   
   graph8.GP.predprey[i] = ga$gen

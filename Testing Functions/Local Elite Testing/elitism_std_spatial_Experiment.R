@@ -212,6 +212,34 @@ for (i in 1:n)
 }
 save(stdSpatial.elite.full.LargeGrid,file="stdSpatial.elite.full.LargeGrid")
 
+graph = gridConstructor.withDiag(100)
+stdSpatial.elite.none.LargeGrid = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=FALSE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  
+  stdSpatial.elite.none.LargeGrid[i] = ga$gen
+  
+  print(paste(i,"Complete -",ga$gen))
+  rm(ga)
+}
+save(stdSpatial.elite.none.LargeGrid,file="stdSpatial.elite.none.LargeGrid")
+
+graph = gridConstructor.withDiag(100)
+stdSpatial.elite.fifty.LargeGrid = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=50,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  
+  stdSpatial.elite.fifty.LargeGrid[i] = ga$gen
+  
+  print(paste(i,"Complete -",ga$gen))
+  rm(ga)
+}
+save(stdSpatial.elite.fifty.LargeGrid,file="stdSpatial.elite.fifty.LargeGrid")
+
 
 #Big Pop
 graph = gridConstructor(1024)

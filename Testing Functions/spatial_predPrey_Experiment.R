@@ -11,6 +11,18 @@ for (i in 1:n)
 }
 save(generations.4graph.predprey, file="graph4.predprey")
 
+graph = small.ring.graph(100)
+ring2.predprey = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=31, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  ring2.predprey[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(ring2.predprey, file="ring2.predprey")
+
 graph = complete.graph(100)
 generations.complete.predprey = c(1)
 for (i in 1:n)
@@ -161,6 +173,142 @@ for (i in 1:n)
   rm(ga)
 }
 save(complete.predprey.FullElite, file="complete.predprey.FullElite")
+
+graph = gridConstructor(100)
+graph4.predprey.10Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=10,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  graph4.predprey.10Elite[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(graph4.predprey.10Elite, file="graph4.predprey.10Elite")
+graph = gridConstructor(100)
+graph8.predprey.10Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=10,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  graph8.predprey.10Elite[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(graph8.predprey.10Elite, file="graph8.predprey.10Elite")
+graph = complete.graph(100)
+complete.predprey.10Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=10,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  complete.predprey.10Elite[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(complete.predprey.10Elite, file="complete.predprey.10Elite")
+
+graph = gridConstructor(100)
+graph4.predprey.1Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=1,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  graph4.predprey.1Elite[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(graph4.predprey.1Elite, file="graph4.predprey.1Elite")
+graph = gridConstructor(100)
+graph8.predprey.1Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=1,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  graph8.predprey.1Elite[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(graph8.predprey.1Elite, file="graph8.predprey.1Elite")
+graph = complete.graph(100)
+complete.predprey.1Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=1,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  complete.predprey.1Elite[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(complete.predprey.1Elite, file="complete.predprey.1Elite")
+
+graph = gridConstructor(100)
+graph4.predprey.5Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=5,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  graph4.predprey.5Elite[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(graph4.predprey.5Elite, file="graph4.predprey.5Elite")
+graph = gridConstructor(100)
+graph8.predprey.5Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=5,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  graph8.predprey.5Elite[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(graph8.predprey.5Elite, file="graph8.predprey.5Elite")
+graph = complete.graph(100)
+complete.predprey.5Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=5,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  complete.predprey.5Elite[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(complete.predprey.5Elite, file="complete.predprey.5Elite")
+
+graph = gridConstructor(100)
+graph4.predprey.50Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=50,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  graph4.predprey.50Elite[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(graph4.predprey.50Elite, file="graph4.predprey.50Elite")
+graph = gridConstructor(100)
+graph8.predprey.50Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=50,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  graph8.predprey.50Elite[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(graph8.predprey.50Elite, file="graph8.predprey.50Elite")
+graph = complete.graph(100)
+complete.predprey.50Elite = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=33, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE),encoding.args=new.encoding.args(chr.length=32), selection.args=new.selection.args(elitism=TRUE,elite.size=50,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  complete.predprey.50Elite[i] = ga$gen
+  print(paste(i,"Complete"))
+  rm(ga)
+}
+save(complete.predprey.50Elite, file="complete.predprey.50Elite")
 
 #Inner Matching
 graph = gridConstructor(100)
@@ -435,3 +583,4 @@ for (i in 1:n)
   rm(ga)
 }
 save(complete.GridFitness.10Elite.predprey, file="complete.GridFitness.10Elite.predprey")
+

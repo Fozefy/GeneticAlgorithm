@@ -626,7 +626,7 @@ Rosenbrock.fitness.fn <- function(organism, ...)
   genes = organism@chromosome$genes
   
   n = 2
-  chromosomeLength = 100
+  chromosomeLength = length(genes)
   x = GrayCode.to.Decimal(genes[1:(chromosomeLength/n)])
   y = GrayCode.to.Decimal(genes[(chromosomeLength/n + 1) : chromosomeLength])
   
@@ -634,6 +634,28 @@ Rosenbrock.fitness.fn <- function(organism, ...)
   
   total
 }
+
+Rosenbrock.twoPop.fitness.fn <- function(organism, popNum, otherPops, externalConnectionsMatrix)
+{
+  if (popNum == 1)
+  {
+    xGenes = organism@chromosome$genes
+    yGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
+  }
+  else
+  {
+    xGenes = otherPops[[1]]@organisms$values[[externalConnectionsMatrix[organism@index$value, popNum]]]@chromosome$genes
+    yGenes = organism@chromosome$genes
+  }
+
+  x = GrayCode.to.Decimal(xGenes)
+  y = GrayCode.to.Decimal(yGenes)
+  
+  total = (1 - x)^2 + 100*(y - x^2)^2
+  
+  total
+}
+
 
 #rosenbrockGA=new.GA.env(encoding.args=new.encoding.args(chr.length=100, chr.encode.type="binary"), fitness.args=new.fitness.args(fitness.fn=Rosenbrock.fitness.fn, goal = 0), selection.args=new.selection.args(maximizing = FALSE))
 
