@@ -58,7 +58,7 @@ graph = gridConstructor(100) #4 connections
 coevoSpt.extraMatching = c(1)
 for (i in 1:n)
 {
-  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withMatching(matching=4), goal=90, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph),encoding.args=new.encoding.args(chr.length=15), verbose=FALSE,reporting.fn=reportNone.report.fn)
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withMatching(matching=4), goal=96, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph),encoding.args=new.encoding.args(chr.length=16), verbose=FALSE,reporting.fn=reportNone.report.fn)
   generational.ga(ga)
   coevoSpt.extraMatching[i] = ga$gen
 print(paste(i,"Complete -", ga$gen))
@@ -70,7 +70,7 @@ graph = complete.graph(100) #complete connections
 coevo.extraMatching = c(1)
 for (i in 1:n)
 {
-  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withMatching(matching=4), goal=90, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=15),verbose=FALSE,reporting.fn=reportNone.report.fn)
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.withMatching(matching=4), goal=96, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=16),verbose=FALSE,reporting.fn=reportNone.report.fn)
   generational.ga(ga)
   
   coevo.extraMatching[i] = ga$gen
@@ -78,7 +78,7 @@ for (i in 1:n)
 print(paste(i,"Complete -", ga$gen))
   rm(ga)
 }
-save(coevo.extraMatching,file="coevo.extraMatching")
+save(coevo.extraMatching,file="coevo.extraMatching.a")
 
 graph = complete.graph(100)
 std.extraMatching = c(1)

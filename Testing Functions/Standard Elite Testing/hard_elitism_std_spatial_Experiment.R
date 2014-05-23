@@ -71,6 +71,20 @@ for (i in 1:n)
 save(hard.stdSpatial.elite.ten,file="hard.stdSpatial.elite.ten")
 
 graph = gridConstructor(100)
+hard.stdSpatial.elite.fifty = c(1)
+for (i in 1:n)
+{
+  ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000), fitness.args=new.fitness.args(goal=60), mutation.args = new.mutation.args(prob.mutation=4),xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=TRUE,elite.size=50,spatial.selection.fn=spatial.child.selection.random.hardElite,adjMatrix=graph), encoding.args=new.encoding.args(chr.length=60),verbose=FALSE,reporting.fn=reportNone.report.fn)
+  generational.ga(ga)
+  
+  hard.stdSpatial.elite.fifty[i] = ga$gen
+  
+  print(paste(i,"Complete -", ga$gen))
+  rm(ga)
+}
+save(hard.stdSpatial.elite.fifty,file="hard.stdSpatial.elite.fifty")
+
+graph = gridConstructor(100)
 stdSpatial.elite.full = c(1)
 for (i in 1:n)
 {

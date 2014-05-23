@@ -114,14 +114,14 @@ for (i in 1:n)
 }
 save(graph4.predprey.NoElite, file="graph4.predprey.NoElite")
 
-graph = gridConstructor(100)
+graph = gridConstructor.withDiag(100)
 graph8.predprey.NoElite = c(1)
 for (i in 1:n)
 {
   ga = new.GA.env(GA.base.args=new.GA.base.args(max.gen=5000,numPop=2), fitness.args=new.fitness.args(fitness.fn=twoPop.one.max.predPrey, goal=31, externalConnectionsMatrix=matrix(c(1:100, 1:100), nrow=100, ncol=2)), xover.args = new.xover.args(keepSecondaryParent=FALSE), selection.args=new.selection.args(elitism=FALSE,adjMatrix=graph), verbose=FALSE,reporting.fn=reportNone.report.fn)
   generational.ga(ga)
   graph8.predprey.NoElite[i] = ga$gen
-  print(paste(i,"Complete"))
+  print(paste(i,"Complete -",ga$gen))
   rm(ga)
 }
 save(graph8.predprey.NoElite, file="graph8.predprey.NoElite")
@@ -150,7 +150,7 @@ for (i in 1:n)
 }
 save(graph4.predprey.FullElite, file="graph4.predprey.FullElite")
 
-graph = gridConstructor(100)
+graph = gridConstructor.withDiag(100)
 graph8.predprey.FullElite = c(1)
 for (i in 1:n)
 {
@@ -185,7 +185,7 @@ for (i in 1:n)
   rm(ga)
 }
 save(graph4.predprey.10Elite, file="graph4.predprey.10Elite")
-graph = gridConstructor(100)
+graph = gridConstructor.withDiag(100)
 graph8.predprey.10Elite = c(1)
 for (i in 1:n)
 {
@@ -219,7 +219,7 @@ for (i in 1:n)
   rm(ga)
 }
 save(graph4.predprey.1Elite, file="graph4.predprey.1Elite")
-graph = gridConstructor(100)
+graph = gridConstructor.withDiag(100)
 graph8.predprey.1Elite = c(1)
 for (i in 1:n)
 {
@@ -253,7 +253,7 @@ for (i in 1:n)
   rm(ga)
 }
 save(graph4.predprey.5Elite, file="graph4.predprey.5Elite")
-graph = gridConstructor(100)
+graph = gridConstructor.withDiag(100)
 graph8.predprey.5Elite = c(1)
 for (i in 1:n)
 {
@@ -287,7 +287,7 @@ for (i in 1:n)
   rm(ga)
 }
 save(graph4.predprey.50Elite, file="graph4.predprey.50Elite")
-graph = gridConstructor(100)
+graph = gridConstructor.withDiag(100)
 graph8.predprey.50Elite = c(1)
 for (i in 1:n)
 {

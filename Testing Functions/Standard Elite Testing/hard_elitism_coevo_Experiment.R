@@ -78,7 +78,7 @@ for (i in 1:n)
   
   hard.elite.fifty.CoevoComp[i] = ga$gen
   
-  print(paste(i,"Complete" -),ga$gen)
+  print(paste(i,"Complete -",ga$gen))
   rm(ga)
 }
 save(hard.elite.fifty.CoevoComp,file="hard.elite.fifty.CoevoComp")
